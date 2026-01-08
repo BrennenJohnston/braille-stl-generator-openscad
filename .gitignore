@@ -1,0 +1,25 @@
+# OpenSCAD
+*.stl
+*.png
+*.bak
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# AI Coding Assistants (tool-agnostic)
+.cursor/
+.cursorrules
+.github/copilot/
+.copilot/
+.codeium/
+.tabnine/
+.aider*
+.continue/
