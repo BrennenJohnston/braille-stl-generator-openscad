@@ -1,0 +1,6 @@
+# Reference Fixture Version Information
+# Generated: 2026-01-09T02:49:05.315551Z
+# Web API: http://localhost:5001
+# Total fixtures: 0
+
+# See FIXTURES_VERSION.json for full metadata

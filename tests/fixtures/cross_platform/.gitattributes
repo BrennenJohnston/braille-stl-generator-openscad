@@ -1,0 +1,10 @@
+# Git LFS tracking for STL files
+# Binary STL files can be large (100KB-1MB each), so we use Git LFS
+# to avoid bloating the repository history
+
+*.stl filter=lfs diff=lfs merge=lfs -text
+
+# Also track other potentially large binary files
+*.obj filter=lfs diff=lfs merge=lfs -text
+*.3mf filter=lfs diff=lfs merge=lfs -text
+*.amf filter=lfs diff=lfs merge=lfs -text

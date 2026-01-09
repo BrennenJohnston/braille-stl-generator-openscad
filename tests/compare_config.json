@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "STL Comparison Configuration",
+  "description": "Centralized tolerances and comparison settings for cross-platform STL validation",
+  "version": "1.0.0",
+  "last_updated": "2026-01-08",
+  
+  "tolerances": {
+    "volume": {
+      "percent": 1.0,
+      "description": "Maximum allowed volume difference as percentage (start loose, tighten after data collection)"
+    },
+    "surface_area": {
+      "percent": 0.5,
+      "description": "Maximum allowed surface area difference as percentage"
+    },
+    "bounding_box": {
+      "mm": 0.1,
+      "description": "Maximum allowed bounding box dimension difference in millimeters"
+    },
+    "max_surface_deviation": {
+      "mm": 0.05,
+      "description": "Maximum allowed surface-to-surface deviation (CloudCompare C2M), tune per feature",
+      "optional": true,
+      "note": "Only computed if CloudCompare available"
+    }
+  },
+  
+  "required_checks": {
+    "watertightness": {
+      "required": true,
+      "must_match": true,
+      "description": "Both meshes must be watertight for 3D printing"
+    },
+    "volume": {
+      "required": true,
+      "description": "Volume check always required"
+    },
+    "surface_area": {
+      "required": true,
+      "description": "Surface area check always required"
+    },
+    "bounding_box": {
+      "required": true,
+      "description": "Bounding box check always required"
+    },
+    "face_count": {
+      "required": false,
+      "report_only": true,
+      "description": "Face count is informational only (varies with mesh resolution)"
+    },
+    "vertex_count": {
+      "required": false,
+      "report_only": true,
+      "description": "Vertex count is informational only (varies with mesh resolution)"
+    },
+    "max_surface_deviation": {
+      "required": false,
+      "skip_if_missing_tools": true,
+      "description": "Numeric deviation check (requires CloudCompare)"
+    }
+  },
+  
+  "alignment": {
+    "icp": {
+      "enabled": true,
+      "threshold_for_alignment_mm": 0.5,
+      "description": "Run ICP alignment if centroid distance or bbox offset exceeds threshold",
+      "max_rms_mm": 0.01,
+      "description_rms": "Fail if ICP RMS exceeds this value (indicates significant geometry mismatch)"
+    },
+    "coordinate_system": {
+      "units": "mm",
+      "origin": "varies_by_shape",
+      "description": "Both generators use millimeters, origin varies (card: corner, cylinder: center)"
+    }
+  },
+  
+  "cloudcompare": {
+    "enabled": true,
+    "optional": true,
+    "sampling_density": 10000,
+    "description_sampling": "Number of points to sample from mesh surface for C2M distance",
+    "max_runtime_seconds": 120,
+    "description_runtime": "Maximum time allowed for CloudCompare operations per comparison",
+    "c2m_both_directions": true,
+    "description_directions": "Compute C2M in both directions (ref→test and test→ref) for symmetric Hausdorff"
+  },
+  
+  "reporting": {
+    "format": "json",
+    "per_test_report": true,
+    "summary_report": true,
+    "include_metadata": {
+      "tool_versions": true,
+      "test_parameters": true,
+      "fixture_version": true,
+      "timestamp": true,
+      "platform": true
+    },
+    "on_failure": {
+      "save_diff_stl": true,
+      "save_alignment_info": true,
+      "verbose_logging": true
+    }
+  },
+  
+  "tool_versions": {
+    "comment": "See tests/tool_versions.yml for detailed version specifications",
+    "openscad": {
+      "ci_version": "2023.12.11",
+      "local_min_version": "2021.01"
+    },
+    "cloudcompare": {
+      "ci_version": "2.13.1",
+      "local_min_version": "2.12.0",
+      "optional": true
+    },
+    "python_packages": {
+      "trimesh": "4.0.5",
+      "numpy": "1.24.3",
+      "scipy": "1.11.4"
+    }
+  },
+  
+  "performance": {
+    "parallel_execution": false,
+    "comment": "Set to true to run test cases in parallel (requires thread-safe OpenSCAD execution)",
+    "timeout_per_test_seconds": 300,
+    "cache_openscad_outputs": true
+  }
+}

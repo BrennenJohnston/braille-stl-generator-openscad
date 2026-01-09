@@ -1,0 +1,38 @@
+# Python Dependencies for STL Validation Framework
+# 
+# Installation: pip install -r tests/requirements.txt
+# 
+# Last Updated: 2026-01-08
+
+# Mesh Analysis (MIT License)
+trimesh[easy]==4.0.5    # Mesh loading, property analysis, easy extras include common deps
+numpy==1.24.3           # Numerical computing (required by trimesh)
+scipy==1.11.4           # Scientific computing (required by trimesh)
+
+# Web API Client
+requests==2.31.0        # HTTP client for web generator API access
+
+# Testing Framework
+pytest==7.4.3           # Test runner
+pytest-json-report==1.5.0  # JSON output for CI
+pytest-timeout==2.2.0   # Test timeout handling
+pytest-xdist==3.5.0     # Parallel test execution (optional)
+
+# Configuration
+pyyaml==6.0.1           # YAML parsing for tool_versions.yml
+
+# Code Quality (Development)
+black==23.12.1          # Code formatting
+ruff==0.1.9             # Fast linting
+mypy==1.7.1             # Type checking
+
+# Documentation
+jsonschema==4.20.0      # JSON schema validation for config files
+
+# Optional: Visual debugging
+# diff3d==0.1.0         # Uncomment if using diff3d for visual comparison
+# matplotlib==3.8.2     # Uncomment for plotting/visualization
+
+# Note: CloudCompare is NOT a Python package
+# Install CloudCompare separately as documented in tests/tool_versions.yml
+# CloudCompare is optional - tests skip numeric deviation if not installed

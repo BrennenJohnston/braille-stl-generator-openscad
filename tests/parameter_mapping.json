@@ -1,0 +1,482 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OpenSCAD to Web API Parameter Mapping",
+  "description": "Machine-readable mapping between OpenSCAD customizer variables and web API parameters. Source of truth for cross-platform validation.",
+  "version": "1.0.0",
+  "last_updated": "2026-01-08",
+  "documentation": "See PARAMETER_MAPPING.md for human-readable version",
+  
+  "parameters": [
+    {
+      "openscad_name": "Line_1",
+      "web_api_name": "line1",
+      "web_ui_label": "Line 1",
+      "type": "string",
+      "default": "⠓⠑⠇⠇⠕",
+      "section": "Text Input - Pre-Translated Braille",
+      "description": "First line of braille text (Unicode braille characters)",
+      "validation": {
+        "pattern": "^[\\u2800-\\u28FF]*$",
+        "max_length": 20
+      }
+    },
+    {
+      "openscad_name": "Line_2",
+      "web_api_name": "line2",
+      "web_ui_label": "Line 2",
+      "type": "string",
+      "default": "⠺⠕⠗⠇⠙",
+      "section": "Text Input - Pre-Translated Braille",
+      "description": "Second line of braille text"
+    },
+    {
+      "openscad_name": "Line_3",
+      "web_api_name": "line3",
+      "web_ui_label": "Line 3",
+      "type": "string",
+      "default": "",
+      "section": "Text Input - Pre-Translated Braille",
+      "description": "Third line of braille text"
+    },
+    {
+      "openscad_name": "Line_4",
+      "web_api_name": "line4",
+      "web_ui_label": "Line 4",
+      "type": "string",
+      "default": "",
+      "section": "Text Input - Pre-Translated Braille",
+      "description": "Fourth line of braille text"
+    },
+    {
+      "openscad_name": "shape_type",
+      "web_api_name": "shape_type",
+      "web_ui_label": "Output Shape",
+      "type": "enum",
+      "default": "card",
+      "values": ["card", "cylinder"],
+      "web_ui_values": {
+        "card": "Card (Flat Plate)",
+        "cylinder": "Cylinder (Curved Surface)"
+      },
+      "section": "Shape and Plate Selection",
+      "description": "Output shape type"
+    },
+    {
+      "openscad_name": "plate_type",
+      "web_api_name": "plate_type",
+      "web_ui_label": "Select Plate to Generate",
+      "type": "enum",
+      "default": "positive",
+      "values": ["positive", "negative"],
+      "web_ui_values": {
+        "positive": "Embossing Plate",
+        "negative": "Universal Counter Plate"
+      },
+      "section": "Shape and Plate Selection",
+      "description": "Which plate to generate"
+    },
+    {
+      "openscad_name": "combined_shape",
+      "web_api_name": "combined_shape",
+      "web_ui_label": "Braille Dot Shape",
+      "type": "enum",
+      "default": "rounded",
+      "values": ["rounded", "cone"],
+      "web_ui_values": {
+        "rounded": "Rounded",
+        "cone": "Cone"
+      },
+      "section": "Expert Mode - Shape Selection",
+      "description": "Braille dot shape for both emboss and counter plates"
+    },
+    {
+      "openscad_name": "indicator_shapes",
+      "web_api_name": "indicator_shapes",
+      "web_ui_label": "Indicator Shapes",
+      "type": "enum",
+      "default": "on",
+      "values": ["on", "off"],
+      "web_ui_values": {
+        "on": "On",
+        "off": "Off"
+      },
+      "section": "Expert Mode - Shape Selection",
+      "description": "Row start/end markers"
+    },
+    {
+      "openscad_name": "card_width",
+      "web_api_name": "card_width",
+      "web_ui_label": "Card Width",
+      "type": "float",
+      "default": 90.0,
+      "range": [50, 200],
+      "unit": "mm",
+      "section": "Expert Mode - Surface Dimensions",
+      "description": "Card width in millimeters"
+    },
+    {
+      "openscad_name": "card_height",
+      "web_api_name": "card_height",
+      "web_ui_label": "Card Height",
+      "type": "float",
+      "default": 52.0,
+      "range": [30, 150],
+      "unit": "mm",
+      "section": "Expert Mode - Surface Dimensions",
+      "description": "Card height in millimeters"
+    },
+    {
+      "openscad_name": "card_thickness",
+      "web_api_name": "card_thickness",
+      "web_ui_label": "Card Thickness",
+      "type": "float",
+      "default": 2.0,
+      "range": [1, 10],
+      "unit": "mm",
+      "section": "Expert Mode - Surface Dimensions",
+      "description": "Card thickness in millimeters"
+    },
+    {
+      "openscad_name": "cylinder_diameter_mm",
+      "web_api_name": "cylinder_diameter_mm",
+      "web_ui_label": "Cylinder Diameter",
+      "type": "float",
+      "default": 30.75,
+      "range": [10, 100],
+      "unit": "mm",
+      "section": "Expert Mode - Surface Dimensions",
+      "description": "Cylinder outer diameter in millimeters"
+    },
+    {
+      "openscad_name": "cylinder_height_mm",
+      "web_api_name": "cylinder_height_mm",
+      "web_ui_label": "Cylinder Height",
+      "type": "float",
+      "default": 52.0,
+      "range": [20, 150],
+      "unit": "mm",
+      "section": "Expert Mode - Surface Dimensions",
+      "description": "Cylinder height in millimeters"
+    },
+    {
+      "openscad_name": "polygon_cutout_radius_mm",
+      "web_api_name": "polygon_cutout_radius_mm",
+      "web_ui_label": "Cutout Radius",
+      "type": "float",
+      "default": 13.0,
+      "range": [0, 50],
+      "unit": "mm",
+      "section": "Expert Mode - Surface Dimensions",
+      "description": "Polygonal cutout circumscribed radius (0 = no cutout)"
+    },
+    {
+      "openscad_name": "polygon_cutout_points",
+      "web_api_name": "polygon_cutout_points",
+      "web_ui_label": "Cutout Points/Sides",
+      "type": "integer",
+      "default": 12,
+      "range": [3, 24],
+      "section": "Expert Mode - Surface Dimensions",
+      "description": "Number of sides/points for polygonal cutout"
+    },
+    {
+      "openscad_name": "seam_offset_degrees",
+      "web_api_name": "seam_offset_degrees",
+      "web_ui_label": "Seam Offset",
+      "type": "float",
+      "default": 355.0,
+      "range": [0, 360],
+      "unit": "degrees",
+      "section": "Expert Mode - Surface Dimensions",
+      "description": "Seam offset (degrees) — Rotates starting position around cylinder"
+    },
+    {
+      "openscad_name": "grid_columns",
+      "web_api_name": "grid_columns",
+      "web_ui_label": "Number of Braille Cells",
+      "type": "integer",
+      "default": 11,
+      "range": [1, 20],
+      "section": "Expert Mode - Braille Spacing",
+      "description": "Number of braille cells per row available for text (2 cells reserved for indicators when On)"
+    },
+    {
+      "openscad_name": "grid_rows",
+      "web_api_name": "grid_rows",
+      "web_ui_label": "Number of Braille Lines",
+      "type": "integer",
+      "default": 4,
+      "range": [1, 10],
+      "section": "Expert Mode - Braille Spacing",
+      "description": "Number of lines of braille"
+    },
+    {
+      "openscad_name": "cell_spacing",
+      "web_api_name": "cell_spacing",
+      "web_ui_label": "Braille Cell Spacing",
+      "type": "float",
+      "default": 6.5,
+      "range": [2, 15],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Spacing",
+      "description": "Horizontal spacing between cells"
+    },
+    {
+      "openscad_name": "line_spacing",
+      "web_api_name": "line_spacing",
+      "web_ui_label": "Braille Line Spacing",
+      "type": "float",
+      "default": 10.0,
+      "range": [5, 25],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Spacing",
+      "description": "Vertical spacing between lines"
+    },
+    {
+      "openscad_name": "dot_spacing",
+      "web_api_name": "dot_spacing",
+      "web_ui_label": "Braille Dot Spacing",
+      "type": "float",
+      "default": 2.5,
+      "range": [1, 5],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Spacing",
+      "description": "Spacing between dots within a cell"
+    },
+    {
+      "openscad_name": "braille_x_adjust",
+      "web_api_name": "braille_x_adjust",
+      "web_ui_label": "X Adjust",
+      "type": "float",
+      "default": 0.0,
+      "range": [-10, 10],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Spacing",
+      "description": "Horizontal adjustment of braille pattern"
+    },
+    {
+      "openscad_name": "braille_y_adjust",
+      "web_api_name": "braille_y_adjust",
+      "web_ui_label": "Y Adjust",
+      "type": "float",
+      "default": 0.0,
+      "range": [-10, 10],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Spacing",
+      "description": "Vertical adjustment of braille pattern"
+    },
+    {
+      "openscad_name": "rounded_dot_base_diameter",
+      "web_api_name": "rounded_dot_base_diameter",
+      "web_ui_label": "Rounded dot base diameter (cone base)",
+      "type": "float",
+      "default": 2.0,
+      "range": [0.5, 3],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Embossing Braille Dot Dimensions (Rounded Shape)",
+      "description": "Base diameter of rounded dot frustum"
+    },
+    {
+      "openscad_name": "rounded_dot_base_height",
+      "web_api_name": "rounded_dot_base_height",
+      "web_ui_label": "Rounded dot base height (cone height)",
+      "type": "float",
+      "default": 0.2,
+      "range": [0, 2],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Embossing Braille Dot Dimensions (Rounded Shape)",
+      "description": "Height of rounded dot frustum"
+    },
+    {
+      "openscad_name": "rounded_dot_dome_diameter",
+      "web_api_name": "rounded_dot_dome_diameter",
+      "web_ui_label": "Rounded dome diameter",
+      "type": "float",
+      "default": 1.5,
+      "range": [0.5, 3],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Embossing Braille Dot Dimensions (Rounded Shape)",
+      "description": "Diameter of rounded dome (linked to cone flat top)"
+    },
+    {
+      "openscad_name": "rounded_dot_dome_height",
+      "web_api_name": "rounded_dot_dome_height",
+      "web_ui_label": "Rounded dot dome height",
+      "type": "float",
+      "default": 0.6,
+      "range": [0.1, 2],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Embossing Braille Dot Dimensions (Rounded Shape)",
+      "description": "Height of rounded dome"
+    },
+    {
+      "openscad_name": "emboss_dot_base_diameter",
+      "web_api_name": "emboss_dot_base_diameter",
+      "web_ui_label": "Dot diameter",
+      "type": "float",
+      "default": 1.8,
+      "range": [0.5, 3],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Embossing Braille Dot Dimensions (Cone Shape)",
+      "description": "Cone dot base diameter"
+    },
+    {
+      "openscad_name": "emboss_dot_height",
+      "web_api_name": "emboss_dot_height",
+      "web_ui_label": "Dot height",
+      "type": "float",
+      "default": 1.0,
+      "range": [0.3, 2],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Embossing Braille Dot Dimensions (Cone Shape)",
+      "description": "Cone dot height"
+    },
+    {
+      "openscad_name": "emboss_dot_flat_hat",
+      "web_api_name": "emboss_dot_flat_hat",
+      "web_ui_label": "Flat hat diameter",
+      "type": "float",
+      "default": 0.4,
+      "range": [0.1, 2],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Embossing Braille Dot Dimensions (Cone Shape)",
+      "description": "Cone dot flat hat diameter"
+    },
+    {
+      "openscad_name": "bowl_counter_dot_base_diameter",
+      "web_api_name": "bowl_counter_dot_base_diameter",
+      "web_ui_label": "Bowl Recess Dot Base Diameter",
+      "type": "float",
+      "default": 1.8,
+      "range": [0.5, 5],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Counter Braille Recessed Dot Dimensions (Rounded Shape / Bowl)",
+      "description": "Bowl recess base diameter"
+    },
+    {
+      "openscad_name": "counter_dot_depth",
+      "web_api_name": "counter_dot_depth",
+      "web_ui_label": "Bowl Recess Depth",
+      "type": "float",
+      "default": 0.8,
+      "range": [0.1, 2],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Counter Braille Recessed Dot Dimensions (Rounded Shape / Bowl)",
+      "description": "Bowl recess depth"
+    },
+    {
+      "openscad_name": "cone_counter_dot_base_diameter",
+      "web_api_name": "cone_counter_dot_base_diameter",
+      "web_ui_label": "Cone recess base diameter",
+      "type": "float",
+      "default": 1.6,
+      "range": [0.5, 3],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Counter Braille Recessed Dot Dimensions (Cone Shape)",
+      "description": "Cone recess base diameter"
+    },
+    {
+      "openscad_name": "cone_counter_dot_height",
+      "web_api_name": "cone_counter_dot_height",
+      "web_ui_label": "Cone recess height",
+      "type": "float",
+      "default": 0.8,
+      "range": [0.3, 2],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Counter Braille Recessed Dot Dimensions (Cone Shape)",
+      "description": "Cone recess height"
+    },
+    {
+      "openscad_name": "cone_counter_dot_flat_hat",
+      "web_api_name": "cone_counter_dot_flat_hat",
+      "web_ui_label": "Cone recess flat hat diameter",
+      "type": "float",
+      "default": 0.4,
+      "range": [0.1, 2],
+      "unit": "mm",
+      "section": "Expert Mode - Braille Dot Adjustments",
+      "subsection": "Counter Braille Recessed Dot Dimensions (Cone Shape)",
+      "description": "Cone recess flat hat diameter"
+    },
+    {
+      "openscad_name": "hemisphere_quality",
+      "web_api_name": "hemisphere_quality",
+      "web_ui_label": "Hemisphere Quality",
+      "type": "enum",
+      "default": "medium",
+      "values": ["low", "medium", "high"],
+      "web_ui_values": {
+        "low": "Low (16 segments)",
+        "medium": "Medium (32 segments)",
+        "high": "High (64 segments)"
+      },
+      "section": "Rendering Quality",
+      "description": "Sphere quality for rounded shapes",
+      "note": "Affects mesh resolution, not geometry dimensions"
+    },
+    {
+      "openscad_name": "cone_segments",
+      "web_api_name": "cone_segments",
+      "web_ui_label": "Cone Segments",
+      "type": "integer",
+      "default": 16,
+      "range": [8, 64],
+      "section": "Rendering Quality",
+      "description": "Number of segments for cone shapes",
+      "note": "Affects mesh resolution, not geometry dimensions"
+    }
+  ],
+  
+  "validation_rules": {
+    "description": "Rules for validating parameter consistency between OpenSCAD and web API",
+    "checks": [
+      {
+        "name": "all_openscad_params_mapped",
+        "description": "Every OpenSCAD customizer parameter must have a web API equivalent",
+        "severity": "error"
+      },
+      {
+        "name": "default_values_match",
+        "description": "Default values must be identical across platforms",
+        "severity": "error"
+      },
+      {
+        "name": "ranges_match",
+        "description": "Value ranges must be identical (where applicable)",
+        "severity": "warning"
+      },
+      {
+        "name": "sections_align",
+        "description": "Parameter sections/groupings should match UI organization",
+        "severity": "warning"
+      },
+      {
+        "name": "types_compatible",
+        "description": "Data types must be compatible (string, float, integer, enum)",
+        "severity": "error"
+      }
+    ]
+  },
+  
+  "notes": [
+    "This mapping is the source of truth for cross-platform validation",
+    "Human-readable documentation in PARAMETER_MAPPING.md should be kept in sync",
+    "Web API uses snake_case; OpenSCAD uses snake_case (aligned)",
+    "Enum values use simple strings (e.g., 'rounded' not 'rounded:Rounded')",
+    "Web UI labels may differ from parameter names for user-friendliness",
+    "Rendering quality parameters affect mesh resolution, not actual geometry dimensions",
+    "All spatial units are millimeters (mm)",
+    "All angular units are degrees (°)"
+  ]
+}

@@ -1,0 +1,17 @@
+# Git LFS tracking for STL files
+# These files are tracked with Git Large File Storage to avoid repository bloat
+*.stl filter=lfs diff=lfs merge=lfs -text
+
+# Ensure consistent line endings
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.txt text eol=lf
+*.scad text eol=lf
+*.sh text eol=lf
+
+# Windows batch files should use CRLF
+*.bat text eol=crlf
+*.ps1 text eol=crlf

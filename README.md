@@ -1,5 +1,8 @@
 # Braille STL Generator (OpenSCAD)
 
+> **⚠️ WORK IN PROGRESS**  
+> This repository is currently under active development. The validation framework and test infrastructure are being implemented. The core OpenSCAD generator is functional, but automated testing and cross-platform validation are not yet complete. Expect breaking changes until v1.0.0 is officially released.
+
 Parametric OpenSCAD program for generating braille embossing plates and counter plates for both flat cards and cylindrical objects.
 
 ## 🔗 Related Project

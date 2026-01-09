@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-01-09T02:49:05.315551Z",
+  "web_api_url": "http://localhost:5001",
+  "web_generator_commit": "TBD",
+  "total_fixtures": 0,
+  "failed_fixtures": 1,
+  "fixtures": [],
+  "failures": [
+    {
+      "name": "card_rounded_emboss_basic",
+      "error": "API request failed with status 410: {\"deprecated_date\":\"2026-01-05\",\"documentation\":\"docs/development/CODEBASE_AUDIT_AND_RENOVATION_PLAN.md\",\"error\":\"Server-side STL generation has been removed.\",\"reason\":\"This endpoint required Redis and Blob storage that caused deployment failures. The application now uses client-side CSG generation exclusively.\",\"solution\":\"Use the web interface at the root URL (/). STL generation happens automatically in your browser using Web Workers and client-side CSG.\",\"status\":\"deprecated\"}\n"
+    }
+  ]
+}

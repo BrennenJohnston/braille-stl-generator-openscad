@@ -1,0 +1,234 @@
+# Tool Version Specifications for STL Validation Framework
+# 
+# This file defines required tool versions for reproducible testing.
+# CI enforces exact versions; local development allows version ranges.
+#
+# Last Updated: 2026-01-08
+
+required_tools:
+  openscad:
+    ci_version: "2023.12.11"  # Exact version for CI
+    local_min_version: "2021.01"  # Minimum for local dev
+    local_max_version: "2024.12.31"  # Maximum tested version
+    
+    description: "OpenSCAD CLI for STL generation from .scad files"
+    
+    download_urls:
+      windows: "https://files.openscad.org/OpenSCAD-2023.12.11-x86_64.zip"
+      linux: "https://files.openscad.org/openscad-2023.12.11.x86_64.AppImage"
+      macos: "https://files.openscad.org/OpenSCAD-2023.12.11.dmg"
+    
+    install_commands:
+      windows: |
+        # Download and extract to C:\Program Files\OpenSCAD
+        # Add to PATH: C:\Program Files\OpenSCAD
+      
+      linux: |
+        # Option 1: AppImage (recommended)
+        wget https://files.openscad.org/openscad-2023.12.11.x86_64.AppImage
+        chmod +x openscad-2023.12.11.x86_64.AppImage
+        sudo mv openscad-2023.12.11.x86_64.AppImage /usr/local/bin/openscad
+        
+        # Option 2: apt (Ubuntu/Debian)
+        sudo add-apt-repository ppa:openscad/releases
+        sudo apt update
+        sudo apt install openscad
+      
+      macos: |
+        # Option 1: Homebrew
+        brew install openscad
+        
+        # Option 2: Direct download
+        # Download DMG from URL above, drag to Applications
+    
+    version_check_command: "openscad --version"
+    expected_output_pattern: "OpenSCAD version 2023.12.11"
+    
+    ci_setup:
+      github_actions: |
+        # .github/workflows/stl_validation.yml
+        # Ubuntu/Linux:
+        - name: Install OpenSCAD (Linux)
+          if: runner.os == 'Linux'
+          run: |
+            sudo add-apt-repository -y ppa:openscad/releases
+            sudo apt-get update
+            sudo apt-get install -y openscad
+        
+        # Windows:
+        - name: Install OpenSCAD (Windows)
+          if: runner.os == 'Windows'
+          run: |
+            choco install openscad --version=2023.12.11 -y
+            echo "C:\Program Files\OpenSCAD" >> $env:GITHUB_PATH
+        
+        # macOS:
+        - name: Install OpenSCAD (macOS)
+          if: runner.os == 'macOS'
+          run: brew install openscad
+  
+  python:
+    ci_version: "3.11.x"  # Latest 3.11 patch version
+    local_min_version: "3.9"  # Minimum Python 3.9 for modern type hints
+    
+    description: "Python runtime for test harness and mesh analysis"
+    
+    packages:
+      trimesh:
+        version: "4.0.5"
+        description: "Mesh loading and property analysis (MIT license)"
+        extras: ["easy"]  # Includes common dependencies
+      
+      numpy:
+        version: "1.24.3"
+        description: "Numerical computing (required by trimesh)"
+      
+      scipy:
+        version: "1.11.4"
+        description: "Scientific computing (required by trimesh)"
+      
+      requests:
+        version: "2.31.0"
+        description: "HTTP client for web API access"
+      
+      pytest:
+        version: "7.4.3"
+        description: "Test framework"
+      
+      pytest-json-report:
+        version: "1.5.0"
+        description: "JSON output for CI reporting"
+      
+      pyyaml:
+        version: "6.0.1"
+        description: "YAML parsing for config files"
+    
+    install_command: |
+      pip install -r tests/requirements.txt
+    
+    ci_setup:
+      github_actions: |
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.11'
+        
+        - name: Install dependencies
+          run: |
+            pip install --upgrade pip
+            pip install -r tests/requirements.txt
+  
+  cloudcompare:
+    ci_version: "2.13.1"  # Latest stable
+    local_min_version: "2.12.0"
+    optional: true  # Tests skip numeric deviation if missing
+    
+    description: "Mesh comparison tool for numeric surface deviation (GPL-3.0, external CLI only)"
+    
+    download_urls:
+      windows: "https://www.cloudcompare.org/release/CloudCompare_v2.13.1_setup_x64.exe"
+      linux: "snap://cloudcompare"
+      macos: "https://www.cloudcompare.org/release/CloudCompare_v2.13.1_macOS.dmg"
+    
+    install_commands:
+      windows: |
+        # Download installer from URL above
+        # Install to default location: C:\Program Files\CloudCompare
+        # CLI executable: C:\Program Files\CloudCompare\CloudCompare.exe
+      
+      linux: |
+        # Option 1: Snap (recommended)
+        sudo snap install cloudcompare
+        
+        # Option 2: Build from source (advanced)
+        # https://github.com/CloudCompare/CloudCompare/blob/master/BUILD.md
+      
+      macos: |
+        # Option 1: Homebrew
+        brew install cloudcompare
+        
+        # Option 2: DMG installer
+        # Download from URL above, drag to Applications
+    
+    executable_paths:
+      windows: "C:\\Program Files\\CloudCompare\\CloudCompare.exe"
+      linux: "/snap/bin/cloudcompare"
+      macos: "/Applications/CloudCompare.app/Contents/MacOS/CloudCompare"
+    
+    version_check_command: "CloudCompare --version"
+    expected_output_pattern: "CloudCompare v2.13"
+    version_check_note: "Version flag varies by platform; may need --version or -version"
+    
+    fallback_behavior: |
+      If CloudCompare is not installed or version check fails:
+      - Tests emit warning: "CloudCompare not found, skipping numeric deviation checks"
+      - Property checks (volume, area, bbox, watertightness) still run
+      - Test result marked as "partial" (not failed)
+      - CI job continues (non-blocking)
+    
+    ci_setup:
+      github_actions: |
+        # CloudCompare installation is optional in CI
+        # For now, skip numeric deviation checks in CI
+        # Future: Add CloudCompare to CI for full validation
+        
+        - name: Install CloudCompare (optional)
+          if: runner.os == 'Linux'
+          run: sudo snap install cloudcompare
+          continue-on-error: true
+  
+  git_lfs:
+    required: true
+    description: "Git Large File Storage for STL fixture files"
+    
+    install_commands:
+      windows: |
+        # Download from: https://git-lfs.github.com/
+        # Or via chocolatey: choco install git-lfs
+        git lfs install
+      
+      linux: |
+        sudo apt install git-lfs  # Ubuntu/Debian
+        # or: sudo yum install git-lfs  # RHEL/CentOS
+        git lfs install
+      
+      macos: |
+        brew install git-lfs
+        git lfs install
+    
+    setup_command: |
+      # Initialize Git LFS in repository
+      git lfs install
+      git lfs track "*.stl"
+      git add .gitattributes
+    
+    ci_setup:
+      github_actions: |
+        # Git LFS is pre-installed on GitHub Actions runners
+        - name: Checkout with LFS
+          uses: actions/checkout@v4
+          with:
+            lfs: true
+
+version_detection:
+  description: "Tests automatically detect tool versions and compare against requirements"
+  
+  ci_mode:
+    - Enforce exact versions for OpenSCAD and Python packages
+    - Fail if version mismatch detected
+    - Skip CloudCompare checks if not installed (non-blocking)
+  
+  local_mode:
+    - Accept version ranges for flexibility
+    - Warn if version outside tested range
+    - Skip CloudCompare checks if not installed (non-blocking)
+  
+  implementation: "See tests/conftest.py for pytest configuration"
+
+notes:
+  - "Tool versions last updated: 2026-01-08"
+  - "Versions chosen based on stability and feature completeness"
+  - "CI uses exact versions for reproducibility"
+  - "Local development allows ranges for developer convenience"
+  - "CloudCompare is optional - tests gracefully degrade if missing"
+  - "Periodically review and update versions (quarterly recommended)"
