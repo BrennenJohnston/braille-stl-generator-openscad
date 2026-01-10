@@ -34,7 +34,7 @@ import json
 import logging
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -112,9 +112,10 @@ class WebFixtureGenerator:
             logger.info(f"Navigating to {self.web_url}")
             self.page.goto(self.web_url, wait_until="networkidle", timeout=30000)
             
-            # Wait for key UI elements to be visible
-            # Adjust selectors based on actual web UI structure
-            self.page.wait_for_selector("textarea, input[type='text']", timeout=10000)
+            # Wait for a stable, always-visible element.
+            # NOTE: Some text inputs (e.g., #auto-text) are hidden by default, so waiting
+            # on generic textarea/input selectors can flake.
+            self.page.wait_for_selector("#action-btn", timeout=15000)
             logger.info("✓ Web generator loaded")
             return True
             
@@ -133,44 +134,133 @@ class WebFixtureGenerator:
             True if successful
         """
         try:
-            # Map parameters to web UI controls
-            # NOTE: These selectors are PLACEHOLDERS and must be updated
-            # based on the actual web UI structure
-            
-            # Set text lines
-            for i in range(1, 5):
-                line_key = f"Line_{i}"
-                if line_key in parameters:
-                    line_value = parameters[line_key]
-                    # Placeholder selector - update based on actual UI
-                    selector = f"#line{i}, [name='line{i}'], textarea[placeholder*='Line {i}']"
-                    try:
-                        self.page.fill(selector, line_value, timeout=5000)
-                    except:
-                        logger.warning(f"Could not set {line_key} (selector may need updating)")
-            
-            # Set dropdowns (shape_type, plate_type, combined_shape, indicator_shapes)
-            dropdown_params = {
-                "shape_type": parameters.get("shape_type", "cylinder"),
-                "plate_type": parameters.get("plate_type", "positive"),
-                "combined_shape": parameters.get("combined_shape", "rounded"),
-                "indicator_shapes": parameters.get("indicator_shapes", "on"),
+            # This app (see local source templates/index.html) uses:
+            # - manual placement inputs: #line1..#lineN (dynamic)
+            # - plate_type radios: input[name="plate_type"][value="positive|negative"]
+            # - placement_mode radios: input[name="placement_mode"][value="manual|auto"]
+            # - shape_type/combined_shape/indicator_shapes radios (in Expert Mode, may be hidden)
+            # - single action button (#action-btn) that toggles Generate STL ↔ Download STL
+
+            # Always use MANUAL placement so #line1..#line4 exist
+            try:
+                self.page.check("input[name='placement_mode'][value='manual']", timeout=3000)
+            except Exception:
+                pass
+
+            # Plate type
+            plate_type = parameters.get("plate_type", "positive")
+            try:
+                self.page.check(f"input[name='plate_type'][value='{plate_type}']", timeout=3000)
+            except Exception as e:
+                logger.warning(f"Could not set plate_type '{plate_type}': {e}")
+
+            # Choose contracted UEB table to better match existing braille fixtures
+            try:
+                self.page.select_option("#language-table", value="en-ueb-g2.ctb", timeout=3000)
+            except Exception:
+                pass
+
+            # Minimal mapping: braille samples in our OpenSCAD fixtures → English words for web UI
+            braille_to_english = {
+                "⠞⠑⠌": "test",
+                "⠞⠑⠌⠞": "test",
+                "⠺⠕⠗": "word",
+                "⠺⠕⠗⠙": "word",
+                "⠓⠑⠭": "hex",
             }
-            
-            for param_name, param_value in dropdown_params.items():
-                # Placeholder selector - update based on actual UI
-                selector = f"select[name='{param_name}'], #{param_name}"
+
+            # Set Expert-mode radios + numeric fields via JS so hidden inputs still work,
+            # and so changing grid_rows happens BEFORE we fill #line1..#line4 (otherwise
+            # the app will recreate inputs and wipe our values).
+            shape_type = parameters.get("shape_type", "cylinder")
+            combined_shape = parameters.get("combined_shape", "rounded")
+            indicator_shapes = parameters.get("indicator_shapes", "on")
+            indicator_value = "1" if indicator_shapes == "on" else "0"
+
+            self.page.evaluate(
+                """
+                ({ shapeType, combinedShape, indicatorValue, numeric }) => {
+                  const setRadio = (name, value) => {
+                    const el = document.querySelector(`input[name="${name}"][value="${value}"]`);
+                    if (!el) return false;
+                    el.checked = true;
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                    return true;
+                  };
+                  const setInputValue = (id, value) => {
+                    if (value === undefined || value === null) return false;
+                    const el = document.getElementById(id);
+                    if (!el) return false;
+                    el.value = String(value);
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                    return true;
+                  };
+                  setRadio('shape_type', shapeType);
+                  setRadio('combined_shape', combinedShape);
+                  setRadio('indicator_shapes', indicatorValue);
+
+                  // Numeric fields: align web generator settings with our test_cases.json
+                  // IDs are taken from the local web app template (templates/index.html).
+                  Object.entries(numeric || {}).forEach(([id, value]) => setInputValue(id, value));
+                }
+                """,
+                {
+                    "shapeType": shape_type,
+                    "combinedShape": combined_shape,
+                    "indicatorValue": indicator_value,
+                    "numeric": {
+                        # Braille layout
+                        "grid_columns": parameters.get("grid_columns"),
+                        "grid_rows": parameters.get("grid_rows"),
+                        "cell_spacing": parameters.get("cell_spacing"),
+                        "line_spacing": parameters.get("line_spacing"),
+                        "dot_spacing": parameters.get("dot_spacing"),
+                        "braille_x_adjust": parameters.get("braille_x_adjust"),
+                        "braille_y_adjust": parameters.get("braille_y_adjust"),
+                        # Cylinder geometry
+                        "cylinder_diameter_mm": parameters.get("cylinder_diameter_mm"),
+                        "cylinder_height_mm": parameters.get("cylinder_height_mm"),
+                        "cylinder_polygonal_cutout_radius_mm": parameters.get("polygon_cutout_radius_mm"),
+                        "cylinder_polygonal_cutout_sides": parameters.get("polygon_cutout_points"),
+                        "seam_offset_deg": parameters.get("seam_offset_degrees"),
+                        # Rounded dot params
+                        "rounded_dot_base_diameter": parameters.get("rounded_dot_base_diameter"),
+                        "rounded_dot_base_height": parameters.get("rounded_dot_base_height"),
+                        "rounded_dot_dome_height": parameters.get("rounded_dot_dome_height"),
+                        "bowl_counter_dot_base_diameter": parameters.get("bowl_counter_dot_base_diameter"),
+                        "counter_dot_depth": parameters.get("counter_dot_depth"),
+                        # Cone dot params
+                        "emboss_dot_base_diameter": parameters.get("emboss_dot_base_diameter"),
+                        "emboss_dot_height": parameters.get("emboss_dot_height"),
+                        "emboss_dot_flat_hat": parameters.get("emboss_dot_flat_hat"),
+                        "cone_counter_dot_base_diameter": parameters.get("cone_counter_dot_base_diameter"),
+                        "cone_counter_dot_height": parameters.get("cone_counter_dot_height"),
+                        "cone_counter_dot_flat_hat": parameters.get("cone_counter_dot_flat_hat"),
+                    },
+                },
+            )
+
+            # Only positive plates require text input; negative plates are universal in the web app.
+            if plate_type == "positive":
+                # Ensure dynamic line inputs exist after grid_rows updates
                 try:
-                    self.page.select_option(selector, value=param_value, timeout=5000)
-                except:
-                    logger.warning(f"Could not set {param_name} (selector may need updating)")
-            
-            # Set numeric parameters (if exposed in UI)
-            # Most numeric params may use defaults in web UI
-            
+                    self.page.wait_for_selector("#line1", timeout=15000)
+                except Exception:
+                    logger.warning("Timed out waiting for #line1 to appear (dynamic inputs)")
+
+                for i in range(1, 5):
+                    line_key = f"Line_{i}"
+                    raw = parameters.get(line_key, "")
+                    value = braille_to_english.get(raw, raw)
+                    try:
+                        self.page.fill(f"#line{i}", value, timeout=5000)
+                    except Exception as e:
+                        logger.warning(f"Could not set {line_key} via #line{i}: {e}")
+
             logger.info("✓ Parameters set")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to set parameters: {e}")
             return False
@@ -186,42 +276,69 @@ class WebFixtureGenerator:
             True if successful
         """
         try:
-            # Find and click download button
-            # Placeholder selector - update based on actual UI
-            download_button_selectors = [
-                "button:has-text('Download STL')",
-                "button:has-text('Generate')",
-                "a:has-text('Download')",
-                "#download-stl",
-                ".download-button",
-            ]
-            
-            download_button = None
-            for selector in download_button_selectors:
-                try:
-                    download_button = self.page.wait_for_selector(selector, timeout=2000)
-                    if download_button:
-                        break
-                except:
-                    continue
-            
-            if not download_button:
-                logger.error("Could not find download button (selectors may need updating)")
+            # The app uses a single button (#action-btn) which toggles state:
+            # - data-state="generate" (Generate STL)
+            # - data-state="download" (Download STL)
+            action_btn = self.page.wait_for_selector("#action-btn", timeout=15000)
+            if not action_btn:
+                logger.error("Could not find #action-btn")
                 return False
-            
-            # Start waiting for download
-            with self.page.expect_download(timeout=60000) as download_info:
-                download_button.click()
-            
+
+            # Generate
+            self.page.click("#action-btn")
+            logger.info("Clicked #action-btn to Generate")
+
+            # Wait until it becomes Download state OR a NON-INFO error is displayed.
+            # NOTE: During normal generation the app uses #error-message with class "error-message info"
+            # as a progress UI. We must not treat that as failure.
+            self.page.wait_for_function(
+                """() => {
+                    const b = document.querySelector('#action-btn');
+                    const err = document.getElementById('error-message');
+                    const errVisible = err && (getComputedStyle(err).display !== 'none') && (err.textContent || '').trim().length > 0;
+                    const errClass = err ? (err.className || '') : '';
+                    const isNonInfoError = errVisible && errClass.includes('error-message') && !errClass.includes('info') && !errClass.includes('grade-note');
+                    if (!b) return errVisible;
+                    const state = b.getAttribute('data-state') || b.dataset.state || '';
+                    const txt = (b.textContent || '').toLowerCase();
+                    const isDownload = state === 'download' || txt.includes('download stl');
+                    return isDownload || isNonInfoError;
+                }""",
+                timeout=600000,  # allow long client-side CSG (especially counter+cone)
+            )
+
+            # If non-info error message is visible, capture it and fail
+            try:
+                err_text = self.page.evaluate(
+                    """() => {
+                        const err = document.getElementById('error-message');
+                        if (!err) return '';
+                        const disp = getComputedStyle(err).display;
+                        if (disp === 'none') return '';
+                        const cls = err.className || '';
+                        if (cls.includes('info') || cls.includes('grade-note')) return '';
+                        const t = (document.getElementById('error-text')?.textContent || '').trim();
+                        const st = (document.getElementById('error-subtext')?.textContent || '').trim();
+                        return [t, st].filter(Boolean).join(' ');
+                    }"""
+                )
+                if err_text:
+                    logger.error(f"Web generator error: {err_text}")
+                    return False
+            except Exception:
+                pass
+
+            # Download
+            with self.page.expect_download(timeout=180000) as download_info:
+                self.page.click("#action-btn")
             download = download_info.value
-            
-            # Save download to output path
+
             output_path.parent.mkdir(parents=True, exist_ok=True)
             download.save_as(output_path)
-            
+
             logger.info(f"✓ Downloaded STL: {output_path.name}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to download STL: {e}")
             return False
@@ -322,7 +439,7 @@ class WebFixtureGenerator:
                 "browser": "chromium",
                 "headless": self.headless,
             },
-            "generated_at": datetime.utcnow().isoformat() + "Z",
+            "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         }
 
         # Save metadata
@@ -481,7 +598,7 @@ Setup:
         # Create version file
         version_info = {
             "version": "1.0.0",
-            "generated_at": datetime.utcnow().isoformat() + "Z",
+            "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "generation_method": "web_ui_playwright",
             "web_url": args.web_url,
             "total_fixtures": len(fixtures_metadata),

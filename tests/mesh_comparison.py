@@ -566,9 +566,24 @@ class MeshComparator:
                 else 0.0
             )
 
-            bbox_diff = np.max(
-                np.abs(ref_props.bounding_box - test_props.bounding_box)
-            )
+            # Bounding-box comparison needs to be robust to translation and rotation around the cylinder axis.
+            # For this repo's current scope (cylinder-only), both generators emit cylinders aligned to Z
+            # (they may differ by translation along Z). So we use Z-height + max radial diameter in XY:
+            # - height_extent: max(z) - min(z)
+            # - diameter_extent: 2 * max(sqrt(x^2 + y^2))
+            def _cylinder_size_metrics_z(mesh: trimesh.Trimesh) -> tuple[float, float]:
+                verts = mesh.vertices.astype(float)
+                if verts.shape[0] == 0:
+                    return 0.0, 0.0
+                z = verts[:, 2]
+                height_extent = float(z.max() - z.min())
+                r = np.sqrt(verts[:, 0] ** 2 + verts[:, 1] ** 2)
+                diameter_extent = float(2.0 * r.max())
+                return height_extent, diameter_extent
+
+            ref_h, ref_d = _cylinder_size_metrics_z(ref_mesh)
+            test_h, test_d = _cylinder_size_metrics_z(test_mesh)
+            bbox_diff = float(max(abs(ref_h - test_h), abs(ref_d - test_d)))
 
             face_diff = abs(ref_props.face_count - test_props.face_count)
             vertex_diff = abs(ref_props.vertex_count - test_props.vertex_count)

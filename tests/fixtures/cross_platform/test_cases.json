@@ -121,7 +121,7 @@
         "bowl_counter_dot_base_diameter": 1.8,
         "counter_dot_depth": 0.8,
         "hemisphere_quality": "low",
-        "cone_segments": 8
+        "cone_segments": 24
       },
       "expected_properties": {
         "is_watertight": true
@@ -161,7 +161,7 @@
         "bowl_counter_dot_base_diameter": 1.8,
         "counter_dot_depth": 0.8,
         "hemisphere_quality": "low",
-        "cone_segments": 8
+        "cone_segments": 24
       },
       "expected_properties": {
         "is_watertight": true
@@ -279,7 +279,7 @@
         "cone_counter_dot_height": 0.8,
         "cone_counter_dot_flat_hat": 0.4,
         "hemisphere_quality": "low",
-        "cone_segments": 8
+        "cone_segments": 24
       },
       "expected_properties": {
         "is_watertight": true
@@ -319,7 +319,7 @@
         "cone_counter_dot_height": 0.8,
         "cone_counter_dot_flat_hat": 0.4,
         "hemisphere_quality": "low",
-        "cone_segments": 8
+        "cone_segments": 24
       },
       "expected_properties": {
         "is_watertight": true
@@ -359,7 +359,7 @@
         "bowl_counter_dot_base_diameter": 1.8,
         "counter_dot_depth": 0.8,
         "hemisphere_quality": "low",
-        "cone_segments": 8
+        "cone_segments": 24
       },
       "expected_properties": {
         "is_watertight": true
@@ -399,7 +399,7 @@
         "cone_counter_dot_height": 0.8,
         "cone_counter_dot_flat_hat": 0.4,
         "hemisphere_quality": "low",
-        "cone_segments": 8
+        "cone_segments": 24
       },
       "expected_properties": {
         "is_watertight": true

@@ -200,8 +200,13 @@ left_margin = (card_width - grid_width) / 2;
 grid_height = (grid_rows - 1) * line_spacing;
 top_margin = (card_height - grid_height) / 2;
 
-// Counter plate recess radii
-bowl_recess_radius = bowl_counter_dot_base_diameter / 2;
+// Counter plate recess radii (spherical cap formula to match web generator)
+// For a bowl recess: R = (a² + h²) / (2h) where a = opening radius, h = depth
+// This ensures the opening diameter = bowl_counter_dot_base_diameter and depth = counter_dot_depth
+_bowl_a = bowl_counter_dot_base_diameter / 2;  // Opening radius
+_bowl_h = counter_dot_depth;                    // Depth
+bowl_recess_radius = (_bowl_a * _bowl_a + _bowl_h * _bowl_h) / (2 * _bowl_h);  // Sphere radius
+bowl_center_offset = bowl_recess_radius - _bowl_h;  // Sphere center offset from surface (positive = outward)
 hemisphere_radius = bowl_recess_radius; // For backward compatibility
 
 // =============================================================================
@@ -354,21 +359,24 @@ module braille_dot_centered() {
 }
 
 // Create a recess for counter plate (bowl or cone shape)
+// For bowl: uses spherical cap formula R = (a² + h²)/(2h) to match web generator exactly
+// The sphere center is offset outward by (R - h) to create a pointed bowl with correct opening
 module counter_recess() {
     // Map quality level (string or legacy numeric) to $fn value
-    quality_fn = (hemisphere_quality == "low" || hemisphere_quality == 1) ? 16 :     // Low quality
+    // Web generator uses Manifold sphere segments=24 for rounded recesses; match that for "low"
+    // to keep cross-platform comparisons stable without needing a separate "web" mode.
+    quality_fn = (hemisphere_quality == "low" || hemisphere_quality == 1) ? 24 :     // Low quality (web-aligned)
                  (hemisphere_quality == "medium" || hemisphere_quality == 2) ? 32 :  // Medium quality
                  (hemisphere_quality == "high" || hemisphere_quality == 3) ? 64 : 32; // High quality (default to medium)
     
     if (use_rounded_dots) {
-        // Bowl recess (spherical cap)
-        intersection() {
-            // Sphere
-            sphere(r = bowl_recess_radius, $fn = quality_fn);
-            // Cut to depth
-            translate([0, 0, -counter_dot_depth / 2])
-            cube([bowl_counter_dot_base_diameter * 2, bowl_counter_dot_base_diameter * 2, counter_dot_depth], center = true);
-        }
+        // Bowl recess (spherical cap) - matching web generator geometry
+        // Sphere center is at z = bowl_center_offset (positive = outward from surface)
+        // This creates a pointed bowl where:
+        // - Opening diameter = bowl_counter_dot_base_diameter at z=0
+        // - Depth reaches exactly z = -counter_dot_depth (tangent point)
+        translate([0, 0, bowl_center_offset])
+        sphere(r = bowl_recess_radius, $fn = quality_fn);
     } else {
         // Cone frustum recess
         translate([0, 0, -cone_counter_dot_height / 2])
@@ -521,15 +529,24 @@ module card_counter_plate() {
 // CYLINDER MODULES
 // =============================================================================
 
-module cylinder_shell() {
+module cylinder_shell(cutout_rotate_deg = 0) {
     difference() {
         // Outer cylinder
-        cylinder(h = cylinder_height_mm, r = cylinder_diameter_mm / 2, center = true);
+        // Match web generator's Manifold cylinder segmentation (64 circular segments)
+        cylinder(h = cylinder_height_mm, r = cylinder_diameter_mm / 2, center = true, $fn = 64);
         
         // Polygonal cutout if specified
         if (polygon_cutout_radius_mm > 0) {
             // Create polygon cutout with specified number of sides
-            cylinder(h = cylinder_height_mm + 2, r = polygon_cutout_radius_mm, $fn = polygon_cutout_points, center = true);
+            // IMPORTANT: Match web generator semantics.
+            // Web UI label says "Circumscribed Radius", but implementation treats the user value as the
+            // *inscribed radius* (apothem, distance from center to polygon side) and converts to circumradius:
+            //   circumradius = apothem / cos(pi / n)
+            // OpenSCAD cylinder(r=..., $fn=n) uses the circumradius (vertices on the circle).
+            cutout_circumradius = polygon_cutout_radius_mm / cos(180 / polygon_cutout_points);
+            // Web semantics: seam_offset rotates polygon cutout ONLY (braille content is independent).
+            rotate([0, 0, cutout_rotate_deg])
+                cylinder(h = cylinder_height_mm + 2, r = cutout_circumradius, $fn = polygon_cutout_points, center = true);
         }
     }
 }
@@ -538,7 +555,9 @@ module cylinder_emboss_plate() {
     // Position cylinder upright for printing and keep all geometry aligned
     translate([0, 0, cylinder_height_mm/2]) {
         // Base cylinder
-        cylinder_shell();
+        // Web semantics: embossing plate rotates polygon COUNTER-CLOCKWISE (negative) by seam_offset,
+        // but braille content is NOT affected by seam_offset.
+        cylinder_shell(cutout_rotate_deg = -seam_offset_degrees);
 
         // Check for invalid characters
         invalid_found = has_invalid_chars(Line_1) || has_invalid_chars(Line_2) || 
@@ -569,7 +588,7 @@ module cylinder_emboss_plate() {
                 y_pos = cylinder_height_mm/2 - top_margin - (row * line_spacing) + braille_y_adjust;
                 
                 // Start marker
-                start_angle_deg = start_angle * 180 / PI + seam_offset_degrees;
+                start_angle_deg = start_angle * 180 / PI;
                 start_x = (radius + active_emboss_height/2) * cos(start_angle_deg);
                 start_y = (radius + active_emboss_height/2) * sin(start_angle_deg);
                 translate([start_x, start_y, y_pos])
@@ -578,7 +597,7 @@ module cylinder_emboss_plate() {
                 
                 // End marker
                 end_angle_rad = start_angle + ((actual_grid_columns - 1) * cell_spacing_angle);
-                end_angle_deg = end_angle_rad * 180 / PI + seam_offset_degrees;
+                end_angle_deg = end_angle_rad * 180 / PI;
                 end_x = (radius + active_emboss_height/2) * cos(end_angle_deg);
                 end_y = (radius + active_emboss_height/2) * sin(end_angle_deg);
                 translate([end_x, end_y, y_pos])
@@ -595,17 +614,18 @@ module cylinder_emboss_plate() {
                 y_pos = cylinder_height_mm/2 - top_margin - (row * line_spacing) + braille_y_adjust;
                 
                 for (col = [0 : min(grid_columns - 1, len(lines[row]) - 1)]) {
-                    // Offset by 1 cell if indicator shapes are enabled
-                    actual_col = indicator_on ? (col + 1) : col;
+                    // Web semantics: when indicators are enabled, 2 columns are reserved at the start
+                    // (triangle marker at col 0, character/rect marker at col 1). Braille starts at col 2.
+                    actual_col = indicator_on ? (col + 2) : col;
                     angle_rad = start_angle + (actual_col * cell_spacing_angle);
-                    angle_deg = angle_rad * 180 / PI + seam_offset_degrees;
+                    angle_deg = angle_rad * 180 / PI;
                     dots = get_dot_pattern(lines[row][col]);
                     
                     for (i = [0:5]) {
                         if (dots[i] == 1) {
                             dot_pos = dot_positions[i];
                             dot_angle_rad = angle_rad + dot_col_angle_offsets[dot_pos[1]];
-                            dot_angle_deg = dot_angle_rad * 180 / PI + seam_offset_degrees;
+                            dot_angle_deg = dot_angle_rad * 180 / PI;
                             dot_y = y_pos + dot_row_offsets[dot_pos[0]];
                             
                             // Transform to cylindrical coordinates
@@ -628,7 +648,9 @@ module cylinder_counter_plate() {
     translate([0, 0, cylinder_height_mm/2])
     difference() {
         // Base cylinder
-        cylinder_shell();
+        // Web semantics: counter plate rotates polygon CLOCKWISE (positive) by seam_offset,
+        // and braille layout is mirrored (direction reversed).
+        cylinder_shell(cutout_rotate_deg = seam_offset_degrees);
         
         // Calculate angular spacing
         radius = cylinder_diameter_mm / 2;
@@ -648,7 +670,7 @@ module cylinder_counter_plate() {
                 y_pos = cylinder_height_mm/2 - top_margin - (row * line_spacing) + braille_y_adjust;
                 
                 // Start marker recess
-                start_angle_deg = start_angle * 180 / PI + seam_offset_degrees;
+                start_angle_deg = -(start_angle * 180 / PI);
                 overcut = 0.05;
                 start_x = (radius + overcut) * cos(start_angle_deg);
                 start_y = (radius + overcut) * sin(start_angle_deg);
@@ -658,7 +680,7 @@ module cylinder_counter_plate() {
                 
                 // End marker recess
                 end_angle_rad = start_angle + ((actual_grid_columns - 1) * cell_spacing_angle);
-                end_angle_deg = end_angle_rad * 180 / PI + seam_offset_degrees;
+                end_angle_deg = -(end_angle_rad * 180 / PI);
                 end_x = (radius + overcut) * cos(end_angle_deg);
                 end_y = (radius + overcut) * sin(end_angle_deg);
                 translate([end_x, end_y, y_pos])
@@ -672,22 +694,23 @@ module cylinder_counter_plate() {
             y_pos = cylinder_height_mm/2 - top_margin - (row * line_spacing) + braille_y_adjust;
             
             for (col = [0 : grid_columns - 1]) {
-                // Offset by 1 cell if indicator shapes are enabled
-                actual_col = indicator_on ? (col + 1) : col;
+                // Web semantics: when indicators are enabled, 2 columns are reserved at the start.
+                actual_col = indicator_on ? (col + 2) : col;
                 angle_rad = start_angle + (actual_col * cell_spacing_angle);
-                angle_deg = angle_rad * 180 / PI + seam_offset_degrees;
+                angle_deg = -(angle_rad * 180 / PI);
                 
                 for (i = [0:5]) {
                     dot_pos = dot_positions[i];
                     dot_angle_rad = angle_rad + dot_col_angle_offsets[dot_pos[1]];
-                    dot_angle_deg = dot_angle_rad * 180 / PI + seam_offset_degrees;
+                    dot_angle_deg = -(dot_angle_rad * 180 / PI);
                     dot_y = y_pos + dot_row_offsets[dot_pos[0]];
                     
                     // Transform to cylindrical coordinates
-                    // Add small overcut to ensure clean openings
-                    overcut = 0.05;
-                    x = (radius + overcut) * cos(dot_angle_deg);
-                    y = (radius + overcut) * sin(dot_angle_deg);
+                    // For bowl recesses, sphere center is at radius + bowl_center_offset (matching web generator)
+                    // For cone recesses, use small overcut to ensure clean openings
+                    recess_radius_offset = use_rounded_dots ? 0 : 0.05;  // Bowl uses offset from counter_recess, cone uses overcut
+                    x = (radius + recess_radius_offset) * cos(dot_angle_deg);
+                    y = (radius + recess_radius_offset) * sin(dot_angle_deg);
                     
                     translate([x, y, dot_y])
                     rotate([0, 90, dot_angle_deg])

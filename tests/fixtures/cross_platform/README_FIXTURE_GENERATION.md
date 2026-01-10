@@ -225,7 +225,6 @@ Two tolerance profiles available:
 
 ## References
 
-- Plan: `.cursor/plans/comprehensive_stl_testing_plan_978c74ad.plan.md`
 - Test cases: `tests/fixtures/cross_platform/test_cases.json`
 - Tool versions: `tests/tool_versions.yml`
 - Comparison config: `tests/compare_config.json`, `tests/compare_config_strict.json`

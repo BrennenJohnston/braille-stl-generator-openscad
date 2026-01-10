@@ -11,37 +11,37 @@
   ],
   "priority": "high",
   "reference_stl": "cross_platform/cylinder_rounded_counter_indicators_on/reference.stl",
-  "stl_size_bytes": 13873260,
-  "stl_sha256": "b35561244b9c35a771a2762fbe600699872e647086b684ce8c9360db65fe1406",
+  "stl_size_bytes": 3736084,
+  "stl_sha256": "7da8f840b99b0c7b82274abae2b344e112d617e7882c2f6efe155c8e1eec6319",
   "mesh_properties": {
-    "volume_mm3": 11693.86896786366,
-    "surface_area_mm2": 10197.127253438466,
+    "volume_mm3": 9802.894458886114,
+    "surface_area_mm2": 10571.540329030533,
     "bounding_box_mm": [
       [
         -15.375,
         -15.375,
-        0.0
+        -26.0
       ],
       [
         15.375,
         15.375,
-        52.0
+        26.0
       ]
     ],
-    "face_count": 43456,
-    "vertex_count": 21728,
+    "face_count": 74720,
+    "vertex_count": 37360,
     "is_watertight": true,
     "centroid_mm": [
-      0.19667662226096388,
-      -0.01677004954481191,
-      26.00000000000134
+      0.05492662654476908,
+      -0.03123621932684578,
+      -1.3580628038940598e-08
     ]
   },
   "generation": {
-    "method": "openscad",
-    "openscad_version": "OpenSCAD version 2026.01.03",
-    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-    "duration_seconds": 0.5057506561279297
+    "method": "web_ui_playwright",
+    "web_url": "http://127.0.0.1:5001",
+    "browser": "chromium",
+    "headless": true
   },
-  "generated_at": "2026-01-10T06:52:50.512711Z"
+  "generated_at": "2026-01-10T08:52:41.070206Z"
 }

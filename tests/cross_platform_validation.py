@@ -237,88 +237,20 @@ class TestCrossPlatformValidation:
 # Convenience test groups for selective running
 
 
-class TestBasicCases(TestCrossPlatformValidation):
-    """Basic test cases only (high priority)."""
+class TestEmbossPlates(TestCrossPlatformValidation):
+    """Emboss plate tests only (faster, currently all passing)."""
 
     @pytest.mark.parametrize(
         "test_case_name",
         [
-            "card_rounded_emboss_basic",
-            "card_rounded_counter_basic",
-            "cylinder_rounded_emboss_basic",
-        ],
-    )
-    def test_basic_validation(
-        self,
-        test_case_name,
-        scad_file,
-        openscad_runner,
-        mesh_comparator,
-        test_cases,
-        fixtures_dir,
-        temp_output_dir,
-    ):
-        """Run basic validation tests only."""
-        self.test_stl_validation(
-            test_case_name,
-            scad_file,
-            openscad_runner,
-            mesh_comparator,
-            test_cases,
-            fixtures_dir,
-            temp_output_dir,
-        )
-
-
-class TestCardShapes(TestCrossPlatformValidation):
-    """Card shape tests only."""
-
-    @pytest.mark.parametrize(
-        "test_case_name",
-        [
-            "card_rounded_emboss_basic",
-            "card_rounded_counter_basic",
-            "card_cone_emboss_basic",
-            "card_cone_counter_basic",
-            "card_rounded_emboss_custom_spacing",
-            "card_rounded_emboss_indicators_off",
-            "card_rounded_emboss_max_grid",
-        ],
-    )
-    def test_card_validation(
-        self,
-        test_case_name,
-        scad_file,
-        openscad_runner,
-        mesh_comparator,
-        test_cases,
-        fixtures_dir,
-        temp_output_dir,
-    ):
-        """Run card shape validation tests."""
-        self.test_stl_validation(
-            test_case_name,
-            scad_file,
-            openscad_runner,
-            mesh_comparator,
-            test_cases,
-            fixtures_dir,
-            temp_output_dir,
-        )
-
-
-class TestCylinderShapes(TestCrossPlatformValidation):
-    """Cylinder shape tests only."""
-
-    @pytest.mark.parametrize(
-        "test_case_name",
-        [
-            "cylinder_rounded_emboss_basic",
-            "cylinder_rounded_counter_basic",
+            "cylinder_rounded_emboss_indicators_on",
+            "cylinder_rounded_emboss_indicators_off",
+            "cylinder_cone_emboss_indicators_on",
+            "cylinder_cone_emboss_indicators_off",
             "cylinder_rounded_emboss_custom_cutout",
         ],
     )
-    def test_cylinder_validation(
+    def test_emboss_validation(
         self,
         test_case_name,
         scad_file,
@@ -328,7 +260,73 @@ class TestCylinderShapes(TestCrossPlatformValidation):
         fixtures_dir,
         temp_output_dir,
     ):
-        """Run cylinder shape validation tests."""
+        """Run emboss plate validation tests only."""
+        self.test_stl_validation(
+            test_case_name,
+            scad_file,
+            openscad_runner,
+            mesh_comparator,
+            test_cases,
+            fixtures_dir,
+            temp_output_dir,
+        )
+
+
+class TestCounterPlates(TestCrossPlatformValidation):
+    """Counter plate tests only (known geometry issues with bowl recess)."""
+
+    @pytest.mark.parametrize(
+        "test_case_name",
+        [
+            "cylinder_rounded_counter_indicators_on",
+            "cylinder_rounded_counter_indicators_off",
+            "cylinder_cone_counter_indicators_on",
+            "cylinder_cone_counter_indicators_off",
+        ],
+    )
+    def test_counter_validation(
+        self,
+        test_case_name,
+        scad_file,
+        openscad_runner,
+        mesh_comparator,
+        test_cases,
+        fixtures_dir,
+        temp_output_dir,
+    ):
+        """Run counter plate validation tests only."""
+        self.test_stl_validation(
+            test_case_name,
+            scad_file,
+            openscad_runner,
+            mesh_comparator,
+            test_cases,
+            fixtures_dir,
+            temp_output_dir,
+        )
+
+
+class TestIndicatorIsolation(TestCrossPlatformValidation):
+    """Indicator recess isolation tests (for debugging indicator bugs)."""
+
+    @pytest.mark.parametrize(
+        "test_case_name",
+        [
+            "cylinder_indicator_recess_rounded",
+            "cylinder_indicator_recess_cone",
+        ],
+    )
+    def test_indicator_validation(
+        self,
+        test_case_name,
+        scad_file,
+        openscad_runner,
+        mesh_comparator,
+        test_cases,
+        fixtures_dir,
+        temp_output_dir,
+    ):
+        """Run indicator isolation validation tests."""
         self.test_stl_validation(
             test_case_name,
             scad_file,

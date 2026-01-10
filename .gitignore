@@ -5,9 +5,14 @@
 /test_*.stl
 /test_*.log
 /*.log
+test_results.log
 
-# Generated images
+# Generated images and artifacts
 *.png
+/artifacts/
+
+# Temporary test downloads
+tests/fixtures/cross_platform/downloads/
 
 # Python
 __pycache__/

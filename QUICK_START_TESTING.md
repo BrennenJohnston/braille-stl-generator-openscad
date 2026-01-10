@@ -319,7 +319,6 @@ pytest tests/cross_platform_validation.py -m "not slow_openscad" -v
 
 - **Implementation Summary**: `IMPLEMENTATION_SUMMARY.md`
 - **Fixture Generation Guide**: `tests/fixtures/cross_platform/README_FIXTURE_GENERATION.md`
-- **Full Plan**: `.cursor/plans/comprehensive_stl_testing_plan_978c74ad.plan.md`
 - **Tool Versions**: `tests/tool_versions.yml`
 - **Comparison Config**: `tests/compare_config.json`, `tests/compare_config_strict.json`
 

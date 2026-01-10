@@ -194,7 +194,6 @@ openscad --help | grep -i manifold
 - **Implementation Details**: `IMPLEMENTATION_SUMMARY.md`
 - **Quick Start Guide**: `QUICK_START_TESTING.md`
 - **Fixture Generation**: `tests/fixtures/cross_platform/README_FIXTURE_GENERATION.md`
-- **Full Plan**: `.cursor/plans/comprehensive_stl_testing_plan_978c74ad.plan.md`
 
 ## Known Limitations (By Design)
 
