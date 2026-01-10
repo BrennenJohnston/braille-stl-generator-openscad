@@ -1,0 +1,47 @@
+{
+  "test_name": "cylinder_cone_counter_indicators_off",
+  "description": "Cylinder: Cone dots, Counter plate, Indicators OFF",
+  "tags": [
+    "cylinder",
+    "cone",
+    "counter",
+    "indicators_off",
+    "core_matrix",
+    "slow_openscad"
+  ],
+  "priority": "high",
+  "reference_stl": "cross_platform/cylinder_cone_counter_indicators_off/reference.stl",
+  "stl_size_bytes": 2748237,
+  "stl_sha256": "5459fd4676f0bfa5974790ff558b24500fec5bce47a244e9a938e7b2799d0ab6",
+  "mesh_properties": {
+    "volume_mm3": 11884.2384098748,
+    "surface_area_mm2": 9944.22438752053,
+    "bounding_box_mm": [
+      [
+        -15.375,
+        -15.375,
+        0.0
+      ],
+      [
+        15.375,
+        15.375,
+        52.0
+      ]
+    ],
+    "face_count": 9056,
+    "vertex_count": 4528,
+    "is_watertight": true,
+    "centroid_mm": [
+      0.12470099873664015,
+      -0.010767812303713986,
+      25.99999999999952
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5044834613800049
+  },
+  "generated_at": "2026-01-10T06:52:54.276567Z"
+}

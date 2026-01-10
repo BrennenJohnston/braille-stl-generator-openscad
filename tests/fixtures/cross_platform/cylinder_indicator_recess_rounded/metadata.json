@@ -1,0 +1,47 @@
+{
+  "test_name": "cylinder_indicator_recess_rounded",
+  "description": "ISOLATED TEST: Minimal fixture to isolate indicator recess behavior (rounded/bowl)",
+  "tags": [
+    "cylinder",
+    "rounded",
+    "counter",
+    "indicators_on",
+    "indicator_isolation",
+    "minimal"
+  ],
+  "priority": "high",
+  "reference_stl": "cross_platform/cylinder_indicator_recess_rounded/reference.stl",
+  "stl_size_bytes": 3502939,
+  "stl_sha256": "42f1766a73b441f7caaa193bbcbddb97fe45b1659724ce229a35dd09974bfcce",
+  "mesh_properties": {
+    "volume_mm3": 11927.801689340451,
+    "surface_area_mm2": 9806.418287122557,
+    "bounding_box_mm": [
+      [
+        -15.375,
+        -15.375,
+        0.0
+      ],
+      [
+        15.375,
+        15.375,
+        52.0
+      ]
+    ],
+    "face_count": 10996,
+    "vertex_count": 5498,
+    "is_watertight": true,
+    "centroid_mm": [
+      0.05112816132892261,
+      -0.004359551169654547,
+      26.000000000000316
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5040721893310547
+  },
+  "generated_at": "2026-01-10T06:52:55.005811Z"
+}

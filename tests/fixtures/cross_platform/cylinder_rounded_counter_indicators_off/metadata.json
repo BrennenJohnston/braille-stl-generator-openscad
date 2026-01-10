@@ -1,0 +1,47 @@
+{
+  "test_name": "cylinder_rounded_counter_indicators_off",
+  "description": "Cylinder: Rounded dots, Counter plate, Indicators OFF",
+  "tags": [
+    "cylinder",
+    "rounded",
+    "counter",
+    "indicators_off",
+    "core_matrix",
+    "slow_openscad"
+  ],
+  "priority": "high",
+  "reference_stl": "cross_platform/cylinder_rounded_counter_indicators_off/reference.stl",
+  "stl_size_bytes": 13708403,
+  "stl_sha256": "ade2f4d49c091deaa2efbf771c434cd8f5e6a399d572c5ccbb68dd2518aa694e",
+  "mesh_properties": {
+    "volume_mm3": 11701.258123126316,
+    "surface_area_mm2": 10174.527535653453,
+    "bounding_box_mm": [
+      [
+        -15.375,
+        -15.375,
+        0.0
+      ],
+      [
+        15.375,
+        15.375,
+        52.0
+      ]
+    ],
+    "face_count": 42944,
+    "vertex_count": 21472,
+    "is_watertight": true,
+    "centroid_mm": [
+      0.22375397415846163,
+      -0.01905865540244774,
+      26.000000000000757
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5046160221099854
+  },
+  "generated_at": "2026-01-10T06:52:51.531218Z"
+}

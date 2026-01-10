@@ -1,12 +1,14 @@
 {
   "test_name": "cylinder_rounded_emboss_custom_cutout",
-  "description": "Cylinder with custom cutout (hexagonal, smaller radius, different seam offset)",
+  "description": "PARAMETRIC TEST: Cylinder with custom cutout (hexagonal, smaller radius, different seam offset)",
   "tags": [
     "cylinder",
     "rounded",
     "emboss",
     "custom",
-    "cutout"
+    "cutout",
+    "indicators_on",
+    "parametric"
   ],
   "priority": "medium",
   "reference_stl": "cross_platform/cylinder_rounded_emboss_custom_cutout/reference.stl",
@@ -40,7 +42,7 @@
     "method": "openscad",
     "openscad_version": "OpenSCAD version 2026.01.03",
     "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-    "duration_seconds": 0.5043509006500244
+    "duration_seconds": 0.5041713714599609
   },
-  "generated_at": "2026-01-10T01:41:17.863316Z"
+  "generated_at": "2026-01-10T06:52:56.398104Z"
 }

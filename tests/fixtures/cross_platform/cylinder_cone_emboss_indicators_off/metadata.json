@@ -1,0 +1,46 @@
+{
+  "test_name": "cylinder_cone_emboss_indicators_off",
+  "description": "Cylinder: Cone dots, Embossing plate, Indicators OFF",
+  "tags": [
+    "cylinder",
+    "cone",
+    "emboss",
+    "indicators_off",
+    "core_matrix"
+  ],
+  "priority": "high",
+  "reference_stl": "cross_platform/cylinder_cone_emboss_indicators_off/reference.stl",
+  "stl_size_bytes": 307552,
+  "stl_sha256": "77122346c9c9891554d6b749a0d0ac7478cd5ab3ab6ba6ca1222e12fb0af9a8b",
+  "mesh_properties": {
+    "volume_mm3": 12020.49471675194,
+    "surface_area_mm2": 9770.922280652094,
+    "bounding_box_mm": [
+      [
+        -15.375,
+        -16.269899432284603,
+        0.0
+      ],
+      [
+        15.375,
+        15.375,
+        52.0
+      ]
+    ],
+    "face_count": 1016,
+    "vertex_count": 536,
+    "is_watertight": true,
+    "centroid_mm": [
+      -0.00406236044087966,
+      -0.13545546863954885,
+      26.148905141167244
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.506181001663208
+  },
+  "generated_at": "2026-01-10T06:52:52.835238Z"
+}

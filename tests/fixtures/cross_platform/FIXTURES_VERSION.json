@@ -1,209 +1,24 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-01-10T01:41:17.864444Z",
+  "generated_at": "2026-01-10T06:52:56.399165Z",
   "generation_method": "openscad",
   "openscad_version": "OpenSCAD version 2026.01.03",
   "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-  "total_fixtures": 10,
+  "total_fixtures": 11,
   "failed_fixtures": 0,
   "fixtures": [
     {
-      "test_name": "card_rounded_emboss_basic",
-      "description": "Default card with rounded dots, indicators on - basic 'hello' test",
-      "tags": [
-        "card",
-        "rounded",
-        "emboss",
-        "basic",
-        "indicators_on"
-      ],
-      "priority": "high",
-      "reference_stl": "cross_platform/card_rounded_emboss_basic/reference.stl",
-      "stl_size_bytes": 2774570,
-      "stl_sha256": "4dbec8bda30d24967ba2129624287b200f9a1a59e487f906e3bcce04433421ee",
-      "mesh_properties": {
-        "volume_mm3": 9384.165869709823,
-        "surface_area_mm2": 9976.458031193251,
-        "bounding_box_mm": [
-          [
-            0.0,
-            0.0,
-            0.0
-          ],
-          [
-            90.0,
-            52.0,
-            2.8
-          ]
-        ],
-        "face_count": 9484,
-        "vertex_count": 4744,
-        "is_watertight": true,
-        "centroid_mm": [
-          44.956800443765516,
-          26.033590975010544,
-          1.0090435683957653
-        ]
-      },
-      "generation": {
-        "method": "openscad",
-        "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.506058931350708
-      },
-      "generated_at": "2026-01-10T01:41:09.928577Z"
-    },
-    {
-      "test_name": "card_rounded_counter_basic",
-      "description": "Counter plate matching card_rounded_emboss_basic",
-      "tags": [
-        "card",
-        "rounded",
-        "counter",
-        "basic",
-        "indicators_on",
-        "slow_openscad"
-      ],
-      "priority": "high",
-      "reference_stl": "cross_platform/card_rounded_counter_basic/reference.stl",
-      "stl_size_bytes": 11987336,
-      "stl_sha256": "73e450b7372c7beef4c0bfda356c65aa5173abe676d7b076c2c5371d40369b91",
-      "mesh_properties": {
-        "volume_mm3": 8978.664846463527,
-        "surface_area_mm2": 10618.400198071182,
-        "bounding_box_mm": [
-          [
-            0.0,
-            0.0,
-            0.0
-          ],
-          [
-            90.0,
-            52.0,
-            2.0
-          ]
-        ],
-        "face_count": 42764,
-        "vertex_count": 21384,
-        "is_watertight": true,
-        "centroid_mm": [
-          44.99999999999968,
-          25.99999999999991,
-          1.0100056485972497
-        ]
-      },
-      "generation": {
-        "method": "openscad",
-        "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5043835639953613
-      },
-      "generated_at": "2026-01-10T01:41:10.934599Z"
-    },
-    {
-      "test_name": "card_cone_emboss_basic",
-      "description": "Card with cone-shaped dots, indicators on",
-      "tags": [
-        "card",
-        "cone",
-        "emboss",
-        "basic",
-        "indicators_on"
-      ],
-      "priority": "high",
-      "reference_stl": "cross_platform/card_cone_emboss_basic/reference.stl",
-      "stl_size_bytes": 359086,
-      "stl_sha256": "f9d219dd57535f179d18b6952fc6e2c9eef87ec7b2d10779b08b984b2cd58737",
-      "mesh_properties": {
-        "volume_mm3": 9386.685791350259,
-        "surface_area_mm2": 9988.694871485306,
-        "bounding_box_mm": [
-          [
-            0.0,
-            0.0,
-            0.0
-          ],
-          [
-            90.0,
-            52.0,
-            3.0
-          ]
-        ],
-        "face_count": 1612,
-        "vertex_count": 808,
-        "is_watertight": true,
-        "centroid_mm": [
-          44.936979498267384,
-          26.047050482269874,
-          1.0114598517521005
-        ]
-      },
-      "generation": {
-        "method": "openscad",
-        "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5047390460968018
-      },
-      "generated_at": "2026-01-10T01:41:11.608621Z"
-    },
-    {
-      "test_name": "card_cone_counter_basic",
-      "description": "Counter plate matching card_cone_emboss_basic",
-      "tags": [
-        "card",
-        "cone",
-        "counter",
-        "basic",
-        "indicators_on",
-        "slow_openscad"
-      ],
-      "priority": "high",
-      "reference_stl": "cross_platform/card_cone_counter_basic/reference.stl",
-      "stl_size_bytes": 1909869,
-      "stl_sha256": "a5bf0f0e001d4b6856dc4535544c73dd7801bee2da1ea61998405afea00c7f44",
-      "mesh_properties": {
-        "volume_mm3": 9185.684512525657,
-        "surface_area_mm2": 10290.583599902471,
-        "bounding_box_mm": [
-          [
-            0.0,
-            0.0,
-            0.0
-          ],
-          [
-            90.0,
-            52.0,
-            2.0
-          ]
-        ],
-        "face_count": 8972,
-        "vertex_count": 4488,
-        "is_watertight": true,
-        "centroid_mm": [
-          44.99999999999997,
-          26.00000000000011,
-          1.006833776128957
-        ]
-      },
-      "generation": {
-        "method": "openscad",
-        "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5053114891052246
-      },
-      "generated_at": "2026-01-10T01:41:12.356033Z"
-    },
-    {
-      "test_name": "cylinder_rounded_emboss_basic",
-      "description": "Cylinder with rounded dots, default parameters",
+      "test_name": "cylinder_rounded_emboss_indicators_on",
+      "description": "Cylinder: Rounded dots, Embossing plate, Indicators ON",
       "tags": [
         "cylinder",
         "rounded",
         "emboss",
-        "basic"
+        "indicators_on",
+        "core_matrix"
       ],
       "priority": "high",
-      "reference_stl": "cross_platform/cylinder_rounded_emboss_basic/reference.stl",
+      "reference_stl": "cross_platform/cylinder_rounded_emboss_indicators_on/reference.stl",
       "stl_size_bytes": 1857052,
       "stl_sha256": "a0c253c79d8dc388d0327e436b90055a9378ba34a70b7c0183ebcb3e7adf7843",
       "mesh_properties": {
@@ -234,22 +49,69 @@
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
         "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5053002834320068
+        "duration_seconds": 0.5041568279266357
       },
-      "generated_at": "2026-01-10T01:41:13.056896Z"
+      "generated_at": "2026-01-10T06:52:48.704784Z"
     },
     {
-      "test_name": "cylinder_rounded_counter_basic",
-      "description": "Counter plate matching cylinder_rounded_emboss_basic",
+      "test_name": "cylinder_rounded_emboss_indicators_off",
+      "description": "Cylinder: Rounded dots, Embossing plate, Indicators OFF",
+      "tags": [
+        "cylinder",
+        "rounded",
+        "emboss",
+        "indicators_off",
+        "core_matrix"
+      ],
+      "priority": "high",
+      "reference_stl": "cross_platform/cylinder_rounded_emboss_indicators_off/reference.stl",
+      "stl_size_bytes": 2525368,
+      "stl_sha256": "a9e3be28c4a9e82b4a0f342eb3d8b80066b5edf9feed539a082e34471bfbd49c",
+      "mesh_properties": {
+        "volume_mm3": 12019.028716541305,
+        "surface_area_mm2": 9768.361497654769,
+        "bounding_box_mm": [
+          [
+            -15.375,
+            -16.052126067602615,
+            0.0
+          ],
+          [
+            15.375,
+            15.375,
+            52.0
+          ]
+        ],
+        "face_count": 7808,
+        "vertex_count": 3928,
+        "is_watertight": true,
+        "centroid_mm": [
+          0.0004875958959202435,
+          -0.12648118018830634,
+          26.1435140437011
+        ]
+      },
+      "generation": {
+        "method": "openscad",
+        "openscad_version": "OpenSCAD version 2026.01.03",
+        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "duration_seconds": 0.5061306953430176
+      },
+      "generated_at": "2026-01-10T06:52:49.479220Z"
+    },
+    {
+      "test_name": "cylinder_rounded_counter_indicators_on",
+      "description": "Cylinder: Rounded dots, Counter plate, Indicators ON",
       "tags": [
         "cylinder",
         "rounded",
         "counter",
-        "basic",
+        "indicators_on",
+        "core_matrix",
         "slow_openscad"
       ],
       "priority": "high",
-      "reference_stl": "cross_platform/cylinder_rounded_counter_basic/reference.stl",
+      "reference_stl": "cross_platform/cylinder_rounded_counter_indicators_on/reference.stl",
       "stl_size_bytes": 13873260,
       "stl_sha256": "b35561244b9c35a771a2762fbe600699872e647086b684ce8c9360db65fe1406",
       "mesh_properties": {
@@ -280,155 +142,348 @@
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
         "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5047218799591064
+        "duration_seconds": 0.5057506561279297
       },
-      "generated_at": "2026-01-10T01:41:14.104861Z"
+      "generated_at": "2026-01-10T06:52:50.512711Z"
     },
     {
-      "test_name": "card_rounded_emboss_custom_spacing",
-      "description": "Card with non-default braille spacing parameters",
+      "test_name": "cylinder_rounded_counter_indicators_off",
+      "description": "Cylinder: Rounded dots, Counter plate, Indicators OFF",
       "tags": [
-        "card",
+        "cylinder",
         "rounded",
-        "emboss",
-        "custom",
-        "spacing"
+        "counter",
+        "indicators_off",
+        "core_matrix",
+        "slow_openscad"
       ],
-      "priority": "medium",
-      "reference_stl": "cross_platform/card_rounded_emboss_custom_spacing/reference.stl",
-      "stl_size_bytes": 2584926,
-      "stl_sha256": "ca7ab11cdd1ec42873fe820b7516bf44ae6fce9a8ac05b3bd5fd95fe678a2726",
+      "priority": "high",
+      "reference_stl": "cross_platform/cylinder_rounded_counter_indicators_off/reference.stl",
+      "stl_size_bytes": 13708403,
+      "stl_sha256": "ade2f4d49c091deaa2efbf771c434cd8f5e6a399d572c5ccbb68dd2518aa694e",
       "mesh_properties": {
-        "volume_mm3": 9383.061748595219,
-        "surface_area_mm2": 9974.8993383913,
+        "volume_mm3": 11701.258123126316,
+        "surface_area_mm2": 10174.527535653453,
         "bounding_box_mm": [
           [
-            0.0,
-            0.0,
+            -15.375,
+            -15.375,
             0.0
           ],
           [
-            90.0,
-            52.0,
-            2.8
+            15.375,
+            15.375,
+            52.0
           ]
         ],
-        "face_count": 8844,
-        "vertex_count": 4424,
+        "face_count": 42944,
+        "vertex_count": 21472,
         "is_watertight": true,
         "centroid_mm": [
-          44.943628661380124,
-          26.025079971859988,
-          1.008728302803517
+          0.22375397415846163,
+          -0.01905865540244774,
+          26.000000000000757
         ]
       },
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
         "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5047476291656494
+        "duration_seconds": 0.5046160221099854
       },
-      "generated_at": "2026-01-10T01:41:14.817057Z"
+      "generated_at": "2026-01-10T06:52:51.531218Z"
     },
     {
-      "test_name": "card_rounded_emboss_indicators_off",
-      "description": "Card without indicator shapes (more cells available for text)",
+      "test_name": "cylinder_cone_emboss_indicators_on",
+      "description": "Cylinder: Cone dots, Embossing plate, Indicators ON",
       "tags": [
-        "card",
-        "rounded",
+        "cylinder",
+        "cone",
         "emboss",
-        "indicators_off"
+        "indicators_on",
+        "core_matrix"
       ],
-      "priority": "medium",
-      "reference_stl": "cross_platform/card_rounded_emboss_indicators_off/reference.stl",
-      "stl_size_bytes": 5106133,
-      "stl_sha256": "0497e725b8df752d9a6685d9023a5508d873dcff3c2c3626b504dd1c91ac79e2",
+      "priority": "high",
+      "reference_stl": "cross_platform/cylinder_cone_emboss_indicators_on/reference.stl",
+      "stl_size_bytes": 404155,
+      "stl_sha256": "0538f30e982fe744de2a6c717b4847c3ec0932749efa87ebb6fba377a7c57c7e",
       "mesh_properties": {
-        "volume_mm3": 9389.811270094293,
-        "surface_area_mm2": 9970.084705652684,
+        "volume_mm3": 12026.158431550946,
+        "surface_area_mm2": 9798.220710469692,
         "bounding_box_mm": [
           [
-            0.0,
-            0.0,
+            -15.375,
+            -16.269899432284603,
             0.0
           ],
           [
-            90.0,
-            52.0,
-            2.7962982586292515
+            15.375,
+            15.375,
+            52.0
           ]
         ],
-        "face_count": 17292,
-        "vertex_count": 8648,
+        "face_count": 1316,
+        "vertex_count": 696,
         "is_watertight": true,
         "centroid_mm": [
-          45.01020098708591,
-          26.068788265406578,
-          1.0085544553747794
+          -0.08717717126385605,
+          -0.10413444312923015,
+          26.11395765868156
         ]
       },
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
         "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5043468475341797
+        "duration_seconds": 0.5039629936218262
       },
-      "generated_at": "2026-01-10T01:41:15.630322Z"
+      "generated_at": "2026-01-10T06:52:52.174714Z"
     },
     {
-      "test_name": "card_rounded_emboss_max_grid",
-      "description": "Card with all 4 lines filled, 11 characters each (maximum capacity)",
+      "test_name": "cylinder_cone_emboss_indicators_off",
+      "description": "Cylinder: Cone dots, Embossing plate, Indicators OFF",
       "tags": [
-        "card",
-        "rounded",
+        "cylinder",
+        "cone",
         "emboss",
-        "max_capacity"
+        "indicators_off",
+        "core_matrix"
       ],
-      "priority": "medium",
-      "reference_stl": "cross_platform/card_rounded_emboss_max_grid/reference.stl",
-      "stl_size_bytes": 26113050,
-      "stl_sha256": "fa253a81a87935f5bf7599c9c24c2a50627ef8f10c48868072ae9e8fd1021846",
+      "priority": "high",
+      "reference_stl": "cross_platform/cylinder_cone_emboss_indicators_off/reference.stl",
+      "stl_size_bytes": 307552,
+      "stl_sha256": "77122346c9c9891554d6b749a0d0ac7478cd5ab3ab6ba6ca1222e12fb0af9a8b",
       "mesh_properties": {
-        "volume_mm3": 9519.972766806042,
-        "surface_area_mm2": 10168.177245833249,
+        "volume_mm3": 12020.49471675194,
+        "surface_area_mm2": 9770.922280652094,
         "bounding_box_mm": [
           [
-            0.0,
-            0.0,
+            -15.375,
+            -16.269899432284603,
             0.0
           ],
           [
-            90.0,
-            52.0,
-            2.8
+            15.375,
+            15.375,
+            52.0
           ]
         ],
-        "face_count": 88204,
-        "vertex_count": 44104,
+        "face_count": 1016,
+        "vertex_count": 536,
         "is_watertight": true,
         "centroid_mm": [
-          45.0189697946424,
-          25.996550946428627,
-          1.0470841457770652
+          -0.00406236044087966,
+          -0.13545546863954885,
+          26.148905141167244
         ]
       },
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
         "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5041744709014893
+        "duration_seconds": 0.506181001663208
       },
-      "generated_at": "2026-01-10T01:41:17.162371Z"
+      "generated_at": "2026-01-10T06:52:52.835238Z"
+    },
+    {
+      "test_name": "cylinder_cone_counter_indicators_on",
+      "description": "Cylinder: Cone dots, Counter plate, Indicators ON",
+      "tags": [
+        "cylinder",
+        "cone",
+        "counter",
+        "indicators_on",
+        "core_matrix",
+        "slow_openscad"
+      ],
+      "priority": "high",
+      "reference_stl": "cross_platform/cylinder_cone_counter_indicators_on/reference.stl",
+      "stl_size_bytes": 2908811,
+      "stl_sha256": "81521f3bbf57b57434ce30e59d5c4c7530f17de264af3113be54effdbd5ea27e",
+      "mesh_properties": {
+        "volume_mm3": 11878.253194112052,
+        "surface_area_mm2": 9964.564316616947,
+        "bounding_box_mm": [
+          [
+            -15.375,
+            -15.375,
+            0.0
+          ],
+          [
+            15.375,
+            15.375,
+            52.0
+          ]
+        ],
+        "face_count": 9568,
+        "vertex_count": 4784,
+        "is_watertight": true,
+        "centroid_mm": [
+          0.09990886250192638,
+          -0.008671195446313612,
+          25.999999999999538
+        ]
+      },
+      "generation": {
+        "method": "openscad",
+        "openscad_version": "OpenSCAD version 2026.01.03",
+        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "duration_seconds": 0.5041975975036621
+      },
+      "generated_at": "2026-01-10T06:52:53.555270Z"
+    },
+    {
+      "test_name": "cylinder_cone_counter_indicators_off",
+      "description": "Cylinder: Cone dots, Counter plate, Indicators OFF",
+      "tags": [
+        "cylinder",
+        "cone",
+        "counter",
+        "indicators_off",
+        "core_matrix",
+        "slow_openscad"
+      ],
+      "priority": "high",
+      "reference_stl": "cross_platform/cylinder_cone_counter_indicators_off/reference.stl",
+      "stl_size_bytes": 2748237,
+      "stl_sha256": "5459fd4676f0bfa5974790ff558b24500fec5bce47a244e9a938e7b2799d0ab6",
+      "mesh_properties": {
+        "volume_mm3": 11884.2384098748,
+        "surface_area_mm2": 9944.22438752053,
+        "bounding_box_mm": [
+          [
+            -15.375,
+            -15.375,
+            0.0
+          ],
+          [
+            15.375,
+            15.375,
+            52.0
+          ]
+        ],
+        "face_count": 9056,
+        "vertex_count": 4528,
+        "is_watertight": true,
+        "centroid_mm": [
+          0.12470099873664015,
+          -0.010767812303713986,
+          25.99999999999952
+        ]
+      },
+      "generation": {
+        "method": "openscad",
+        "openscad_version": "OpenSCAD version 2026.01.03",
+        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "duration_seconds": 0.5044834613800049
+      },
+      "generated_at": "2026-01-10T06:52:54.276567Z"
+    },
+    {
+      "test_name": "cylinder_indicator_recess_rounded",
+      "description": "ISOLATED TEST: Minimal fixture to isolate indicator recess behavior (rounded/bowl)",
+      "tags": [
+        "cylinder",
+        "rounded",
+        "counter",
+        "indicators_on",
+        "indicator_isolation",
+        "minimal"
+      ],
+      "priority": "high",
+      "reference_stl": "cross_platform/cylinder_indicator_recess_rounded/reference.stl",
+      "stl_size_bytes": 3502939,
+      "stl_sha256": "42f1766a73b441f7caaa193bbcbddb97fe45b1659724ce229a35dd09974bfcce",
+      "mesh_properties": {
+        "volume_mm3": 11927.801689340451,
+        "surface_area_mm2": 9806.418287122557,
+        "bounding_box_mm": [
+          [
+            -15.375,
+            -15.375,
+            0.0
+          ],
+          [
+            15.375,
+            15.375,
+            52.0
+          ]
+        ],
+        "face_count": 10996,
+        "vertex_count": 5498,
+        "is_watertight": true,
+        "centroid_mm": [
+          0.05112816132892261,
+          -0.004359551169654547,
+          26.000000000000316
+        ]
+      },
+      "generation": {
+        "method": "openscad",
+        "openscad_version": "OpenSCAD version 2026.01.03",
+        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "duration_seconds": 0.5040721893310547
+      },
+      "generated_at": "2026-01-10T06:52:55.005811Z"
+    },
+    {
+      "test_name": "cylinder_indicator_recess_cone",
+      "description": "ISOLATED TEST: Minimal fixture to isolate indicator recess behavior (cone)",
+      "tags": [
+        "cylinder",
+        "cone",
+        "counter",
+        "indicators_on",
+        "indicator_isolation",
+        "minimal"
+      ],
+      "priority": "high",
+      "reference_stl": "cross_platform/cylinder_indicator_recess_cone/reference.stl",
+      "stl_size_bytes": 757652,
+      "stl_sha256": "e6217d537ef7b1572a5a91c59f3f35ed45b361dec86bcf2ce3ef78d2c50573ca",
+      "mesh_properties": {
+        "volume_mm3": 11973.897745902555,
+        "surface_area_mm2": 9748.277552917178,
+        "bounding_box_mm": [
+          [
+            -15.375,
+            -15.375,
+            0.0
+          ],
+          [
+            15.375,
+            15.375,
+            52.0
+          ]
+        ],
+        "face_count": 2524,
+        "vertex_count": 1262,
+        "is_watertight": true,
+        "centroid_mm": [
+          0.025531389540263846,
+          -0.0022158961995533424,
+          25.999999999999805
+        ]
+      },
+      "generation": {
+        "method": "openscad",
+        "openscad_version": "OpenSCAD version 2026.01.03",
+        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "duration_seconds": 0.5042035579681396
+      },
+      "generated_at": "2026-01-10T06:52:55.682700Z"
     },
     {
       "test_name": "cylinder_rounded_emboss_custom_cutout",
-      "description": "Cylinder with custom cutout (hexagonal, smaller radius, different seam offset)",
+      "description": "PARAMETRIC TEST: Cylinder with custom cutout (hexagonal, smaller radius, different seam offset)",
       "tags": [
         "cylinder",
         "rounded",
         "emboss",
         "custom",
-        "cutout"
+        "cutout",
+        "indicators_on",
+        "parametric"
       ],
       "priority": "medium",
       "reference_stl": "cross_platform/cylinder_rounded_emboss_custom_cutout/reference.stl",
@@ -462,9 +517,9 @@
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
         "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-        "duration_seconds": 0.5043509006500244
+        "duration_seconds": 0.5041713714599609
       },
-      "generated_at": "2026-01-10T01:41:17.863316Z"
+      "generated_at": "2026-01-10T06:52:56.398104Z"
     }
   ]
 }

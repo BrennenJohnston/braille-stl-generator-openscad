@@ -1,0 +1,47 @@
+{
+  "test_name": "cylinder_indicator_recess_cone",
+  "description": "ISOLATED TEST: Minimal fixture to isolate indicator recess behavior (cone)",
+  "tags": [
+    "cylinder",
+    "cone",
+    "counter",
+    "indicators_on",
+    "indicator_isolation",
+    "minimal"
+  ],
+  "priority": "high",
+  "reference_stl": "cross_platform/cylinder_indicator_recess_cone/reference.stl",
+  "stl_size_bytes": 757652,
+  "stl_sha256": "e6217d537ef7b1572a5a91c59f3f35ed45b361dec86bcf2ce3ef78d2c50573ca",
+  "mesh_properties": {
+    "volume_mm3": 11973.897745902555,
+    "surface_area_mm2": 9748.277552917178,
+    "bounding_box_mm": [
+      [
+        -15.375,
+        -15.375,
+        0.0
+      ],
+      [
+        15.375,
+        15.375,
+        52.0
+      ]
+    ],
+    "face_count": 2524,
+    "vertex_count": 1262,
+    "is_watertight": true,
+    "centroid_mm": [
+      0.025531389540263846,
+      -0.0022158961995533424,
+      25.999999999999805
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5042035579681396
+  },
+  "generated_at": "2026-01-10T06:52:55.682700Z"
+}

@@ -1,0 +1,153 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "STL Comparison Configuration - STRICT Profile",
+  "description": "Strict tolerances for catching subtle geometry differences after initial debugging. Use baseline config (compare_config.json) for early development/debugging.",
+  "version": "1.0.0",
+  "profile": "strict",
+  "last_updated": "2026-01-09",
+  
+  "tolerances": {
+    "volume": {
+      "percent": 0.1,
+      "description": "Strict: Maximum 0.1% volume difference (baseline: 1.0%)"
+    },
+    "surface_area": {
+      "percent": 0.1,
+      "description": "Strict: Maximum 0.1% surface area difference (baseline: 0.5%)"
+    },
+    "bounding_box": {
+      "mm": 0.01,
+      "description": "Strict: Maximum 0.01mm bounding box difference (baseline: 0.1mm)"
+    },
+    "max_surface_deviation": {
+      "mm": 0.02,
+      "description": "Strict: Maximum 0.02mm surface deviation (baseline: 0.05mm). Tune per feature after identifying discrepancies.",
+      "optional": true,
+      "note": "Only computed if CloudCompare available. May need per-feature tuning for rounded vs cone geometries."
+    }
+  },
+  
+  "required_checks": {
+    "watertightness": {
+      "required": true,
+      "must_match": true,
+      "description": "Both meshes must be watertight for 3D printing"
+    },
+    "volume": {
+      "required": true,
+      "description": "Volume check always required"
+    },
+    "surface_area": {
+      "required": true,
+      "description": "Surface area check always required"
+    },
+    "bounding_box": {
+      "required": true,
+      "description": "Bounding box check always required"
+    },
+    "face_count": {
+      "required": false,
+      "report_only": true,
+      "description": "Face count is informational only (varies with mesh resolution)"
+    },
+    "vertex_count": {
+      "required": false,
+      "report_only": true,
+      "description": "Vertex count is informational only (varies with mesh resolution)"
+    },
+    "max_surface_deviation": {
+      "required": true,
+      "skip_if_missing_tools": true,
+      "description": "Numeric deviation check (requires CloudCompare) - STRICT enforcement"
+    }
+  },
+  
+  "alignment": {
+    "icp": {
+      "enabled": true,
+      "threshold_for_alignment_mm": 0.1,
+      "description": "Strict: Run ICP if offset exceeds 0.1mm (baseline: 0.5mm)",
+      "max_rms_mm": 0.005,
+      "description_rms": "Strict: Fail if ICP RMS exceeds 0.005mm (baseline: 0.01mm)"
+    },
+    "coordinate_system": {
+      "units": "mm",
+      "origin": "varies_by_shape",
+      "description": "Both generators use millimeters, origin varies (card: corner, cylinder: center)"
+    }
+  },
+  
+  "cloudcompare": {
+    "enabled": true,
+    "optional": true,
+    "sampling_density": 20000,
+    "description_sampling": "Strict: 20k points (baseline: 10k) for higher resolution deviation analysis",
+    "max_runtime_seconds": 180,
+    "description_runtime": "Allow longer runtime for higher sampling density",
+    "c2m_both_directions": true,
+    "description_directions": "Compute C2M in both directions (ref→test and test→ref) for symmetric Hausdorff"
+  },
+  
+  "reporting": {
+    "format": "json",
+    "per_test_report": true,
+    "summary_report": true,
+    "include_metadata": {
+      "tool_versions": true,
+      "test_parameters": true,
+      "fixture_version": true,
+      "timestamp": true,
+      "platform": true,
+      "comparison_profile": "strict"
+    },
+    "on_failure": {
+      "save_diff_stl": true,
+      "save_alignment_info": true,
+      "verbose_logging": true,
+      "save_deviation_heatmap": true
+    }
+  },
+  
+  "tool_versions": {
+    "comment": "See tests/tool_versions.yml for authoritative version specifications. Strict profile REQUIRES exact versions.",
+    "openscad": {
+      "ci_version": "2026.01.03",
+      "enforce_exact_version": true,
+      "require_manifold_backend": true,
+      "note": "Strict profile requires exact OpenSCAD 2026.01.03 with Manifold backend"
+    },
+    "cloudcompare": {
+      "ci_version": "2.13.1",
+      "local_min_version": "2.12.0",
+      "optional": true,
+      "note": "Strongly recommended for strict profile to enable surface deviation checks"
+    },
+    "python_packages": {
+      "trimesh": "4.0.5",
+      "numpy": "1.24.3",
+      "scipy": "1.11.4"
+    }
+  },
+  
+  "performance": {
+    "parallel_execution": false,
+    "comment": "Set to true to run test cases in parallel (requires thread-safe OpenSCAD execution)",
+    "timeout_per_test_seconds": 300,
+    "cache_openscad_outputs": true
+  },
+  
+  "usage_notes": [
+    "STRICT PROFILE: Use after initial debugging and fixture generation",
+    "Purpose: Catch subtle geometry differences between OpenSCAD and web generator",
+    "Baseline profile (compare_config.json) should be used for:",
+    "  - Initial development and debugging",
+    "  - When gross issues need fixing first",
+    "  - When CloudCompare is not available",
+    "Strict profile should be used for:",
+    "  - Final validation before release",
+    "  - CI quality gates (after initial stabilization)",
+    "  - Detecting regressions in geometry implementation",
+    "To use strict profile: pytest --comparison-config=tests/compare_config_strict.json",
+    "Or set environment variable: COMPARISON_CONFIG=tests/compare_config_strict.json"
+  ]
+}

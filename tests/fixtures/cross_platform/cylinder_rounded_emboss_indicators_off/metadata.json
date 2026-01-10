@@ -1,0 +1,46 @@
+{
+  "test_name": "cylinder_rounded_emboss_indicators_off",
+  "description": "Cylinder: Rounded dots, Embossing plate, Indicators OFF",
+  "tags": [
+    "cylinder",
+    "rounded",
+    "emboss",
+    "indicators_off",
+    "core_matrix"
+  ],
+  "priority": "high",
+  "reference_stl": "cross_platform/cylinder_rounded_emboss_indicators_off/reference.stl",
+  "stl_size_bytes": 2525368,
+  "stl_sha256": "a9e3be28c4a9e82b4a0f342eb3d8b80066b5edf9feed539a082e34471bfbd49c",
+  "mesh_properties": {
+    "volume_mm3": 12019.028716541305,
+    "surface_area_mm2": 9768.361497654769,
+    "bounding_box_mm": [
+      [
+        -15.375,
+        -16.052126067602615,
+        0.0
+      ],
+      [
+        15.375,
+        15.375,
+        52.0
+      ]
+    ],
+    "face_count": 7808,
+    "vertex_count": 3928,
+    "is_watertight": true,
+    "centroid_mm": [
+      0.0004875958959202435,
+      -0.12648118018830634,
+      26.1435140437011
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5061306953430176
+  },
+  "generated_at": "2026-01-10T06:52:49.479220Z"
+}

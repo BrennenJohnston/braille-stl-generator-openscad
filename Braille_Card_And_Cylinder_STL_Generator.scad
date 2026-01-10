@@ -93,8 +93,9 @@ Line_3 = ""; // Third line of braille text
 Line_4 = ""; // Fourth line of braille text
 
 /* [Shape and Plate Selection] */
-// Choose the output shape type (note: web UI defaults to cylinder temporarily while card is being refined)
-shape_type = "card"; // ["card:Card (Flat Plate)", "cylinder:Cylinder (Curved Surface)"]
+// Choose the output shape type
+// NOTE: Card option temporarily hidden (code preserved) until web UI parity is restored
+shape_type = "cylinder"; // ["cylinder:Cylinder (Curved Surface)"]
 // Choose which plate to generate
 plate_type = "positive"; // ["positive:Embossing Plate", "negative:Universal Counter Plate"]
 

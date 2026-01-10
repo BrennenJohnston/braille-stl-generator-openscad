@@ -63,6 +63,7 @@ class OpenSCADRunner:
         openscad_path: Optional[Path] = None,
         default_timeout_seconds: int = 300,
         use_manifold: Optional[bool] = None,
+        enforce_version: Optional[str] = None,
     ):
         """
         Initialize OpenSCAD runner.
@@ -71,11 +72,17 @@ class OpenSCADRunner:
             openscad_path: Path to OpenSCAD executable. If None, auto-detect.
             default_timeout_seconds: Default timeout for OpenSCAD execution
             use_manifold: Use Manifold backend (faster). None=auto-detect, True=force, False=use CGAL
+            enforce_version: If set, enforce this exact OpenSCAD version (for CI reproducibility)
         """
         self.openscad_path = openscad_path or self._find_openscad()
         self.default_timeout_seconds = default_timeout_seconds
         self._verify_openscad()
+        self.version_string = self.get_version()
         self.use_manifold = use_manifold if use_manifold is not None else self._detect_manifold_support()
+        
+        # Version enforcement (primarily for CI)
+        if enforce_version:
+            self._enforce_version(enforce_version)
 
     def _find_openscad(self) -> Path:
         """
@@ -183,6 +190,48 @@ class OpenSCADRunner:
             timeout=10,
         )
         return (result.stdout or result.stderr).strip()
+    
+    def _enforce_version(self, required_version: str) -> None:
+        """
+        Enforce exact OpenSCAD version for reproducibility.
+        
+        Args:
+            required_version: Required version string (e.g., "2026.01.03")
+            
+        Raises:
+            OpenSCADNotFoundError: If version doesn't match
+        """
+        if required_version not in self.version_string:
+            raise OpenSCADNotFoundError(
+                f"OpenSCAD version mismatch!\n"
+                f"Required: {required_version}\n"
+                f"Found: {self.version_string}\n"
+                f"For reproducible testing, please install OpenSCAD {required_version}.\n"
+                f"See tests/tool_versions.yml for download instructions."
+            )
+        logger.info(f"✓ OpenSCAD version check passed: {required_version}")
+    
+    def check_manifold_backend(self, require_manifold: bool = False) -> bool:
+        """
+        Check if Manifold backend is available and optionally require it.
+        
+        Args:
+            require_manifold: If True, raise error if Manifold is not available
+            
+        Returns:
+            True if Manifold is available
+            
+        Raises:
+            OpenSCADNotFoundError: If require_manifold=True and Manifold not available
+        """
+        if require_manifold and not self.use_manifold:
+            raise OpenSCADNotFoundError(
+                f"Manifold backend is required but not available in this OpenSCAD build.\n"
+                f"Found: {self.version_string}\n"
+                f"Please install OpenSCAD 2026.01.03+ nightly with Manifold support.\n"
+                f"See tests/tool_versions.yml for download instructions."
+            )
+        return self.use_manifold
 
     def generate_stl(
         self,

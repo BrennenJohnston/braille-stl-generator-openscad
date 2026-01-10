@@ -52,14 +52,15 @@
       "web_api_name": "shape_type",
       "web_ui_label": "Output Shape",
       "type": "enum",
-      "default": "card",
-      "values": ["card", "cylinder"],
+      "default": "cylinder",
+      "values": ["cylinder"],
+      "disabled_values": ["card"],
       "web_ui_values": {
-        "card": "Card (Flat Plate)",
         "cylinder": "Cylinder (Curved Surface)"
       },
       "section": "Shape and Plate Selection",
-      "description": "Output shape type"
+      "description": "Output shape type (card temporarily disabled)",
+      "note": "Card option disabled until web UI parity is restored"
     },
     {
       "openscad_name": "plate_type",

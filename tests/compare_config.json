@@ -106,10 +106,11 @@
   },
   
   "tool_versions": {
-    "comment": "See tests/tool_versions.yml for detailed version specifications",
+    "comment": "See tests/tool_versions.yml for authoritative version specifications. Values here kept for backward compatibility but tool_versions.yml is the source of truth.",
     "openscad": {
-      "ci_version": "2021.01",
-      "local_min_version": "2021.01"
+      "ci_version": "2026.01.03",
+      "local_min_version": "2021.01",
+      "note": "2026 nightly with Manifold backend recommended; see tool_versions.yml"
     },
     "cloudcompare": {
       "ci_version": "2.13.1",

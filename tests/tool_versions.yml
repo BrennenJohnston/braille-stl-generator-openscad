@@ -8,6 +8,8 @@
 required_tools:
   openscad:
     ci_version: "2026.01.03"  # Development snapshot with Manifold backend (fast)
+    ci_version_pinned: true  # Enforce exact version in CI for reproducibility
+    required_backend: "Manifold"  # Required backend for consistent geometry/performance
     local_min_version: "2021.01"  # Minimum for local dev (stable release fallback)
     # Note: OpenSCAD development snapshots/nightlies use date-based versions (YYYY.MM.DD).
     # They are significantly faster for heavy boolean operations using the Manifold geometry engine.
@@ -251,10 +253,12 @@ version_detection:
 
 notes:
   - "Tool versions last updated: 2026-01-09"
-  - "OpenSCAD nightly (2026.01.03+) with Manifold backend recommended for faster rendering"
+  - "OpenSCAD nightly (2026.01.03+) with Manifold backend REQUIRED for consistent geometry"
+  - "Manifold backend is auto-detected and enabled when available (--backend Manifold flag)"
   - "Reference fixtures were generated with OpenSCAD 2026.01.03 using Manifold backend"
-  - "CI uses exact versions for reproducibility"
-  - "Local development allows ranges for developer convenience"
+  - "CI enforces exact OpenSCAD version 2026.01.03 with Manifold backend for reproducibility"
+  - "Local development allows version ranges but Manifold backend is strongly recommended"
   - "CloudCompare is optional - tests gracefully degrade if missing"
   - "When switching OpenSCAD versions/backends, regenerate fixtures: python scripts/regenerate_fixtures.py --openscad-mode"
+  - "Tessellation settings (hemisphere_quality, cone_segments) are normalized in test fixtures"
   - "Periodically review and update versions (quarterly recommended)"

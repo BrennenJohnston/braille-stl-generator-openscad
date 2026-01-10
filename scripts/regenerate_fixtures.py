@@ -153,7 +153,7 @@ class OpenSCADFixtureGenerator:
                 "scad_file": str(self.scad_file.name),
                 "duration_seconds": result.duration_seconds,
             },
-            "generated_at": datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z"),
+            "generated_at": datetime.utcnow().isoformat() + "Z",
         }
 
         # Save metadata
@@ -193,7 +193,7 @@ class OpenSCADFixtureGenerator:
         # Create version file
         version_info = {
             "version": "1.0.0",
-            "generated_at": datetime.now(datetime.UTC).isoformat().replace("+00:00", "Z"),
+            "generated_at": datetime.utcnow().isoformat() + "Z",
             "generation_method": "openscad",
             "openscad_version": self.runner.get_version(),
             "scad_file": str(self.scad_file.name),

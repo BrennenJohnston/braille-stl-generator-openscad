@@ -113,9 +113,25 @@ def tool_versions(tests_dir) -> Dict[str, Any]:
 @pytest.fixture(scope="session")
 def comparison_config(tests_dir, pytestconfig) -> Dict[str, Any]:
     """Load comparison configuration."""
-    config_path = tests_dir / "compare_config.json"
+    import os
+    
+    # Check for custom config path (CLI option or environment variable)
+    custom_config = pytestconfig.getoption("--comparison-config", None)
+    if not custom_config:
+        custom_config = os.environ.get("COMPARISON_CONFIG", None)
+    
+    if custom_config:
+        config_path = Path(custom_config)
+        logger.info(f"Using custom comparison config: {config_path}")
+    else:
+        config_path = tests_dir / "compare_config.json"
+    
     with open(config_path) as f:
         config = json.load(f)
+    
+    # Log which profile is being used
+    profile = config.get("profile", "baseline")
+    logger.info(f"Comparison profile: {profile}")
 
     # Allow CLI flag to disable CloudCompare usage even if installed
     if pytestconfig.getoption("--skip-cloudcompare"):
@@ -137,7 +153,20 @@ def test_cases(fixtures_dir) -> Dict[str, Any]:
     """Load test cases definitions."""
     test_cases_path = fixtures_dir / "test_cases.json"
     with open(test_cases_path, encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    
+    # CI GUARD: Fail fast if any card test cases are found
+    # Card tests are disabled until web UI parity is restored
+    for test_case in data.get("test_cases", []):
+        shape_type = test_case.get("parameters", {}).get("shape_type", "")
+        if shape_type == "card":
+            pytest.fail(
+                f"BLOCKED: Card test case '{test_case['name']}' found in test_cases.json. "
+                f"Card tests are disabled until web UI parity is restored. "
+                f"Only 'cylinder' shape_type is allowed."
+            )
+    
+    return data
 
 
 @pytest.fixture(scope="session")
@@ -146,11 +175,36 @@ def openscad_runner(tool_versions) -> OpenSCADRunner:
     Create OpenSCAD runner instance.
 
     Skips all tests if OpenSCAD is not available.
+    In CI mode (CI=true env var), enforces exact version and Manifold backend.
     """
+    import os
+    
     try:
-        runner = OpenSCADRunner()
+        # Check if running in CI mode
+        is_ci = os.environ.get("CI", "").lower() in ("true", "1", "yes")
+        
+        # Get version requirements from tool_versions.yml
+        openscad_config = tool_versions.get("required_tools", {}).get("openscad", {})
+        required_version = openscad_config.get("ci_version") if is_ci else None
+        
+        # Create runner with optional version enforcement
+        runner = OpenSCADRunner(
+            enforce_version=required_version if is_ci else None
+        )
+        
         version = runner.get_version()
         logger.info(f"OpenSCAD available: {version}")
+        
+        # Check Manifold backend (require in CI, warn in local)
+        if is_ci:
+            runner.check_manifold_backend(require_manifold=True)
+            logger.info("✓ Manifold backend verified (CI mode)")
+        elif not runner.use_manifold:
+            logger.warning(
+                "⚠ Manifold backend not available - results may differ from CI. "
+                "Consider upgrading to OpenSCAD 2026.01.03+ nightly."
+            )
+        
         return runner
     except Exception as e:
         pytest.skip(f"OpenSCAD not available: {e}")
@@ -279,4 +333,10 @@ def pytest_addoption(parser):
         action="store_true",
         default=False,
         help="Update expected properties in test_cases.json from test results",
+    )
+    parser.addoption(
+        "--comparison-config",
+        action="store",
+        default=None,
+        help="Path to comparison config JSON (default: tests/compare_config.json, strict: tests/compare_config_strict.json)",
     )
