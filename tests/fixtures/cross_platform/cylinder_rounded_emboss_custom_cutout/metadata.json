@@ -1,0 +1,46 @@
+{
+  "test_name": "cylinder_rounded_emboss_custom_cutout",
+  "description": "Cylinder with custom cutout (hexagonal, smaller radius, different seam offset)",
+  "tags": [
+    "cylinder",
+    "rounded",
+    "emboss",
+    "custom",
+    "cutout"
+  ],
+  "priority": "medium",
+  "reference_stl": "cross_platform/cylinder_rounded_emboss_custom_cutout/reference.stl",
+  "stl_size_bytes": 2050632,
+  "stl_sha256": "a42e12f40c053f6565bff203bf17616cd19c6fcf8a01b0ebd1c67c8cf1336de7",
+  "mesh_properties": {
+    "volume_mm3": 24878.42822826563,
+    "surface_area_mm2": 9209.0279517108,
+    "bounding_box_mm": [
+      [
+        -16.17564334967325,
+        -16.145011654411118,
+        0.0
+      ],
+      [
+        15.375,
+        15.375,
+        52.0
+      ]
+    ],
+    "face_count": 6356,
+    "vertex_count": 3212,
+    "is_watertight": true,
+    "centroid_mm": [
+      -0.012599804067010889,
+      -0.1318954151057733,
+      26.1167797390138
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5043509006500244
+  },
+  "generated_at": "2026-01-10T01:41:17.863316Z"
+}

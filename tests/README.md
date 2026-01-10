@@ -351,15 +351,14 @@ git lfs pull
 
 ## References
 
-- **Plan**: `stl_validation_framework_8922b21f.plan.md` (project root)
 - **Web Generator**: https://braille-card-and-cylinder-stl-gener.vercel.app
 - **Web Source**: https://github.com/BrennenJohnston/braille-card-and-cylinder-stl-generator
 - **OpenSCAD**: https://openscad.org/
 - **CloudCompare**: https://www.cloudcompare.org/
 - **Git LFS**: https://git-lfs.github.com/
-- **trimesh**: https://trimsh.org/
+- **trimesh**: https://trimesh.org/
 
 ---
 
-**Last Updated**: 2026-01-08  
+**Last Updated**: 2026-01-09  
 **Framework Version**: 1.0.0

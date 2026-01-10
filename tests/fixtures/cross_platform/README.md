@@ -188,7 +188,8 @@ git lfs install
 - Regenerate if web generator has updates: `python scripts/regenerate_fixtures.py`
 
 ### "OpenSCAD output doesn't match"
-1. Check OpenSCAD version: `openscad --version` (should be 2023.12.11 or compatible)
+1. Check OpenSCAD version: `openscad --version` (should be 2021.01+).  
+   - If counter plates are extremely slow, try a **Development Snapshot / Nightly** build and enable the **Manifold** geometry engine in OpenSCAD Preferences.
 2. Review parameter mapping: `tests/parameter_mapping.json`
 3. Check for OpenSCAD code changes affecting geometry
 4. Run with verbose logging: `pytest -v -s tests/cross_platform_validation.py::test_<name>`
@@ -199,9 +200,8 @@ git lfs install
 - **Web Source**: https://github.com/BrennenJohnston/braille-card-and-cylinder-stl-generator
 - **OpenSCAD Source**: https://github.com/BrennenJohnston/braille-stl-generator-openscad
 - **Git LFS**: https://git-lfs.github.com/
-- **Validation Plan**: See project root `stl_validation_framework_8922b21f.plan.md`
 
 ---
 
-**Last Updated**: 2026-01-08  
-**Fixture Version**: Not yet generated (run `python scripts/regenerate_fixtures.py`)
+**Last Updated**: 2026-01-09  
+**Fixture Version**: Generated with OpenSCAD 2026.01.03 (Manifold backend)

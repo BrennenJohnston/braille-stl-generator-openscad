@@ -11,17 +11,65 @@ License: PolyForm Noncommercial 1.0.0
 import json
 import logging
 import platform
+import re
 import shutil
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import trimesh
 
 logger = logging.getLogger(__name__)
+
+
+def _parse_cloudcompare_asc_distances(
+    asc_path: Path, separator: str = ","
+) -> Tuple[float, float, int]:
+    """
+    Parse a CloudCompare ASCII cloud export (ASC) produced after a C2M_DIST run.
+
+    We assume the *last* numeric column corresponds to the active scalar field
+    (the C2M distance), which is CloudCompare's default behavior when exporting.
+
+    Returns:
+        (max_distance, mean_distance, count)
+
+    Raises:
+        ValueError: if no numeric distance values can be parsed.
+    """
+    distances: List[float] = []
+
+    with open(asc_path, "r", encoding="utf-8", errors="ignore") as f:
+        for raw_line in f:
+            line = raw_line.strip()
+            if not line:
+                continue
+            # Skip obvious headers/comments (CloudCompare may emit headers depending on flags)
+            if line.startswith("#") or line.startswith("//"):
+                continue
+
+            parts = [p.strip() for p in line.split(separator)]
+            if len(parts) < 4:
+                # Need at least XYZ + one scalar field value
+                continue
+
+            try:
+                floats = [float(p) for p in parts]
+            except ValueError:
+                # Likely a header line (e.g., "X,Y,Z,..." from -ADD_HEADER)
+                continue
+
+            distances.append(float(floats[-1]))
+
+    if not distances:
+        raise ValueError(f"No numeric distances parsed from {asc_path}")
+
+    max_d = float(max(distances))
+    mean_d = float(sum(distances) / len(distances))
+    return max_d, mean_d, len(distances)
 
 
 @dataclass
@@ -178,6 +226,210 @@ class MeshComparator:
 
         return None
 
+    def _cloudcompare_is_enabled(self) -> bool:
+        """Whether CloudCompare usage is enabled by config."""
+        return bool(self.cloudcompare_config.get("enabled", True))
+
+    def _cloudcompare_timeout_seconds(self) -> int:
+        """Max runtime per CloudCompare invocation."""
+        return int(self.cloudcompare_config.get("max_runtime_seconds", 120))
+
+    def _cloudcompare_sampling_points(self) -> int:
+        """Number of points to sample from each mesh surface for C2M distance."""
+        return int(self.cloudcompare_config.get("sampling_density", 10000))
+
+    def _run_cloudcompare(
+        self, args: List[str], cwd: Path, timeout_seconds: int
+    ) -> subprocess.CompletedProcess:
+        """
+        Run CloudCompare CLI and capture stdout/stderr.
+
+        Args:
+            args: CloudCompare CLI args (without the executable)
+            cwd: Working directory (used to keep any auto-generated files contained)
+            timeout_seconds: Timeout for the CloudCompare process
+        """
+        if not self.cloudcompare_path:
+            raise RuntimeError("CloudCompare not available")
+
+        # On Windows, CloudCompare is a GUI app; CREATE_NO_WINDOW prevents flashing a console window.
+        creationflags = 0
+        if platform.system() == "Windows":
+            creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
+        cmd = [str(self.cloudcompare_path), "-SILENT", "-AUTO_SAVE", "OFF", *args]
+        logger.debug("CloudCompare cmd: %s (cwd=%s)", " ".join(cmd), cwd)
+
+        return subprocess.run(
+            cmd,
+            cwd=str(cwd),
+            capture_output=True,
+            text=True,
+            timeout=timeout_seconds,
+            creationflags=creationflags,
+        )
+
+    def _parse_icp_rms_mm(self, text: str) -> Optional[float]:
+        """Best-effort extraction of ICP RMS value from CloudCompare output/log text."""
+        # Examples we may see: "RMS: 0.00123" / "RMS error = 1e-4"
+        match = re.search(
+            r"\bRMS(?:\s+error)?\b[^0-9eE+\-]*([0-9]*\.?[0-9]+(?:[eE][+\-]?\d+)?)",
+            text,
+        )
+        if not match:
+            return None
+        try:
+            return float(match.group(1))
+        except ValueError:
+            return None
+
+    def _cloudcompare_icp_align_mesh(
+        self, data_mesh: Path, model_mesh: Path, work_dir: Path
+    ) -> Tuple[Path, Optional[float]]:
+        """
+        Align 'data_mesh' to 'model_mesh' using CloudCompare ICP.
+
+        Returns:
+            (aligned_data_mesh_path, icp_rms_mm)
+        """
+        if not self.cloudcompare_path:
+            raise RuntimeError("CloudCompare not available")
+
+        work_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copy inputs to isolate any auto-generated outputs (e.g., transformation matrix files)
+        data_copy = work_dir / "data.stl"
+        model_copy = work_dir / "model.stl"
+        shutil.copy2(data_mesh, data_copy)
+        shutil.copy2(model_mesh, model_copy)
+
+        aligned_path = work_dir / "data_aligned.stl"
+        timeout = self._cloudcompare_timeout_seconds()
+
+        icp_cfg = self.alignment_config.get("icp", {})
+        # Keep defaults unless we explicitly set a few safe options.
+        icp_args: List[str] = [
+            "-M_EXPORT_FMT",
+            "STL",
+            "-O",
+            data_copy.name,
+            "-O",
+            model_copy.name,
+            "-ICP",
+        ]
+
+        # Optional knobs (CloudCompare accepts these in command line mode)
+        overlap = icp_cfg.get("overlap_percent")
+        if overlap is not None:
+            icp_args.extend(["-OVERLAP", str(int(overlap))])
+
+        # Remove the (unchanged) model mesh so we can save only the aligned data mesh
+        icp_args.extend(
+            [
+                "-POP_MESHES",
+                "-SAVE_MESHES",
+                "FILE",
+                aligned_path.name,
+            ]
+        )
+
+        result = self._run_cloudcompare(icp_args, cwd=work_dir, timeout_seconds=timeout)
+        if result.returncode != 0:
+            raise RuntimeError(
+                "CloudCompare ICP failed:\n"
+                f"  returncode={result.returncode}\n"
+                f"  stdout={result.stdout}\n"
+                f"  stderr={result.stderr}"
+            )
+
+        if not aligned_path.exists():
+            raise RuntimeError(
+                f"CloudCompare ICP did not produce aligned mesh: {aligned_path}"
+            )
+
+        # Best-effort RMS parsing (stdout/stderr, then any text outputs)
+        rms = self._parse_icp_rms_mm((result.stdout or "") + "\n" + (result.stderr or ""))
+        if rms is None:
+            for txt in sorted(work_dir.glob("*.txt")):
+                try:
+                    rms = self._parse_icp_rms_mm(
+                        txt.read_text(encoding="utf-8", errors="ignore")
+                    )
+                except Exception:
+                    continue
+                if rms is not None:
+                    break
+
+        return aligned_path, rms
+
+    def _cloudcompare_c2m_distance_stats(
+        self, compared_mesh: Path, reference_mesh: Path, work_dir: Path
+    ) -> Tuple[float, float]:
+        """
+        Compute cloud-to-mesh distance stats (max, mean) using CloudCompare.
+
+        This will:
+        - load compared_mesh (as mesh)
+        - sample it to a point cloud (POINTS = sampling_density)
+        - clear meshes, then load reference_mesh (as mesh)
+        - run C2M_DIST (unsigned)
+        - save the resulting cloud as ASCII (ASC) and compute max/mean from its scalar field
+        """
+        if not self.cloudcompare_path:
+            raise RuntimeError("CloudCompare not available")
+
+        work_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copy inputs into work_dir so any side files stay contained
+        compared_copy = work_dir / "compared.stl"
+        reference_copy = work_dir / "reference.stl"
+        shutil.copy2(compared_mesh, compared_copy)
+        shutil.copy2(reference_mesh, reference_copy)
+
+        out_cloud = work_dir / "c2m_result.asc"
+        timeout = self._cloudcompare_timeout_seconds()
+        n_points = self._cloudcompare_sampling_points()
+
+        cc_args: List[str] = [
+            "-C_EXPORT_FMT",
+            "ASC",
+            "-PREC",
+            "12",
+            "-SEP",
+            "COMMA",
+            "-ADD_HEADER",
+            "-O",
+            compared_copy.name,
+            "-SAMPLE_MESH",
+            "POINTS",
+            str(n_points),
+            "-CLEAR_MESHES",
+            "-O",
+            reference_copy.name,
+            "-C2M_DIST",
+            "-UNSIGNED",
+            "-SAVE_CLOUDS",
+            "FILE",
+            out_cloud.name,
+        ]
+
+        result = self._run_cloudcompare(cc_args, cwd=work_dir, timeout_seconds=timeout)
+        if result.returncode != 0:
+            raise RuntimeError(
+                "CloudCompare C2M_DIST failed:\n"
+                f"  returncode={result.returncode}\n"
+                f"  stdout={result.stdout}\n"
+                f"  stderr={result.stderr}"
+            )
+
+        if not out_cloud.exists():
+            raise RuntimeError(
+                f"CloudCompare did not produce expected output cloud: {out_cloud}"
+            )
+
+        max_d, mean_d, _count = _parse_cloudcompare_asc_distances(out_cloud, separator=",")
+        return max_d, mean_d
+
     def load_mesh(self, stl_path: Path) -> trimesh.Trimesh:
         """
         Load STL file as trimesh.
@@ -250,176 +502,241 @@ class MeshComparator:
         ref_props = self.extract_properties(ref_mesh)
         test_props = self.extract_properties(test_mesh)
 
-        # Calculate differences
-        volume_diff_pct = (
-            abs(ref_props.volume - test_props.volume)
-            / ref_props.volume
-            * 100.0
-            if ref_props.volume > 0
-            else 0.0
-        )
+        cloudcompare_available = self.cloudcompare_path is not None
+        cloudcompare_enabled = cloudcompare_available and self._cloudcompare_is_enabled()
 
-        area_diff_pct = (
-            abs(ref_props.surface_area - test_props.surface_area)
-            / ref_props.surface_area
-            * 100.0
-            if ref_props.surface_area > 0
-            else 0.0
-        )
-
-        bbox_diff = np.max(np.abs(ref_props.bounding_box - test_props.bounding_box))
-
-        face_diff = abs(ref_props.face_count - test_props.face_count)
-        vertex_diff = abs(ref_props.vertex_count - test_props.vertex_count)
-        watertight_match = (
-            ref_props.is_watertight == test_props.is_watertight
-        )
-
-        # Check for alignment needs
+        # Optional: ICP alignment (CloudCompare)
         icp_performed = False
         icp_rms = None
+        aligned_test_stl = test_stl
 
-        centroid_distance = np.linalg.norm(
-            ref_props.centroid - test_props.centroid
-        )
-        threshold = self.alignment_config["icp"]["threshold_for_alignment_mm"]
-
-        if centroid_distance > threshold:
-            logger.info(
-                f"Centroid distance {centroid_distance:.3f}mm > {threshold}mm, "
-                f"ICP alignment recommended but not yet implemented"
-            )
-            # TODO: Implement ICP alignment with CloudCompare
-            # For now, just log the warning
-
-        # Numeric deviation (optional, requires CloudCompare)
+        # Numeric deviation (CloudCompare)
         max_deviation = None
         mean_deviation = None
-        cloudcompare_available = self.cloudcompare_path is not None
 
-        if cloudcompare_available and self.cloudcompare_config.get(
-            "enabled", True
-        ):
-            try:
-                max_deviation, mean_deviation = self._compute_surface_deviation(
-                    reference_stl, test_stl
-                )
-            except Exception as e:
-                logger.warning(
-                    f"CloudCompare surface deviation computation failed: {e}"
-                )
+        cc_tmp = None
+        cc_root: Optional[Path] = None
+        if cloudcompare_enabled:
+            cc_tmp = tempfile.TemporaryDirectory(prefix="cloudcompare_")
+            cc_root = Path(cc_tmp.name)
 
-        # Check against tolerances
-        failures = []
+        try:
+            # Decide whether to run ICP alignment (based on centroid distance heuristic)
+            icp_cfg = self.alignment_config.get("icp", {})
+            icp_enabled = bool(icp_cfg.get("enabled", False))
+            icp_threshold = float(icp_cfg.get("threshold_for_alignment_mm", 0.0))
 
-        # Volume check
-        if self.required_checks["volume"]["required"]:
-            vol_tol = self.tolerances["volume"]["percent"]
-            if volume_diff_pct > vol_tol:
-                failures.append(
-                    f"Volume difference {volume_diff_pct:.2f}% exceeds "
-                    f"tolerance {vol_tol}%"
-                )
-
-        # Surface area check
-        if self.required_checks["surface_area"]["required"]:
-            area_tol = self.tolerances["surface_area"]["percent"]
-            if area_diff_pct > area_tol:
-                failures.append(
-                    f"Surface area difference {area_diff_pct:.2f}% exceeds "
-                    f"tolerance {area_tol}%"
-                )
-
-        # Bounding box check
-        if self.required_checks["bounding_box"]["required"]:
-            bbox_tol = self.tolerances["bounding_box"]["mm"]
-            if bbox_diff > bbox_tol:
-                failures.append(
-                    f"Bounding box difference {bbox_diff:.3f}mm exceeds "
-                    f"tolerance {bbox_tol}mm"
-                )
-
-        # Watertightness check
-        if self.required_checks["watertightness"]["required"]:
-            if not watertight_match:
-                failures.append(
-                    f"Watertightness mismatch: ref={ref_props.is_watertight}, "
-                    f"test={test_props.is_watertight}"
-                )
-            if (
-                self.required_checks["watertightness"]["must_match"]
-                and not test_props.is_watertight
-            ):
-                failures.append("Test mesh is not watertight (required)")
-
-        # Numeric deviation check (optional)
-        if (
-            max_deviation is not None
-            and not self.required_checks["max_surface_deviation"].get(
-                "skip_if_missing_tools", False
+            centroid_distance = float(
+                np.linalg.norm(ref_props.centroid - test_props.centroid)
             )
-        ):
-            dev_tol = self.tolerances["max_surface_deviation"]["mm"]
-            if max_deviation > dev_tol:
-                failures.append(
-                    f"Max surface deviation {max_deviation:.3f}mm exceeds "
-                    f"tolerance {dev_tol}mm"
+
+            if cloudcompare_enabled and icp_enabled and centroid_distance > icp_threshold:
+                logger.info(
+                    f"Centroid distance {centroid_distance:.3f}mm > {icp_threshold}mm; "
+                    f"running ICP alignment with CloudCompare"
                 )
+                try:
+                    aligned_test_stl, icp_rms = self._cloudcompare_icp_align_mesh(
+                        data_mesh=test_stl,
+                        model_mesh=reference_stl,
+                        work_dir=cc_root / "icp",
+                    )
+                    icp_performed = True
 
-        passed = len(failures) == 0
-        duration = time.time() - start_time
+                    # Reload aligned mesh for subsequent (translation-sensitive) checks
+                    test_mesh = self.load_mesh(aligned_test_stl)
+                    test_props = self.extract_properties(test_mesh)
+                except Exception as e:
+                    logger.warning(f"CloudCompare ICP alignment failed: {e}")
 
-        return ComparisonResult(
-            passed=passed,
-            reference_properties=ref_props,
-            test_properties=test_props,
-            volume_diff_percent=volume_diff_pct,
-            surface_area_diff_percent=area_diff_pct,
-            bounding_box_diff_mm=float(bbox_diff),
-            face_count_diff=face_diff,
-            vertex_count_diff=vertex_diff,
-            watertightness_match=watertight_match,
-            max_surface_deviation_mm=max_deviation,
-            mean_surface_deviation_mm=mean_deviation,
-            cloudcompare_available=cloudcompare_available,
-            icp_performed=icp_performed,
-            icp_rms_mm=icp_rms,
-            failures=failures,
-            comparison_time_seconds=duration,
-        )
+            # Calculate differences (after optional alignment)
+            volume_diff_pct = (
+                abs(ref_props.volume - test_props.volume)
+                / ref_props.volume
+                * 100.0
+                if ref_props.volume > 0
+                else 0.0
+            )
+
+            area_diff_pct = (
+                abs(ref_props.surface_area - test_props.surface_area)
+                / ref_props.surface_area
+                * 100.0
+                if ref_props.surface_area > 0
+                else 0.0
+            )
+
+            bbox_diff = np.max(
+                np.abs(ref_props.bounding_box - test_props.bounding_box)
+            )
+
+            face_diff = abs(ref_props.face_count - test_props.face_count)
+            vertex_diff = abs(ref_props.vertex_count - test_props.vertex_count)
+            watertight_match = ref_props.is_watertight == test_props.is_watertight
+
+            # CloudCompare numeric deviation (optional tool, but can be required by config)
+            if cloudcompare_enabled:
+                try:
+                    max_deviation, mean_deviation = self._compute_surface_deviation(
+                        reference_stl, aligned_test_stl, work_dir=cc_root
+                    )
+                except Exception as e:
+                    logger.warning(
+                        f"CloudCompare surface deviation computation failed: {e}"
+                    )
+
+            # Check against tolerances
+            failures = []
+
+            # Volume check
+            if self.required_checks["volume"]["required"]:
+                vol_tol = self.tolerances["volume"]["percent"]
+                if volume_diff_pct > vol_tol:
+                    failures.append(
+                        f"Volume difference {volume_diff_pct:.2f}% exceeds "
+                        f"tolerance {vol_tol}%"
+                    )
+
+            # Surface area check
+            if self.required_checks["surface_area"]["required"]:
+                area_tol = self.tolerances["surface_area"]["percent"]
+                if area_diff_pct > area_tol:
+                    failures.append(
+                        f"Surface area difference {area_diff_pct:.2f}% exceeds "
+                        f"tolerance {area_tol}%"
+                    )
+
+            # Bounding box check
+            if self.required_checks["bounding_box"]["required"]:
+                bbox_tol = self.tolerances["bounding_box"]["mm"]
+                if bbox_diff > bbox_tol:
+                    failures.append(
+                        f"Bounding box difference {bbox_diff:.3f}mm exceeds "
+                        f"tolerance {bbox_tol}mm"
+                    )
+
+            # Watertightness check
+            if self.required_checks["watertightness"]["required"]:
+                if not watertight_match:
+                    failures.append(
+                        f"Watertightness mismatch: ref={ref_props.is_watertight}, "
+                        f"test={test_props.is_watertight}"
+                    )
+                if (
+                    self.required_checks["watertightness"]["must_match"]
+                    and not test_props.is_watertight
+                ):
+                    failures.append("Test mesh is not watertight (required)")
+
+            # ICP RMS sanity check (if available)
+            if icp_performed and icp_rms is not None:
+                max_rms = icp_cfg.get("max_rms_mm")
+                if max_rms is not None and icp_rms > float(max_rms):
+                    failures.append(
+                        f"ICP RMS {icp_rms:.4f}mm exceeds max_rms {float(max_rms):.4f}mm"
+                    )
+
+            # Numeric deviation check (CloudCompare)
+            max_dev_cfg = self.required_checks.get("max_surface_deviation", {})
+            dev_required = bool(max_dev_cfg.get("required", False))
+            skip_if_missing = bool(max_dev_cfg.get("skip_if_missing_tools", False))
+
+            if max_deviation is None:
+                # Missing tool or computation failure
+                if dev_required:
+                    if not cloudcompare_enabled:
+                        if not skip_if_missing:
+                            failures.append(
+                                "Max surface deviation check required but CloudCompare is not available/enabled"
+                            )
+                    else:
+                        failures.append(
+                            "Max surface deviation check required but could not be computed (CloudCompare error)"
+                        )
+            else:
+                dev_tol = self.tolerances["max_surface_deviation"]["mm"]
+                if max_deviation > dev_tol and dev_required:
+                    failures.append(
+                        f"Max surface deviation {max_deviation:.3f}mm exceeds "
+                        f"tolerance {dev_tol}mm"
+                    )
+
+            passed = len(failures) == 0
+            duration = time.time() - start_time
+
+            return ComparisonResult(
+                passed=passed,
+                reference_properties=ref_props,
+                test_properties=test_props,
+                volume_diff_percent=volume_diff_pct,
+                surface_area_diff_percent=area_diff_pct,
+                bounding_box_diff_mm=float(bbox_diff),
+                face_count_diff=face_diff,
+                vertex_count_diff=vertex_diff,
+                watertightness_match=watertight_match,
+                max_surface_deviation_mm=max_deviation,
+                mean_surface_deviation_mm=mean_deviation,
+                cloudcompare_available=cloudcompare_available,
+                icp_performed=icp_performed,
+                icp_rms_mm=icp_rms,
+                failures=failures,
+                comparison_time_seconds=duration,
+            )
+        finally:
+            if cc_tmp is not None:
+                cc_tmp.cleanup()
 
     def _compute_surface_deviation(
-        self, reference_stl: Path, test_stl: Path
-    ) -> Tuple[float, float]:
+        self,
+        reference_stl: Path,
+        test_stl: Path,
+        work_dir: Optional[Path] = None,
+    ) -> Tuple[Optional[float], Optional[float]]:
         """
-        Compute surface deviation using CloudCompare CLI.
+        Compute symmetric surface deviation using CloudCompare CLI (C2M distance).
 
-        This is a placeholder implementation. Full implementation would:
-        1. Sample reference mesh → point cloud
-        2. Compute C2M distance to test mesh
-        3. Sample test mesh → point cloud
-        4. Compute C2M distance to reference mesh
-        5. Return max(both directions) and mean
+        Strategy:
+        - sample mesh A -> cloud A, compute C2M(A -> B)
+        - sample mesh B -> cloud B, compute C2M(B -> A)
+        - return max(maxA, maxB) and mean(meanA, meanB)
 
-        Args:
-            reference_stl: Reference STL path
-            test_stl: Test STL path
-
-        Returns:
-            Tuple of (max_deviation_mm, mean_deviation_mm)
-
-        Raises:
-            RuntimeError: If CloudCompare execution fails
+        Note: This computes a Hausdorff-like metric based on sampled points (not exact).
         """
         if not self.cloudcompare_path:
             raise RuntimeError("CloudCompare not available")
 
-        # TODO: Implement CloudCompare CLI invocation
-        # For now, return None to skip numeric deviation
-        logger.warning(
-            "CloudCompare surface deviation computation not yet fully implemented"
+        if work_dir is None:
+            with tempfile.TemporaryDirectory(prefix="cloudcompare_") as td:
+                return self._compute_surface_deviation(
+                    reference_stl=reference_stl,
+                    test_stl=test_stl,
+                    work_dir=Path(td),
+                )
+
+        both_directions = bool(self.cloudcompare_config.get("c2m_both_directions", True))
+
+        # Test -> Reference
+        dir_a = work_dir / "c2m_test_to_ref"
+        max_a, mean_a = self._cloudcompare_c2m_distance_stats(
+            compared_mesh=test_stl,
+            reference_mesh=reference_stl,
+            work_dir=dir_a,
         )
-        return None, None
+
+        if not both_directions:
+            return max_a, mean_a
+
+        # Reference -> Test
+        dir_b = work_dir / "c2m_ref_to_test"
+        max_b, mean_b = self._cloudcompare_c2m_distance_stats(
+            compared_mesh=reference_stl,
+            reference_mesh=test_stl,
+            work_dir=dir_b,
+        )
+
+        max_dev = max(max_a, max_b)
+        mean_dev = (mean_a + mean_b) / 2.0
+        return float(max_dev), float(mean_dev)
 
 
 def main():

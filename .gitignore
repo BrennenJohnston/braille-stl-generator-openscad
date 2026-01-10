@@ -1,7 +1,19 @@
 # OpenSCAD
-*.stl
-*.png
 *.bak
+
+# Test outputs in root directory (not in tests/fixtures)
+/test_*.stl
+/test_*.log
+/*.log
+
+# Generated images
+*.png
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
 
 # IDEs
 .vscode/

@@ -55,7 +55,7 @@
       "description": "Vertex count is informational only (varies with mesh resolution)"
     },
     "max_surface_deviation": {
-      "required": false,
+      "required": true,
       "skip_if_missing_tools": true,
       "description": "Numeric deviation check (requires CloudCompare)"
     }
@@ -108,7 +108,7 @@
   "tool_versions": {
     "comment": "See tests/tool_versions.yml for detailed version specifications",
     "openscad": {
-      "ci_version": "2023.12.11",
+      "ci_version": "2021.01",
       "local_min_version": "2021.01"
     },
     "cloudcompare": {

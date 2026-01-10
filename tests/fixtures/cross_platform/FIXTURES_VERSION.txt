@@ -1,6 +1,8 @@
 # Reference Fixture Version Information
-# Generated: 2026-01-09T02:49:05.315551Z
-# Web API: http://localhost:5001
-# Total fixtures: 0
+# Generated: 2026-01-10T01:41:17.864444Z
+# Method: OpenSCAD self-test mode
+# OpenSCAD: OpenSCAD version 2026.01.03
+# Total fixtures: 10
+# Failed: 0
 
 # See FIXTURES_VERSION.json for full metadata

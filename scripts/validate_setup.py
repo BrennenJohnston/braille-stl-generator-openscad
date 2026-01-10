@@ -13,6 +13,7 @@ License: PolyForm Noncommercial 1.0.0
 
 import argparse
 import logging
+import platform
 import shutil
 import sys
 from pathlib import Path
@@ -90,14 +91,39 @@ def check_cloudcompare():
     print("\n☁️  Checking CloudCompare (optional)...")
     
     cloudcompare_path = shutil.which("CloudCompare")
+
+    # Also check common default install locations (users often don't add to PATH)
+    if not cloudcompare_path:
+        system = platform.system()
+        candidates = []
+        if system == "Windows":
+            candidates = [
+                Path(r"C:\Program Files\CloudCompare\CloudCompare.exe"),
+            ]
+        elif system == "Darwin":
+            candidates = [
+                Path("/Applications/CloudCompare.app/Contents/MacOS/CloudCompare"),
+            ]
+        elif system == "Linux":
+            candidates = [
+                Path("/snap/bin/cloudcompare"),
+                Path("/usr/bin/cloudcompare"),
+                Path("/usr/local/bin/cloudcompare"),
+            ]
+
+        for p in candidates:
+            if p.exists():
+                cloudcompare_path = str(p)
+                break
+
     if cloudcompare_path:
         print(f"  ✓ CloudCompare found: {cloudcompare_path}")
         return True
-    else:
-        print("  ⚠ CloudCompare not found (optional)")
-        print("    Numeric deviation checks will be skipped")
-        print("    Install from: https://www.cloudcompare.org/")
-        return None  # None = optional, not critical
+
+    print("  ⚠ CloudCompare not found (optional)")
+    print("    Numeric deviation checks will be skipped")
+    print("    Install from: https://www.cloudcompare.org/")
+    return None  # None = optional, not critical
 
 
 def check_git_lfs():

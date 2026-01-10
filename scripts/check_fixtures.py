@@ -112,9 +112,8 @@ def check_fixtures():
         print("⚠️  No fixtures generated yet")
         print()
         print("Next steps:")
-        print("  1. Open web generator: http://localhost:5001")
-        print("  2. Follow guide: tests/MANUAL_FIXTURE_GENERATION.md")
-        print("  3. Start with HIGH PRIORITY test cases (marked with 🔥)")
+        print("  Run: python scripts/regenerate_fixtures.py --openscad-mode")
+        print("  See: tests/README.md for details")
         print()
     elif len(missing) > 0:
         high_priority_missing = [f for f in missing if f["priority"] == "high"]
@@ -126,7 +125,7 @@ def check_fixtures():
         
         print("Next steps:")
         print(f"  Generate remaining {len(missing)} fixture(s)")
-        print("  See: tests/MANUAL_FIXTURE_GENERATION.md")
+        print("  Run: python scripts/regenerate_fixtures.py --openscad-mode")
         print()
     else:
         print("✅ All fixtures generated!")

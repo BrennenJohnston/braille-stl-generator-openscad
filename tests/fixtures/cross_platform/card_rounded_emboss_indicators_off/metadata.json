@@ -1,0 +1,45 @@
+{
+  "test_name": "card_rounded_emboss_indicators_off",
+  "description": "Card without indicator shapes (more cells available for text)",
+  "tags": [
+    "card",
+    "rounded",
+    "emboss",
+    "indicators_off"
+  ],
+  "priority": "medium",
+  "reference_stl": "cross_platform/card_rounded_emboss_indicators_off/reference.stl",
+  "stl_size_bytes": 5106133,
+  "stl_sha256": "0497e725b8df752d9a6685d9023a5508d873dcff3c2c3626b504dd1c91ac79e2",
+  "mesh_properties": {
+    "volume_mm3": 9389.811270094293,
+    "surface_area_mm2": 9970.084705652684,
+    "bounding_box_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        90.0,
+        52.0,
+        2.7962982586292515
+      ]
+    ],
+    "face_count": 17292,
+    "vertex_count": 8648,
+    "is_watertight": true,
+    "centroid_mm": [
+      45.01020098708591,
+      26.068788265406578,
+      1.0085544553747794
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5043468475341797
+  },
+  "generated_at": "2026-01-10T01:41:15.630322Z"
+}

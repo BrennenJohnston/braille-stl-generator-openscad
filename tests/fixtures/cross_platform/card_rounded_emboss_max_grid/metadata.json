@@ -1,0 +1,45 @@
+{
+  "test_name": "card_rounded_emboss_max_grid",
+  "description": "Card with all 4 lines filled, 11 characters each (maximum capacity)",
+  "tags": [
+    "card",
+    "rounded",
+    "emboss",
+    "max_capacity"
+  ],
+  "priority": "medium",
+  "reference_stl": "cross_platform/card_rounded_emboss_max_grid/reference.stl",
+  "stl_size_bytes": 26113050,
+  "stl_sha256": "fa253a81a87935f5bf7599c9c24c2a50627ef8f10c48868072ae9e8fd1021846",
+  "mesh_properties": {
+    "volume_mm3": 9519.972766806042,
+    "surface_area_mm2": 10168.177245833249,
+    "bounding_box_mm": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        90.0,
+        52.0,
+        2.8
+      ]
+    ],
+    "face_count": 88204,
+    "vertex_count": 44104,
+    "is_watertight": true,
+    "centroid_mm": [
+      45.0189697946424,
+      25.996550946428627,
+      1.0470841457770652
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5041744709014893
+  },
+  "generated_at": "2026-01-10T01:41:17.162371Z"
+}

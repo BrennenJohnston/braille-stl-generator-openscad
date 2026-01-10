@@ -52,7 +52,7 @@
       "name": "card_rounded_counter_basic",
       "description": "Counter plate matching card_rounded_emboss_basic",
       "priority": "high",
-      "tags": ["card", "rounded", "counter", "basic", "indicators_on"],
+      "tags": ["card", "rounded", "counter", "basic", "indicators_on", "slow_openscad"],
       "parameters": {
         "Line_1": "⠓⠑⠇⠇⠕",
         "Line_2": "",
@@ -78,14 +78,15 @@
         "rounded_dot_dome_height": 0.6,
         "bowl_counter_dot_base_diameter": 1.8,
         "counter_dot_depth": 0.8,
-        "hemisphere_quality": "medium",
-        "cone_segments": 16
+        "hemisphere_quality": "low",
+        "cone_segments": 8
       },
       "expected_properties": {
         "is_watertight": true,
         "volume_mm3_approx": 9200.0,
         "surface_area_mm2_approx": 11000.0
-      }
+      },
+      "note": "Uses low quality for faster OpenSCAD rendering (~5 min with medium quality)"
     },
     {
       "name": "card_cone_emboss_basic",
@@ -128,7 +129,7 @@
       "name": "card_cone_counter_basic",
       "description": "Counter plate matching card_cone_emboss_basic",
       "priority": "high",
-      "tags": ["card", "cone", "counter", "basic", "indicators_on"],
+      "tags": ["card", "cone", "counter", "basic", "indicators_on", "slow_openscad"],
       "parameters": {
         "Line_1": "⠺⠕⠗⠇⠙",
         "Line_2": "",
@@ -154,12 +155,13 @@
         "cone_counter_dot_base_diameter": 1.6,
         "cone_counter_dot_height": 0.8,
         "cone_counter_dot_flat_hat": 0.4,
-        "hemisphere_quality": "medium",
-        "cone_segments": 16
+        "hemisphere_quality": "low",
+        "cone_segments": 8
       },
       "expected_properties": {
         "is_watertight": true
-      }
+      },
+      "note": "Uses low quality for faster OpenSCAD rendering"
     },
     {
       "name": "cylinder_rounded_emboss_basic",
@@ -204,7 +206,7 @@
       "name": "cylinder_rounded_counter_basic",
       "description": "Counter plate matching cylinder_rounded_emboss_basic",
       "priority": "high",
-      "tags": ["cylinder", "rounded", "counter", "basic"],
+      "tags": ["cylinder", "rounded", "counter", "basic", "slow_openscad"],
       "parameters": {
         "Line_1": "⠞⠑⠌",
         "Line_2": "",
@@ -232,12 +234,13 @@
         "rounded_dot_dome_height": 0.6,
         "bowl_counter_dot_base_diameter": 1.8,
         "counter_dot_depth": 0.8,
-        "hemisphere_quality": "medium",
-        "cone_segments": 16
+        "hemisphere_quality": "low",
+        "cone_segments": 8
       },
       "expected_properties": {
         "is_watertight": true
-      }
+      },
+      "note": "Uses low quality for faster OpenSCAD rendering (~5 min with medium quality)"
     },
     {
       "name": "card_rounded_emboss_custom_spacing",

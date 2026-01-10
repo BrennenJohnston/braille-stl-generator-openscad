@@ -111,11 +111,17 @@ def tool_versions(tests_dir) -> Dict[str, Any]:
 
 
 @pytest.fixture(scope="session")
-def comparison_config(tests_dir) -> Dict[str, Any]:
+def comparison_config(tests_dir, pytestconfig) -> Dict[str, Any]:
     """Load comparison configuration."""
     config_path = tests_dir / "compare_config.json"
     with open(config_path) as f:
-        return json.load(f)
+        config = json.load(f)
+
+    # Allow CLI flag to disable CloudCompare usage even if installed
+    if pytestconfig.getoption("--skip-cloudcompare"):
+        config.setdefault("cloudcompare", {})["enabled"] = False
+
+    return config
 
 
 @pytest.fixture(scope="session")
@@ -130,7 +136,7 @@ def parameter_mapping(tests_dir) -> Dict[str, Any]:
 def test_cases(fixtures_dir) -> Dict[str, Any]:
     """Load test cases definitions."""
     test_cases_path = fixtures_dir / "test_cases.json"
-    with open(test_cases_path) as f:
+    with open(test_cases_path, encoding="utf-8") as f:
         return json.load(f)
 
 

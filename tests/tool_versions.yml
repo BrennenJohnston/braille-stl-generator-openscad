@@ -7,60 +7,84 @@
 
 required_tools:
   openscad:
-    ci_version: "2023.12.11"  # Exact version for CI
-    local_min_version: "2021.01"  # Minimum for local dev
-    local_max_version: "2024.12.31"  # Maximum tested version
+    ci_version: "2026.01.03"  # Development snapshot with Manifold backend (fast)
+    local_min_version: "2021.01"  # Minimum for local dev (stable release fallback)
+    # Note: OpenSCAD development snapshots/nightlies use date-based versions (YYYY.MM.DD).
+    # They are significantly faster for heavy boolean operations using the Manifold geometry engine.
+    # The framework auto-detects Manifold support and enables it when available.
     
     description: "OpenSCAD CLI for STL generation from .scad files"
     
+    backend_notes: |
+      # Manifold Backend (recommended for performance)
+      # The Manifold backend (new in 2024+ builds) provides significantly faster
+      # boolean operations compared to CGAL. The framework automatically detects
+      # and enables Manifold when available via --backend Manifold flag.
+      # Reference fixtures should be regenerated when switching backends.
+    
     download_urls:
-      windows: "https://files.openscad.org/OpenSCAD-2023.12.11-x86_64.zip"
-      linux: "https://files.openscad.org/openscad-2023.12.11.x86_64.AppImage"
-      macos: "https://files.openscad.org/OpenSCAD-2023.12.11.dmg"
+      # Development snapshots/nightlies (RECOMMENDED for performance)
+      snapshots_download_page: "https://openscad.org/downloads.html#snapshots"
+      # Stable release downloads (slower but more widely tested)
+      windows_zip: "https://files.openscad.org/OpenSCAD-2021.01-x86-64.zip"
+      windows_installer: "https://files.openscad.org/OpenSCAD-2021.01-x86-64-Installer.exe"
+      linux_appimage: "https://files.openscad.org/OpenSCAD-2021.01-x86_64.AppImage"
+      macos_dmg: "https://files.openscad.org/OpenSCAD-2021.01.dmg"
     
     install_commands:
       windows: |
-        # Download and extract to C:\Program Files\OpenSCAD
-        # Add to PATH: C:\Program Files\OpenSCAD
+        # RECOMMENDED: Download nightly from snapshots page for Manifold backend
+        # Install to C:\Program Files\OpenSCAD (Nightly)
+        # Add to PATH or set OPENSCAD_PATH environment variable
+        # Fallback: Use stable 2021.01 from official downloads
       
       linux: |
-        # Option 1: AppImage (recommended)
-        wget https://files.openscad.org/openscad-2023.12.11.x86_64.AppImage
-        chmod +x openscad-2023.12.11.x86_64.AppImage
-        sudo mv openscad-2023.12.11.x86_64.AppImage /usr/local/bin/openscad
+        # Option 1: Nightly AppImage (recommended for Manifold backend)
+        # Download from https://openscad.org/downloads.html#snapshots
+        chmod +x OpenSCAD-*.AppImage
+        sudo mv OpenSCAD-*.AppImage /usr/local/bin/openscad
         
-        # Option 2: apt (Ubuntu/Debian)
+        # Option 2: apt (Ubuntu/Debian) - stable version
         sudo add-apt-repository ppa:openscad/releases
         sudo apt update
         sudo apt install openscad
       
       macos: |
-        # Option 1: Homebrew
+        # Option 1: Homebrew (may have nightly cask)
         brew install openscad
         
-        # Option 2: Direct download
-        # Download DMG from URL above, drag to Applications
+        # Option 2: Nightly from snapshots page (recommended)
+        # Download DMG from snapshots page, drag to Applications
     
     version_check_command: "openscad --version"
-    expected_output_pattern: "OpenSCAD version 2023.12.11"
+    expected_output_pattern: "OpenSCAD version 20"  # Accepts 2021.01+ and 2024+/2025+/2026+ nightlies
     
     ci_setup:
       github_actions: |
         # .github/workflows/stl_validation.yml
-        # Ubuntu/Linux:
+        # For CI, use nightly builds for Manifold backend (faster) or stable for compatibility
+        
+        # Ubuntu/Linux (nightly with Manifold):
         - name: Install OpenSCAD (Linux)
           if: runner.os == 'Linux'
           run: |
-            sudo add-apt-repository -y ppa:openscad/releases
-            sudo apt-get update
-            sudo apt-get install -y openscad
+            # Download latest nightly for Manifold backend support
+            # Alternatively use stable: https://files.openscad.org/OpenSCAD-2021.01-x86_64.AppImage
+            wget -q https://files.openscad.org/snapshots/OpenSCAD-2026.01.03-x86_64.AppImage -O openscad.AppImage
+            chmod +x openscad.AppImage
+            sudo mv openscad.AppImage /usr/local/bin/openscad
         
-        # Windows:
+        # Windows (nightly with Manifold):
         - name: Install OpenSCAD (Windows)
           if: runner.os == 'Windows'
           run: |
-            choco install openscad --version=2023.12.11 -y
-            echo "C:\Program Files\OpenSCAD" >> $env:GITHUB_PATH
+            # Download nightly snapshot for Manifold backend
+            $url = 'https://files.openscad.org/snapshots/OpenSCAD-2026.01.03-x86-64.zip'
+            $zip = Join-Path $env:RUNNER_TEMP 'openscad.zip'
+            $dst = Join-Path $env:RUNNER_TEMP 'OpenSCAD'
+            Invoke-WebRequest -Uri $url -OutFile $zip
+            Expand-Archive -Path $zip -DestinationPath $dst -Force
+            echo $dst >> $env:GITHUB_PATH
         
         # macOS:
         - name: Install OpenSCAD (macOS)
@@ -226,9 +250,11 @@ version_detection:
   implementation: "See tests/conftest.py for pytest configuration"
 
 notes:
-  - "Tool versions last updated: 2026-01-08"
-  - "Versions chosen based on stability and feature completeness"
+  - "Tool versions last updated: 2026-01-09"
+  - "OpenSCAD nightly (2026.01.03+) with Manifold backend recommended for faster rendering"
+  - "Reference fixtures were generated with OpenSCAD 2026.01.03 using Manifold backend"
   - "CI uses exact versions for reproducibility"
   - "Local development allows ranges for developer convenience"
   - "CloudCompare is optional - tests gracefully degrade if missing"
+  - "When switching OpenSCAD versions/backends, regenerate fixtures: python scripts/regenerate_fixtures.py --openscad-mode"
   - "Periodically review and update versions (quarterly recommended)"
