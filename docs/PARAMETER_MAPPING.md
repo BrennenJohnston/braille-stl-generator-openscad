@@ -207,4 +207,3 @@ All default values match the web-based generator's defaults (0.4mm paper preset 
 - Branah Braille Translator: https://www.branah.com/braille-translator
 - BANA Size & Spacing: https://brailleauthority.org/size-and-spacing-braille-characters
 
-

@@ -1,6 +1,8 @@
-# Braille STL Generator (OpenSCAD)
+# Braille Cylinder STL Generator (OpenSCAD)
 
-Parametric OpenSCAD program for generating braille embossing plates and counter plates for both flat cards and cylindrical objects.
+Parametric OpenSCAD program for generating braille embossing plates and counter plates for cylindrical objects.
+
+[![STL Validation](https://github.com/BrennenJohnston/braille-stl-generator-openscad/actions/workflows/stl-validation.yml/badge.svg)](https://github.com/BrennenJohnston/braille-stl-generator-openscad/actions/workflows/stl-validation.yml)
 
 ## 🔗 Related Project
 
@@ -16,6 +18,8 @@ This is the **offline OpenSCAD companion** to the web-based Braille STL Generato
 
 **This OpenSCAD version requires pre-translated Unicode braille text.** It does NOT include automatic translation.
 
+---
+
 ## 🚀 Quick Start
 
 1. **Translate your text**:
@@ -30,20 +34,20 @@ This is the **offline OpenSCAD companion** to the web-based Braille STL Generato
 
 3. **Configure**:
    - Paste braille into `Line_1`, `Line_2`, etc.
-   - Choose `shape_type`: `card` or `cylinder`
-   - Choose `plate_type`: `positive` (emboss) or `negative` (counter)
-   - Choose `combined_shape`: `rounded` or `cone`
+   - Choose `plate_type`: Embossing Plate or Counter Plate
+   - Choose `paper_thickness_preset`: 0.4mm, 0.3mm, or Custom
+   - Choose `dot_shape`: Rounded or Cone
 
 4. **Generate**:
    - Render: F6 (or Design → Render)
    - Export: File → Export → Export as STL
 
+---
+
 ## 📋 What This Makes
 
-- **Card Emboss Plate**: Raised braille dots for flat cards
-- **Card Counter Plate**: Recessed support for embossing flat cards
-- **Cylinder Emboss Plate**: Raised dots on cylindrical surface
-- **Cylinder Counter Plate**: Recessed support for cylindrical objects
+- **Cylinder Emboss Plate**: Raised braille dots on cylindrical surface
+- **Cylinder Counter Plate**: Recessed support for embossing cylindrical objects
 
 ## 🎯 Features
 
@@ -52,33 +56,36 @@ This is the **offline OpenSCAD companion** to the web-based Braille STL Generato
 - **Cone**: Traditional frustum cone dots with matching cone recesses
 
 ### Indicator Shapes
-- Optional start/end markers for each row (toggle: `"on"` or `"off"`)
+- Optional start/end markers for each row (triangle and rectangle)
 - Helps with plate alignment during embossing
-- Reserves 2 cells per row when enabled (`indicator_shapes = "on"`)
+- Reserves 2 cells per row when enabled
+
+### Paper Thickness Presets
+- **0.4mm Preset** (default): Optimized for thicker paper, larger dots
+- **0.3mm Preset**: Optimized for thinner paper, smaller dots
+- **Custom**: Use manually-entered parameter values
+
+The preset system controls 24 parameters at once (spacing, dot dimensions, cylinder settings) matching the web app's "Card Thickness" dropdown.
 
 ### Parametric Control
 All parameters match the web-based generator UI:
-- Card dimensions (width, height, thickness)
 - Cylinder dimensions (diameter, height, cutout)
 - Braille spacing (cell, line, dot spacing)
 - Dot dimensions (separate controls for rounded and cone shapes)
 - Counter plate recess dimensions
 - Positioning adjustments (X/Y offsets)
 
+---
+
 ## 📐 Default Settings
 
-All defaults match industry standards and web app defaults:
-
-### Card Settings
-- Width: 90mm (standard business card)
-- Height: 52mm
-- Thickness: 2mm
+All defaults match the web app's **0.4mm Paper Thickness Preset** (applied on load):
 
 ### Cylinder Settings
-- Diameter: 30.75mm
+- Diameter: 30.8mm
 - Height: 52mm
 - Polygonal Cutout: 13mm radius, 12 points/sides
-- Seam Offset: 355°
+- Seam Offset: 0°
 
 ### Braille Grid
 - Cells per row: 11 (available for text; 2 additional cells reserved when indicators are on)
@@ -87,72 +94,17 @@ All defaults match industry standards and web app defaults:
 - Line spacing: 10.0mm
 - Dot spacing: 2.5mm
 
-### Dot Dimensions (Rounded - Default)
-- Base diameter: 2.0mm
-- Base height: 0.2mm
-- Dome diameter: 1.5mm
-- Dome height: 0.6mm
+### Dot Dimensions (Rounded - 0.4mm Preset)
+- Base diameter: 1.5mm
+- Base height: 0.5mm
+- Dome diameter: 1.0mm
+- Dome height: 0.5mm
 
-### Counter Plate (Bowl - Default)
+### Counter Plate (Bowl - 0.4mm Preset)
 - Base diameter: 1.8mm
 - Depth: 0.8mm
 
-## 🔧 Expert Mode Parameters
-
-The Customizer organizes parameters into sections matching the web app:
-
-1. **Text Input - Pre-Translated Braille**: Pre-translated braille lines
-2. **Shape and Plate Selection**: Card/Cylinder, Emboss/Counter
-3. **Expert Mode - Shape Selection**: Rounded/Cone, Indicator Shapes
-4. **Expert Mode - Surface Dimensions**: Card and Cylinder dimensions combined
-5. **Expert Mode - Braille Spacing**: Grid layout and positioning parameters
-6. **Expert Mode - Braille Dot Adjustments**: 
-   - Emboss Dot Dimensions (Rounded Shape)
-   - Emboss Dot Dimensions (Cone Shape)
-   - Counter Dot Dimensions (Rounded Shape / Bowl)
-   - Counter Dot Dimensions (Cone Shape)
-7. **Rendering Quality**: Mesh resolution settings
-
-## 📊 Parameter Mapping
-
-See [PARAMETER_MAPPING.md](PARAMETER_MAPPING.md) for complete mapping between OpenSCAD parameters and web app UI controls.
-
-## 📐 Technical Specifications
-
-For developers and contributors, detailed technical documentation is available:
-
-- **[OPENSCAD_COORDINATE_SYSTEM_SPECIFICATIONS.md](OPENSCAD_COORDINATE_SYSTEM_SPECIFICATIONS.md)**: Coordinate system details, cylinder surface dot positioning, rotation/translation transformations, and centering logic for rounded dots.
-
-## 🎓 Usage Examples
-
-### Business Card (Flat Card)
-```
-1. Translate "John Doe\n555-1234" at Branah.com
-2. Set shape_type = "card"
-3. Set plate_type = "positive"
-4. Set combined_shape = "rounded"
-5. Paste braille into Line_1 and Line_2
-6. Render and export
-```
-
-### Cylindrical Label
-```
-1. Translate your text at Branah.com
-2. Set shape_type = "cylinder"
-3. Set plate_type = "positive"
-4. Adjust cylinder_diameter_mm as needed
-5. Paste braille into lines
-6. Render and export
-```
-
-### Universal Counter Plate
-```
-1. No text needed (creates all positions)
-2. Set shape_type = "card" or "cylinder"
-3. Set plate_type = "negative"
-4. Set combined_shape to match your emboss plate
-5. Render and export
-```
+---
 
 ## 🖨️ 3D Printing Tips
 
@@ -160,34 +112,50 @@ For developers and contributors, detailed technical documentation is available:
 - **Layer Height**: 0.1-0.2mm for smooth dots
 - **Infill**: 40%+ recommended for stiffness
 - **Perimeters**: 3-4 for strength
-- **Orientation**: 
-  - Cards: Print flat, embossed surface UP
-  - Cylinders: Print upright as oriented in preview
+- **Orientation**: Print upright as oriented in preview
 - **Speed**: Slower outer walls (≤30mm/s) for smoother dots
 
-## 📚 References
+---
 
-1. **Web Generator**: https://braille-card-and-cylinder-stl-gener.vercel.app
-2. **Branah Translator**: https://www.branah.com/braille-translator
-3. **BANA Standards**: https://brailleauthority.org/size-and-spacing-braille-characters
-4. **NLS Spec 800**: https://www.loc.gov/nls/
-5. **ADA Standards**: https://archive.ada.gov/
+## 📚 Documentation
 
-## 🙏 Acknowledgments
+| Document | Description |
+|----------|-------------|
+| [docs/WEB_TO_OPENSCAD_PORTING_GUIDE.md](docs/WEB_TO_OPENSCAD_PORTING_GUIDE.md) | Comprehensive guide for porting web generators to OpenSCAD |
+| [docs/QUICK_START_TESTING.md](docs/QUICK_START_TESTING.md) | Quick start guide for the test framework |
+| [docs/PARAMETER_MAPPING.md](docs/PARAMETER_MAPPING.md) | Parameter mapping between OpenSCAD and web UI |
+| [docs/OPENSCAD_COORDINATE_SYSTEM_SPECIFICATIONS.md](docs/OPENSCAD_COORDINATE_SYSTEM_SPECIFICATIONS.md) | Technical coordinate system documentation |
+| [tests/README.md](tests/README.md) | Test framework documentation |
 
-- **Brennen Johnston**: Original web-based generator
-- **Tobi Weinberg**: Project inception and development support
-- **Liblouis**: Professional braille translation library (used in web app)
+---
 
-## 📄 License
+## 🧪 Automated Testing
 
-This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
+This project includes a comprehensive cross-platform validation framework that compares OpenSCAD output against web-generated reference STLs.
 
-- ✅ Free for personal, educational, and non-commercial use
-- ✅ Modification and remixing allowed
-- ❌ **No commercial use permitted**
+### Running Tests
 
-See the [LICENSE](LICENSE) file for full terms.
+```bash
+# Install dependencies
+pip install -r tests/requirements.txt
+
+# Run all tests
+pytest tests/cross_platform_validation.py -v
+
+# Run with strict tolerances
+pytest tests/cross_platform_validation.py --comparison-config=tests/compare_config_strict.json -v
+```
+
+### Test Coverage
+
+- **8 core matrix tests**: All combinations of dot shape × plate type × indicators
+- **2 indicator isolation tests**: Minimal fixtures for debugging
+- **1 parametric variation test**: Custom cutout geometry
+- **Customizer validation tests**: Prevent dropdown duplicate issues
+
+See [docs/QUICK_START_TESTING.md](docs/QUICK_START_TESTING.md) for detailed testing instructions.
+
+---
 
 ## 🆚 Web App vs. OpenSCAD
 
@@ -205,6 +173,8 @@ See the [LICENSE](LICENSE) file for full terms.
 - ✅ You need version control (plain text files)
 - ✅ You want batch processing capability
 
+---
+
 ## 🐛 Troubleshooting
 
 ### "INVALID CHARACTERS" Warning
@@ -217,12 +187,44 @@ See the [LICENSE](LICENSE) file for full terms.
 
 ### Dots Don't Align
 - Check `braille_x_adjust` and `braille_y_adjust`
-- Ensure `cell_spacing`, `line_spacing`, and `dot_spacing` match between emboss and counter plates
+- Ensure spacing settings match between emboss and counter plates
 
 ### Plates Don't Fit Together
-- Verify both plates use same `combined_shape` setting
+- Verify both plates use same `dot_shape` setting
 - Check that counter plate dimensions match emboss dimensions
-- Ensure `indicator_shapes` setting is same for both plates
+- Ensure `indicators` setting is same for both plates
+
+---
+
+## 📚 References
+
+1. **Web Generator**: https://braille-card-and-cylinder-stl-gener.vercel.app
+2. **Branah Translator**: https://www.branah.com/braille-translator
+3. **BANA Standards**: https://brailleauthority.org/size-and-spacing-braille-characters
+4. **NLS Spec 800**: https://www.loc.gov/nls/
+5. **ADA Standards**: https://archive.ada.gov/
+
+---
+
+## 🙏 Acknowledgments
+
+- **Brennen Johnston**: Original web-based generator
+- **Tobi Weinberg**: Project inception and development support
+- **Liblouis**: Professional braille translation library (used in web app)
+
+---
+
+## 📄 License
+
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
+
+- ✅ Free for personal, educational, and non-commercial use
+- ✅ Modification and remixing allowed
+- ❌ **No commercial use permitted**
+
+See the [LICENSE](LICENSE) file for full terms.
+
+---
 
 ## 📞 Support
 
@@ -230,11 +232,11 @@ For issues specific to this OpenSCAD version:
 1. [Open an issue](https://github.com/BrennenJohnston/braille-stl-generator-openscad/issues) on this repository
 2. Check parameter values in Customizer
 3. Verify Unicode braille character validity
-4. Ensure OpenSCAD version 2021.01 or newer
+4. Ensure OpenSCAD version 2024.x or newer (2026.01.03+ recommended)
 
 For general braille embossing questions, see the [web app](https://braille-card-and-cylinder-stl-gener.vercel.app).
 
 ---
 
-**Version**: 1.0.0  
-**Last Updated**: 2026-01-09
+**Version**: 2.1.0  
+**Last Updated**: 2026-01-11

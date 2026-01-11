@@ -41,7 +41,7 @@ Generate golden STL files from the web API:
 python scripts/regenerate_fixtures.py
 
 # Generate specific test case
-python scripts/regenerate_fixtures.py --test-case card_rounded_emboss_basic
+python scripts/regenerate_fixtures.py --test-case cylinder_rounded_emboss_indicators_on
 
 # Dry run (show what would be generated)
 python scripts/regenerate_fixtures.py --dry-run
@@ -57,7 +57,7 @@ pytest tests/cross_platform_validation.py
 pytest tests/cross_platform_validation.py -m high_priority
 
 # Run specific test case
-pytest tests/cross_platform_validation.py::TestSTLValidation::test_stl_validation[card_rounded_emboss_basic]
+pytest tests/cross_platform_validation.py::TestSTLValidation::test_stl_validation[cylinder_rounded_emboss_indicators_on]
 
 # Run with verbose output
 pytest tests/cross_platform_validation.py -v -s

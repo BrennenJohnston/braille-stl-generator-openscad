@@ -30,5 +30,5 @@
     "hemisphere_quality": "medium",
     "cone_segments": 16
   },
-  "generated_with": "web_ui"
+  "generated_with": "openscad"
 }

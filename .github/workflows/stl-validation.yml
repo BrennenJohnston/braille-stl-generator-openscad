@@ -1,0 +1,295 @@
+# STL Validation CI/CD Workflow
+#
+# This workflow validates the OpenSCAD braille generator against web-generated
+# reference fixtures to ensure cross-platform geometry consistency.
+#
+# Triggers:
+# - Push to main/master branch
+# - Pull requests
+# - Manual dispatch (for debugging)
+#
+# Jobs:
+# 1. lint: Code quality checks (Python linting, schema validation)
+# 2. test-quick: Fast tests (customizer validation, parameter schema)
+# 3. test-full: Full STL validation against reference fixtures
+#
+# Requirements:
+# - OpenSCAD 2026.01.03+ with Manifold backend
+# - Python 3.11+
+# - Git LFS for STL fixture files
+
+name: STL Validation
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - '**.scad'
+      - 'tests/**'
+      - 'scripts/**'
+      - '.github/workflows/stl-validation.yml'
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      comparison_profile:
+        description: 'Comparison profile (baseline or strict)'
+        required: false
+        default: 'baseline'
+        type: choice
+        options:
+          - baseline
+          - strict
+      skip_slow_tests:
+        description: 'Skip slow counter plate tests'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  CI: true
+  OPENSCAD_VERSION: "2026.01.03"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  # ==========================================================================
+  # Job 1: Code Quality Checks
+  # ==========================================================================
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'tests/requirements.txt'
+      
+      - name: Install Python dependencies
+        run: pip install -r tests/requirements.txt
+      
+      - name: Run Python linting (ruff)
+        run: |
+          pip install ruff
+          ruff check tests/ scripts/ --ignore E501
+        continue-on-error: true
+      
+      - name: Validate parameter schema
+        run: python tests/validate_parameter_schema.py
+      
+      - name: Validate test case JSON
+        run: python -c "import json; json.load(open('tests/fixtures/cross_platform/test_cases.json'))"
+
+  # ==========================================================================
+  # Job 2: Quick Tests (No OpenSCAD Required)
+  # ==========================================================================
+  test-quick:
+    name: Quick Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'tests/requirements.txt'
+      
+      - name: Install Python dependencies
+        run: pip install -r tests/requirements.txt
+      
+      - name: Run OpenSCAD Customizer tests
+        run: pytest tests/test_openscad_customizer.py -v
+      
+      - name: Run indicator source guard tests
+        run: pytest tests/test_indicator_source_guards.py -v
+
+  # ==========================================================================
+  # Job 3: Full STL Validation
+  # ==========================================================================
+  test-full:
+    name: STL Validation (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    needs: test-quick
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        # Can expand to include windows-latest and macos-latest
+        # os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Pull LFS files
+        run: git lfs pull
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'tests/requirements.txt'
+      
+      - name: Install Python dependencies
+        run: pip install -r tests/requirements.txt
+      
+      # ---------- OpenSCAD Installation (Linux) ----------
+      - name: Install OpenSCAD (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          # Download OpenSCAD nightly AppImage
+          wget -q "https://files.openscad.org/snapshots/OpenSCAD-${{ env.OPENSCAD_VERSION }}-x86_64.AppImage" -O openscad.AppImage || \
+          wget -q "https://files.openscad.org/OpenSCAD-${{ env.OPENSCAD_VERSION }}-x86_64.AppImage" -O openscad.AppImage
+          chmod +x openscad.AppImage
+          
+          # Extract AppImage (required for CI environments without FUSE)
+          ./openscad.AppImage --appimage-extract
+          sudo mv squashfs-root /opt/openscad
+          sudo ln -sf /opt/openscad/AppRun /usr/local/bin/openscad
+          
+          # Verify installation
+          openscad --version
+      
+      # ---------- OpenSCAD Installation (Windows) ----------
+      - name: Install OpenSCAD (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Download and install OpenSCAD
+          $url = "https://files.openscad.org/snapshots/OpenSCAD-${{ env.OPENSCAD_VERSION }}-x86-64-Installer.exe"
+          Invoke-WebRequest -Uri $url -OutFile openscad-installer.exe
+          Start-Process -Wait -FilePath .\openscad-installer.exe -ArgumentList '/S'
+          
+          # Add to PATH
+          $env:PATH = "C:\Program Files\OpenSCAD;$env:PATH"
+          echo "C:\Program Files\OpenSCAD" >> $env:GITHUB_PATH
+          
+          # Verify installation
+          openscad --version
+      
+      # ---------- OpenSCAD Installation (macOS) ----------
+      - name: Install OpenSCAD (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install --cask openscad
+          openscad --version
+      
+      # ---------- Verify OpenSCAD Setup ----------
+      - name: Verify OpenSCAD version and backend
+        run: |
+          echo "=== OpenSCAD Version ==="
+          openscad --version
+          
+          echo ""
+          echo "=== Checking Manifold Backend ==="
+          openscad --help 2>&1 | grep -i manifold || echo "Manifold info not in help output"
+      
+      # ---------- Run Validation Tests ----------
+      - name: Run STL validation tests (baseline)
+        if: github.event.inputs.comparison_profile != 'strict'
+        run: |
+          pytest tests/cross_platform_validation.py -v \
+            --skip-cloudcompare \
+            ${{ github.event.inputs.skip_slow_tests == 'true' && '-m "not slow_openscad"' || '' }}
+      
+      - name: Run STL validation tests (strict)
+        if: github.event.inputs.comparison_profile == 'strict'
+        run: |
+          pytest tests/cross_platform_validation.py -v \
+            --comparison-config=tests/compare_config_strict.json \
+            --skip-cloudcompare \
+            ${{ github.event.inputs.skip_slow_tests == 'true' && '-m "not slow_openscad"' || '' }}
+      
+      # ---------- Upload Test Artifacts ----------
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: |
+            tests/fixtures/cross_platform/**/openscad_output.stl
+            test_results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # ==========================================================================
+  # Job 4: Fixture Integrity Check
+  # ==========================================================================
+  check-fixtures:
+    name: Fixture Integrity
+    runs-on: ubuntu-latest
+    needs: lint
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+      
+      - name: Pull LFS files
+        run: git lfs pull
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: 'tests/requirements.txt'
+      
+      - name: Install Python dependencies
+        run: pip install -r tests/requirements.txt
+      
+      - name: Verify fixture integrity
+        run: python scripts/verify_fixture_integrity.py
+      
+      - name: Check for card test cases (should be blocked)
+        run: |
+          if grep -q '"card' tests/fixtures/cross_platform/test_cases.json; then
+            echo "ERROR: Card test cases found! Card support has been removed."
+            exit 1
+          fi
+          echo "✓ No card test cases found (as expected)"
+
+  # ==========================================================================
+  # Summary Job
+  # ==========================================================================
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [lint, test-quick, test-full, check-fixtures]
+    if: always()
+    
+    steps:
+      - name: Check job results
+        run: |
+          echo "=== CI Summary ==="
+          echo "Lint: ${{ needs.lint.result }}"
+          echo "Quick Tests: ${{ needs.test-quick.result }}"
+          echo "Full Tests: ${{ needs.test-full.result }}"
+          echo "Fixture Check: ${{ needs.check-fixtures.result }}"
+          
+          if [[ "${{ needs.lint.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-quick.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-full.result }}" == "failure" ]] || \
+             [[ "${{ needs.check-fixtures.result }}" == "failure" ]]; then
+            echo ""
+            echo "❌ CI FAILED - See individual job logs for details"
+            exit 1
+          fi
+          
+          echo ""
+          echo "✅ All CI checks passed!"

@@ -38,19 +38,37 @@ By participating in this project, you agree to maintain a respectful and inclusi
 
 ### Prerequisites
 
-- OpenSCAD 2021.01 or newer
+- OpenSCAD 2026.01.03+ with Manifold backend (recommended for faster rendering)
 - Git
+- Python 3.9+ (for running automated tests)
 
 ### Testing Your Changes
+
+#### Manual Testing
 
 1. Open the `.scad` file in OpenSCAD
 2. Use the Customizer panel (View → Customizer) to adjust parameters
 3. Press F5 for preview, F6 for full render
 4. Test with various configurations:
-   - Card vs Cylinder shapes
+   - Cylinder shapes (card temporarily hidden)
    - Positive (emboss) vs Negative (counter) plates
    - Rounded vs Cone dot shapes
    - With and without indicator shapes
+
+#### Automated Testing
+
+```bash
+# Install test dependencies
+pip install -r tests/requirements.txt
+
+# Run validation tests
+pytest tests/cross_platform_validation.py -v
+
+# Run specific test
+pytest tests/cross_platform_validation.py -k cylinder_rounded_emboss_indicators_on
+```
+
+See `tests/README.md` for comprehensive testing documentation.
 
 ## Making Changes
 

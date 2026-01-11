@@ -2,9 +2,21 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "OpenSCAD to Web API Parameter Mapping",
   "description": "Machine-readable mapping between OpenSCAD customizer variables and web API parameters. Source of truth for cross-platform validation.",
-  "version": "1.0.0",
-  "last_updated": "2026-01-08",
+  "version": "2.1.0",
+  "last_updated": "2026-01-10",
   "documentation": "See PARAMETER_MAPPING.md for human-readable version",
+  
+  "ui_parameter_format": {
+    "description": "OpenSCAD Customizer dropdown format guidelines to prevent duplicate options",
+    "correct_format": "param = \"DefaultLabel\"; // [Label1, Label2, Label3]",
+    "guidelines": [
+      "Use human-readable labels directly as values (e.g., 'Rounded' not 'rounded:Rounded')",
+      "The default value must exactly match one of the dropdown options",
+      "Avoid value:Label format as it can cause duplicate entries in some OpenSCAD versions",
+      "For test system compatibility, normalize both UI labels and lowercase values in calculated section"
+    ],
+    "test_system_note": "Test system passes parameters via -D flags with lowercase values (e.g., 'rounded', 'positive'). The OpenSCAD file normalizes these to work with UI labels."
+  },
   
   "parameters": [
     {
@@ -48,104 +60,78 @@
       "description": "Fourth line of braille text"
     },
     {
-      "openscad_name": "shape_type",
-      "web_api_name": "shape_type",
-      "web_ui_label": "Output Shape",
-      "type": "enum",
-      "default": "cylinder",
-      "values": ["cylinder"],
-      "disabled_values": ["card"],
-      "web_ui_values": {
-        "cylinder": "Cylinder (Curved Surface)"
-      },
-      "section": "Shape and Plate Selection",
-      "description": "Output shape type (card temporarily disabled)",
-      "note": "Card option disabled until web UI parity is restored"
-    },
-    {
       "openscad_name": "plate_type",
       "web_api_name": "plate_type",
       "web_ui_label": "Select Plate to Generate",
       "type": "enum",
-      "default": "positive",
-      "values": ["positive", "negative"],
-      "web_ui_values": {
+      "default": "Embossing Plate",
+      "values": ["Embossing Plate", "Counter Plate"],
+      "test_system_values": ["positive", "negative"],
+      "value_mapping": {
         "positive": "Embossing Plate",
-        "negative": "Universal Counter Plate"
+        "negative": "Counter Plate",
+        "Embossing Plate": "Embossing Plate",
+        "Counter Plate": "Counter Plate"
       },
-      "section": "Shape and Plate Selection",
+      "section": "Plate Selection",
       "description": "Which plate to generate"
     },
     {
-      "openscad_name": "combined_shape",
+      "openscad_name": "paper_thickness_preset",
+      "web_api_name": "paper_thickness_preset",
+      "web_ui_label": "Card Thickness",
+      "type": "enum",
+      "default": "0.4mm",
+      "values": ["0.4mm", "0.3mm", "Custom"],
+      "section": "Paper Thickness Preset",
+      "description": "Preset that controls multiple parameters (spacing, dot dimensions, cylinder settings)",
+      "note": "Web UI label is 'Card Thickness' but this is NOT the removed card-geometry feature—it's a parametric memory system"
+    },
+    {
+      "openscad_name": "dot_shape",
+      "openscad_test_name": "combined_shape",
       "web_api_name": "combined_shape",
       "web_ui_label": "Braille Dot Shape",
       "type": "enum",
-      "default": "rounded",
-      "values": ["rounded", "cone"],
-      "web_ui_values": {
+      "default": "Rounded",
+      "values": ["Rounded", "Cone"],
+      "test_system_values": ["rounded", "cone"],
+      "value_mapping": {
         "rounded": "Rounded",
-        "cone": "Cone"
+        "cone": "Cone",
+        "Rounded": "Rounded",
+        "Cone": "Cone"
       },
       "section": "Expert Mode - Shape Selection",
       "description": "Braille dot shape for both emboss and counter plates"
     },
     {
-      "openscad_name": "indicator_shapes",
+      "openscad_name": "indicators",
+      "openscad_test_name": "indicator_shapes",
       "web_api_name": "indicator_shapes",
       "web_ui_label": "Indicator Shapes",
       "type": "enum",
-      "default": "on",
-      "values": ["on", "off"],
-      "web_ui_values": {
+      "default": "On",
+      "values": ["On", "Off"],
+      "test_system_values": ["on", "off"],
+      "value_mapping": {
         "on": "On",
-        "off": "Off"
+        "off": "Off",
+        "On": "On",
+        "Off": "Off"
       },
       "section": "Expert Mode - Shape Selection",
       "description": "Row start/end markers"
-    },
-    {
-      "openscad_name": "card_width",
-      "web_api_name": "card_width",
-      "web_ui_label": "Card Width",
-      "type": "float",
-      "default": 90.0,
-      "range": [50, 200],
-      "unit": "mm",
-      "section": "Expert Mode - Surface Dimensions",
-      "description": "Card width in millimeters"
-    },
-    {
-      "openscad_name": "card_height",
-      "web_api_name": "card_height",
-      "web_ui_label": "Card Height",
-      "type": "float",
-      "default": 52.0,
-      "range": [30, 150],
-      "unit": "mm",
-      "section": "Expert Mode - Surface Dimensions",
-      "description": "Card height in millimeters"
-    },
-    {
-      "openscad_name": "card_thickness",
-      "web_api_name": "card_thickness",
-      "web_ui_label": "Card Thickness",
-      "type": "float",
-      "default": 2.0,
-      "range": [1, 10],
-      "unit": "mm",
-      "section": "Expert Mode - Surface Dimensions",
-      "description": "Card thickness in millimeters"
     },
     {
       "openscad_name": "cylinder_diameter_mm",
       "web_api_name": "cylinder_diameter_mm",
       "web_ui_label": "Cylinder Diameter",
       "type": "float",
-      "default": 30.75,
+      "default": 30.8,
       "range": [10, 100],
       "unit": "mm",
-      "section": "Expert Mode - Surface Dimensions",
+      "section": "Expert Mode - Cylinder Dimensions",
       "description": "Cylinder outer diameter in millimeters"
     },
     {
@@ -156,7 +142,7 @@
       "default": 52.0,
       "range": [20, 150],
       "unit": "mm",
-      "section": "Expert Mode - Surface Dimensions",
+      "section": "Expert Mode - Cylinder Dimensions",
       "description": "Cylinder height in millimeters"
     },
     {
@@ -167,7 +153,7 @@
       "default": 13.0,
       "range": [0, 50],
       "unit": "mm",
-      "section": "Expert Mode - Surface Dimensions",
+      "section": "Expert Mode - Cylinder Dimensions",
       "description": "Polygonal cutout circumscribed radius (0 = no cutout)"
     },
     {
@@ -177,7 +163,7 @@
       "type": "integer",
       "default": 12,
       "range": [3, 24],
-      "section": "Expert Mode - Surface Dimensions",
+      "section": "Expert Mode - Cylinder Dimensions",
       "description": "Number of sides/points for polygonal cutout"
     },
     {
@@ -185,10 +171,10 @@
       "web_api_name": "seam_offset_degrees",
       "web_ui_label": "Seam Offset",
       "type": "float",
-      "default": 355.0,
+      "default": 0.0,
       "range": [0, 360],
       "unit": "degrees",
-      "section": "Expert Mode - Surface Dimensions",
+      "section": "Expert Mode - Cylinder Dimensions",
       "description": "Seam offset (degrees) — Rotates starting position around cylinder"
     },
     {
@@ -271,7 +257,7 @@
       "web_api_name": "rounded_dot_base_diameter",
       "web_ui_label": "Rounded dot base diameter (cone base)",
       "type": "float",
-      "default": 2.0,
+      "default": 1.5,
       "range": [0.5, 3],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -283,7 +269,7 @@
       "web_api_name": "rounded_dot_base_height",
       "web_ui_label": "Rounded dot base height (cone height)",
       "type": "float",
-      "default": 0.2,
+      "default": 0.5,
       "range": [0, 2],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -295,7 +281,7 @@
       "web_api_name": "rounded_dot_dome_diameter",
       "web_ui_label": "Rounded dome diameter",
       "type": "float",
-      "default": 1.5,
+      "default": 1.0,
       "range": [0.5, 3],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -307,7 +293,7 @@
       "web_api_name": "rounded_dot_dome_height",
       "web_ui_label": "Rounded dot dome height",
       "type": "float",
-      "default": 0.6,
+      "default": 0.5,
       "range": [0.1, 2],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -319,7 +305,7 @@
       "web_api_name": "emboss_dot_base_diameter",
       "web_ui_label": "Dot diameter",
       "type": "float",
-      "default": 1.8,
+      "default": 1.5,
       "range": [0.5, 3],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -331,7 +317,7 @@
       "web_api_name": "emboss_dot_height",
       "web_ui_label": "Dot height",
       "type": "float",
-      "default": 1.0,
+      "default": 0.8,
       "range": [0.3, 2],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -379,7 +365,7 @@
       "web_api_name": "cone_counter_dot_base_diameter",
       "web_ui_label": "Cone recess base diameter",
       "type": "float",
-      "default": 1.6,
+      "default": 1.9,
       "range": [0.5, 3],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -391,7 +377,7 @@
       "web_api_name": "cone_counter_dot_height",
       "web_ui_label": "Cone recess height",
       "type": "float",
-      "default": 0.8,
+      "default": 0.7,
       "range": [0.3, 2],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -403,7 +389,7 @@
       "web_api_name": "cone_counter_dot_flat_hat",
       "web_ui_label": "Cone recess flat hat diameter",
       "type": "float",
-      "default": 0.4,
+      "default": 1.0,
       "range": [0.1, 2],
       "unit": "mm",
       "section": "Expert Mode - Braille Dot Adjustments",
@@ -411,16 +397,21 @@
       "description": "Cone recess flat hat diameter"
     },
     {
-      "openscad_name": "hemisphere_quality",
+      "openscad_name": "render_quality",
+      "openscad_test_name": "hemisphere_quality",
       "web_api_name": "hemisphere_quality",
-      "web_ui_label": "Hemisphere Quality",
+      "web_ui_label": "Render Quality",
       "type": "enum",
-      "default": "medium",
-      "values": ["low", "medium", "high"],
-      "web_ui_values": {
-        "low": "Low (16 segments)",
-        "medium": "Medium (32 segments)",
-        "high": "High (64 segments)"
+      "default": "Medium",
+      "values": ["Low", "Medium", "High"],
+      "test_system_values": ["low", "medium", "high"],
+      "value_mapping": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "Low": "Low",
+        "Medium": "Medium",
+        "High": "High"
       },
       "section": "Rendering Quality",
       "description": "Sphere quality for rounded shapes",
@@ -439,6 +430,17 @@
     }
   ],
   
+  "removed_parameters": {
+    "description": "Parameters removed in version 2.0.0 (card support removed)",
+    "parameters": [
+      "shape_type",
+      "card_width",
+      "card_height", 
+      "card_thickness"
+    ],
+    "reason": "Card support permanently removed in favor of cylinder-only operation"
+  },
+  
   "validation_rules": {
     "description": "Rules for validating parameter consistency between OpenSCAD and web API",
     "checks": [
@@ -451,6 +453,12 @@
         "name": "default_values_match",
         "description": "Default values must be identical across platforms",
         "severity": "error"
+      },
+      {
+        "name": "dropdown_no_duplicates",
+        "description": "OpenSCAD dropdown options should not cause duplicate entries in Customizer",
+        "severity": "error",
+        "check_method": "Verify UI default matches exactly one dropdown option"
       },
       {
         "name": "ranges_match",
@@ -471,11 +479,16 @@
   },
   
   "notes": [
+    "Version 2.0.0: Card support removed, cylinder-only operation",
+    "Version 2.1.0: Paper thickness preset system added, defaults updated to match web app 0.4mm preset",
     "This mapping is the source of truth for cross-platform validation",
     "Human-readable documentation in PARAMETER_MAPPING.md should be kept in sync",
     "Web API uses snake_case; OpenSCAD uses snake_case (aligned)",
-    "Enum values use simple strings (e.g., 'rounded' not 'rounded:Rounded')",
-    "Web UI labels may differ from parameter names for user-friendliness",
+    "UI dropdown labels are human-friendly (e.g., 'Rounded' not 'rounded')",
+    "Test system uses lowercase values (e.g., 'rounded', 'positive')",
+    "OpenSCAD normalizes both formats in calculated values section",
+    "Paper thickness preset controls 24 parameters across spacing, dot dimensions, and cylinder settings",
+    "Web UI label 'Card Thickness' is NOT card geometry—it's a parametric memory system for known-good values",
     "Rendering quality parameters affect mesh resolution, not actual geometry dimensions",
     "All spatial units are millimeters (mm)",
     "All angular units are degrees (°)"

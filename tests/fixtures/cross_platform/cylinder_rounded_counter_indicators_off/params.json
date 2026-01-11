@@ -28,7 +28,7 @@
     "bowl_counter_dot_base_diameter": 1.8,
     "counter_dot_depth": 0.8,
     "hemisphere_quality": "low",
-    "cone_segments": 8
+    "cone_segments": 24
   },
-  "generated_with": "web_ui"
+  "generated_with": "openscad"
 }

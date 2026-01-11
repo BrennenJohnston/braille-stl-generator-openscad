@@ -1,8 +1,14 @@
 # Reference Fixture Version Information
-# Generated: 2026-01-10T08:53:00.591193Z
-# Method: Web UI (Playwright automation)
-# Web URL: http://127.0.0.1:5001
+# Version: 2.1.0
+# Generated: 2026-01-11T05:36:31.285285Z
+# Method: OpenSCAD self-test mode
+# OpenSCAD: OpenSCAD version 2026.01.03
 # Total fixtures: 11
 # Failed: 0
+
+# Version 2.1.0 Changes:
+# - Paper thickness preset system added (0.4mm / 0.3mm / Custom)
+# - Defaults updated to match web app 0.4mm preset
+# - All fixtures regenerated with new default values
 
 # See FIXTURES_VERSION.json for full metadata

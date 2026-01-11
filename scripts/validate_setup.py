@@ -260,7 +260,7 @@ def print_next_steps(all_checks_passed, has_fixtures):
         print("\n  2. Run validation tests:")
         print("     pytest tests/cross_platform_validation.py -v")
         print("\n  3. Run specific test:")
-        print("     pytest tests/cross_platform_validation.py -k card_rounded_emboss_basic")
+        print("     pytest tests/cross_platform_validation.py -k cylinder_rounded_emboss_indicators_on")
     
     elif all_checks_passed and not has_fixtures:
         print("⚠️  SETUP INCOMPLETE - Generate fixtures first")

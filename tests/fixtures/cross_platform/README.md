@@ -100,20 +100,20 @@ Each test case in `test_cases.json` defines:
 Example:
 ```json
 {
-  "name": "card_rounded_emboss_basic",
-  "description": "Default card with rounded dots, indicators on",
+  "name": "cylinder_rounded_emboss_indicators_on",
+  "description": "Cylinder: Rounded dots, Embossing plate, Indicators ON",
   "priority": "high",
-  "tags": ["card", "rounded", "emboss", "basic"],
+  "tags": ["cylinder", "rounded", "emboss", "indicators_on", "core_matrix"],
   "parameters": {
-    "Line_1": "⠓⠑⠇⠇⠕",
-    "shape_type": "card",
+    "Line_1": "⠞⠑⠌",
+    "shape_type": "cylinder",
     "plate_type": "positive",
     "combined_shape": "rounded",
+    "indicator_shapes": "on",
     ...
   },
   "expected_properties": {
-    "is_watertight": true,
-    "volume_mm3_approx": 9360.0
+    "is_watertight": true
   }
 }
 ```
@@ -188,8 +188,8 @@ git lfs install
 - Regenerate if web generator has updates: `python scripts/regenerate_fixtures.py`
 
 ### "OpenSCAD output doesn't match"
-1. Check OpenSCAD version: `openscad --version` (should be 2021.01+).  
-   - If counter plates are extremely slow, try a **Development Snapshot / Nightly** build and enable the **Manifold** geometry engine in OpenSCAD Preferences.
+1. Check OpenSCAD version: `openscad --version` (should be 2026.01.03+ with Manifold backend).  
+   - Use **Development Snapshot / Nightly** builds with the **Manifold** geometry engine for faster rendering and consistent results.
 2. Review parameter mapping: `tests/parameter_mapping.json`
 3. Check for OpenSCAD code changes affecting geometry
 4. Run with verbose logging: `pytest -v -s tests/cross_platform_validation.py::test_<name>`
