@@ -552,6 +552,20 @@ module cylinder_emboss_plate() {
                     linear_extrude(height = INVALID_TEXT_DEPTH)
                     text("INVALID CHARACTERS", size = INVALID_TEXT_SIZE, halign = "center", valign = "center");
                 }
+
+                // Check whether any line exceeds the cells available for text.
+                // When indicators are on, the first two cells are reserved for
+                // alignment markers, so usable capacity drops by 2.
+                text_too_long =
+                    max([len(Line_1), len(Line_2), len(Line_3), len(Line_4)])
+                    > (active_grid_columns - (indicator_on ? 2 : 0));
+
+                if (text_too_long) {
+                    translate([0, 0, active_cylinder_height_mm/2 + INVALID_TEXT_Z_OFFSET + 8])
+                    color("red")
+                    linear_extrude(height = INVALID_TEXT_DEPTH)
+                    text("TEXT TOO LONG", size = INVALID_TEXT_SIZE, halign = "center", valign = "center");
+                }
         
                 // Create braille dots on cylinder surface
                 lines = [Line_1, Line_2, Line_3, Line_4];

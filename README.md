@@ -191,8 +191,14 @@ See [docs/QUICK_START_TESTING.md](docs/QUICK_START_TESTING.md) for detailed test
 - Solution: Translate at Branah.com and copy the braille output
 
 ### "TEXT TOO LONG" Warning
-- Your braille text exceeds `grid_columns` limit
-- Solution: Reduce text length or increase `grid_columns`
+- Any of `Line_1`–`Line_4` is longer than the cells available for text
+- Capacity = `grid_columns` when indicators are off, or
+  `grid_columns - 2` when indicators are on (col 0 and col 1 are
+  reserved for the alignment markers)
+- A red `TEXT TOO LONG` extrusion is rendered above the cylinder
+  whenever the limit is exceeded
+- Solution: shorten the line, increase `grid_columns`, or turn
+  indicators off
 
 ### Dots Don't Align
 - Check `braille_y_adjust` for vertical offset, or `seam_offset_degrees` for angular offset around the cylinder
@@ -247,5 +253,5 @@ For general braille embossing questions, see the [web app](https://braille-card-
 
 ---
 
-**Version**: 2.1.0  
-**Last Updated**: 2026-01-11
+**Version**: 2.2.0  
+**Last Updated**: 2026-05-30
