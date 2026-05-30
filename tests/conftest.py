@@ -41,10 +41,6 @@ def pytest_configure(config):
     )
     config.addinivalue_line(
         "markers",
-        "card: mark test as testing card shape",
-    )
-    config.addinivalue_line(
-        "markers",
         "cylinder: mark test as testing cylinder shape",
     )
     config.addinivalue_line(
@@ -64,9 +60,6 @@ def pytest_configure(config):
 def pytest_collection_modifyitems(config, items):
     """Modify test collection to add markers based on test names."""
     for item in items:
-        # Add markers based on test name
-        if "card" in item.nodeid.lower():
-            item.add_marker(pytest.mark.card)
         if "cylinder" in item.nodeid.lower():
             item.add_marker(pytest.mark.cylinder)
         if "emboss" in item.nodeid.lower():
@@ -230,7 +223,7 @@ def test_case_data(request, test_cases, fixtures_dir):
     Parametrized fixture for individual test cases.
 
     Usage in test:
-        @pytest.mark.parametrize("test_case_data", ["card_rounded_emboss_basic"], indirect=True)
+        @pytest.mark.parametrize("test_case_data", ["cylinder_rounded_emboss_indicators_on"], indirect=True)
         def test_something(test_case_data):
             test_name, params, expected_props, fixture_dir = test_case_data
     """
@@ -257,26 +250,12 @@ def test_case_data(request, test_cases, fixtures_dir):
     )
 
 
-def check_tool_version(tool_name: str, actual_version: str, tool_config: Dict):
-    """
-    Check if tool version meets requirements.
-
-    Args:
-        tool_name: Tool name
-        actual_version: Actual version string
-        tool_config: Tool config from tool_versions.yml
-
-    Returns:
-        bool: True if version is acceptable
-    """
-    # For now, just log the version - full version comparison
-    # would require parsing version strings
-    logger.info(f"{tool_name} version: {actual_version}")
-
-    # TODO: Implement version comparison
-    # Compare against ci_version (exact) or local_min_version (range)
-
-    return True
+# NOTE: a stub `check_tool_version()` helper used to live here. It was never
+# called, and real OpenSCAD version enforcement is implemented in
+# OpenSCADRunner._enforce_version() (see tests/openscad_runner.py), which is
+# wired up by the `openscad_runner` fixture below whenever the `CI` env var
+# is truthy. If you need to enforce another tool's version, add it there
+# rather than reviving a parallel helper here.
 
 
 @pytest.fixture(scope="session", autouse=True)
