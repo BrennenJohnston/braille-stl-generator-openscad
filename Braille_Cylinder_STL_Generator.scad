@@ -335,7 +335,7 @@ function get_dot_pattern(char) =
 // =============================================================================
 //
 // Every curved-surface primitive below picks its $fn from exactly one source
-// based on what kind of surface it is. The four sources are intentionally
+// based on what kind of surface it is. The five sources are intentionally
 // segregated (not competing) — pick whichever matches your geometry class:
 //
 //   1. CYLINDER_SHELL_FN = 64   — the outer cylinder shell. Hardcoded so the
@@ -396,9 +396,10 @@ CYLINDER_SHELL_FN = 64;
 // "INVALID CHARACTERS" warning text placement (rendered above the cylinder
 // when get_dot_pattern() returns the bad-pattern marker for an untranslated
 // English glyph).
-INVALID_TEXT_Z_OFFSET = 5;   // mm above the cylinder top
-INVALID_TEXT_SIZE     = 5;   // text() font size in mm
-INVALID_TEXT_DEPTH    = 2;   // linear_extrude height in mm
+INVALID_TEXT_Z_OFFSET   = 5;   // mm above the cylinder top
+INVALID_TEXT_SIZE       = 5;   // text() font size in mm
+INVALID_TEXT_DEPTH      = 2;   // linear_extrude height in mm
+INVALID_TEXT_STACK_GAP  = 8;   // mm gap above INVALID CHARACTERS to stack TEXT TOO LONG
 
 module indicator_triangle_2d(rotate_180 = false) {
     // Isosceles triangle with vertical base on LEFT, apex RIGHT (default).
@@ -561,7 +562,7 @@ module cylinder_emboss_plate() {
                     > (active_grid_columns - (indicator_on ? 2 : 0));
 
                 if (text_too_long) {
-                    translate([0, 0, active_cylinder_height_mm/2 + INVALID_TEXT_Z_OFFSET + 8])
+                    translate([0, 0, active_cylinder_height_mm/2 + INVALID_TEXT_Z_OFFSET + INVALID_TEXT_STACK_GAP])
                     color("red")
                     linear_extrude(height = INVALID_TEXT_DEPTH)
                     text("TEXT TOO LONG", size = INVALID_TEXT_SIZE, halign = "center", valign = "center");
