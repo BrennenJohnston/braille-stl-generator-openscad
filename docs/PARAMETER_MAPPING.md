@@ -67,8 +67,11 @@ The OpenSCAD version has been updated to match the web-based generator's UI para
 ### Expert Mode - Braille Positioning
 | OpenSCAD Parameter | Web App Equivalent | Default | Range |
 |--------------------|-------------------|---------|-------|
-| `braille_x_adjust` | X Adjust | 0.0 mm | -10 to 10 mm |
 | `braille_y_adjust` | Y Adjust | 0.0 mm | -10 to 10 mm |
+
+> Removed in v2.2.0: `braille_x_adjust`. On a cylinder the X axis is the angular
+> wrap around the seam, so a linear "X adjust" had no useful meaning. Use
+> `seam_offset_degrees` (Cylinder Dimensions) for angular pattern offset.
 
 ### Expert Mode - Emboss Dot Dimensions (Rounded Shape)
 | OpenSCAD Parameter | Web App Equivalent | Default | Range |

@@ -195,7 +195,7 @@ See [docs/QUICK_START_TESTING.md](docs/QUICK_START_TESTING.md) for detailed test
 - Solution: Reduce text length or increase `grid_columns`
 
 ### Dots Don't Align
-- Check `braille_x_adjust` and `braille_y_adjust`
+- Check `braille_y_adjust` for vertical offset, or `seam_offset_degrees` for angular offset around the cylinder
 - Ensure spacing settings match between emboss and counter plates
 
 ### Plates Don't Fit Together

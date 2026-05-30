@@ -231,17 +231,6 @@
       "description": "Spacing between dots within a cell"
     },
     {
-      "openscad_name": "braille_x_adjust",
-      "web_api_name": "braille_x_adjust",
-      "web_ui_label": "X Adjust",
-      "type": "float",
-      "default": 0.0,
-      "range": [-10, 10],
-      "unit": "mm",
-      "section": "Expert Mode - Braille Spacing",
-      "description": "Horizontal adjustment of braille pattern"
-    },
-    {
       "openscad_name": "braille_y_adjust",
       "web_api_name": "braille_y_adjust",
       "web_ui_label": "Y Adjust",

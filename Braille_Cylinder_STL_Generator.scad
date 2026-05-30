@@ -119,7 +119,10 @@ line_spacing = 10.0; // [5:0.1:25] Vertical spacing between lines (mm)
 dot_spacing = 2.5; // [1:0.1:5] Spacing between dots within a cell (mm)
 
 // --- Braille Positioning ---
-braille_x_adjust = 0.0; // [-10:0.1:10] Horizontal adjustment of braille pattern (mm)
+// Note: on a cylinder, X = angular wrap around the seam — a linear "X adjust"
+// has no useful meaning, so only the vertical adjust is exposed. Use
+// `seam_offset_degrees` (Expert Mode - Cylinder Dimensions) to rotate the
+// braille pattern around the cylinder axis.
 braille_y_adjust = 0.0; // [-10:0.1:10] Vertical adjustment of braille pattern (mm)
 
 /* [Expert Mode - Braille Dot Adjustments] */
@@ -168,7 +171,6 @@ _p04_grid_rows = 4;
 _p04_cell_spacing = 6.5;
 _p04_line_spacing = 10.0;
 _p04_dot_spacing = 2.5;
-_p04_braille_x_adjust = 0.0;
 _p04_braille_y_adjust = 0.0;
 
 // Emboss Rounded
@@ -205,7 +207,6 @@ _p03_grid_rows = 4;
 _p03_cell_spacing = 6.5;
 _p03_line_spacing = 10.0;
 _p03_dot_spacing = 2.5;
-_p03_braille_x_adjust = 0.0;
 _p03_braille_y_adjust = 0.0;
 
 // Emboss Rounded (smaller)
@@ -243,6 +244,10 @@ _p03_seam_offset_degrees = 0.0;
 //
 // Usage: openscad -D 'combined_shape="rounded"' -D 'indicator_shapes="on"' ...
 //
+// IMPORTANT: keep this `/* [Hidden] */` marker so OpenSCAD's Customizer
+// never renders these four vars as orphan, uncategorized sliders even if
+// a new `/* [Section] */` heading gets inserted above this block later.
+/* [Hidden] */
 combined_shape = "";         // "rounded" or "cone" (from test system)
 indicator_shapes = "";       // "on" or "off" (from test system)
 hemisphere_quality = "";     // "low", "medium", "high" (from test system)
@@ -298,10 +303,6 @@ _preset_line_spacing = (paper_thickness_preset == "0.4mm") ? _p04_line_spacing :
 _preset_dot_spacing = (paper_thickness_preset == "0.4mm") ? _p04_dot_spacing :
                       (paper_thickness_preset == "0.3mm") ? _p03_dot_spacing :
                       dot_spacing;
-
-_preset_braille_x_adjust = (paper_thickness_preset == "0.4mm") ? _p04_braille_x_adjust :
-                           (paper_thickness_preset == "0.3mm") ? _p03_braille_x_adjust :
-                           braille_x_adjust;
 
 _preset_braille_y_adjust = (paper_thickness_preset == "0.4mm") ? _p04_braille_y_adjust :
                            (paper_thickness_preset == "0.3mm") ? _p03_braille_y_adjust :
@@ -387,14 +388,13 @@ _preset_seam_offset_degrees = (paper_thickness_preset == "0.4mm") ? _p04_seam_of
 // They incorporate both preset routing (above) and shape-based routing (rounded vs cone).
 
 // Active emboss dot parameters (based on shape selection, using preset-routed values)
-active_emboss_base_diameter = use_rounded_dots ? _preset_rounded_dot_base_diameter : _preset_emboss_dot_base_diameter;
+// Note: cone/rounded emboss modules consume the underlying _preset_* constants
+// directly; only the composite height is needed at this layer.
 active_emboss_height = use_rounded_dots ? (_preset_rounded_dot_base_height + _preset_rounded_dot_dome_height) : _preset_emboss_dot_height;
-active_emboss_top_diameter = use_rounded_dots ? _preset_rounded_dot_dome_diameter : _preset_emboss_dot_flat_hat;
 
 // Active counter dot parameters (based on shape selection, using preset-routed values)
 active_counter_base_diameter = use_rounded_dots ? _preset_bowl_counter_dot_base_diameter : _preset_cone_counter_dot_base_diameter;
 active_counter_height = use_rounded_dots ? _preset_counter_dot_depth : _preset_cone_counter_dot_height;
-active_counter_top_diameter = use_rounded_dots ? 0 : _preset_cone_counter_dot_flat_hat;
 
 // Active spacing parameters (pass through from preset routing)
 active_grid_columns = _preset_grid_columns;
@@ -402,7 +402,6 @@ active_grid_rows = _preset_grid_rows;
 active_cell_spacing = _preset_cell_spacing;
 active_line_spacing = _preset_line_spacing;
 active_dot_spacing = _preset_dot_spacing;
-active_braille_x_adjust = _preset_braille_x_adjust;
 active_braille_y_adjust = _preset_braille_y_adjust;
 
 // Active cylinder parameters (pass through from preset routing)
