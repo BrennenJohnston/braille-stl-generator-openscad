@@ -344,7 +344,25 @@ function get_dot_pattern(char) =
 //     Column 1: Rectangle placeholder (counter ALWAYS rectangle; emboss uses rect for braille input)
 //
 INDICATOR_TRIANGLE_DEPTH_EMBOSS = 0.6;
-INDICATOR_RECT_DEPTH_EMBOSS = 0.5;
+INDICATOR_RECT_DEPTH_EMBOSS     = 0.5;
+
+// Radial epsilon pushed into the cylinder shell so recessed indicator
+// markers and cone-counter recesses break coplanar boolean faces cleanly
+// (without this, CGAL/Manifold can produce zero-area facets at the contact
+// patch and STL exporters complain about non-manifold edges).
+INDICATOR_OVERCUT = 0.05;
+
+// Cylinder shell tessellation count. The cylinder is rendered as a regular
+// prism; 64 segments gives near-cylindrical appearance at modest cost.
+// Keep in sync with the web preview's three.js shell segments.
+CYLINDER_SHELL_FN = 64;
+
+// "INVALID CHARACTERS" warning text placement (rendered above the cylinder
+// when get_dot_pattern() returns the bad-pattern marker for an untranslated
+// English glyph).
+INVALID_TEXT_Z_OFFSET = 5;   // mm above the cylinder top
+INVALID_TEXT_SIZE     = 5;   // text() font size in mm
+INVALID_TEXT_DEPTH    = 2;   // linear_extrude height in mm
 
 module indicator_triangle_2d(rotate_180 = false) {
     // Isosceles triangle with vertical base on LEFT, apex RIGHT (default).
@@ -382,7 +400,7 @@ module indicator_rectangle_prism_centered(depth) {
 }
 
 // Cylinder marker placement helper
-module place_cylinder_marker(theta_deg, y_pos, cyl_radius, depth, overcut = 0.05) {
+module place_cylinder_marker(theta_deg, y_pos, cyl_radius, depth, overcut = INDICATOR_OVERCUT) {
     radial_offset = cyl_radius - depth/2 + overcut;
     x = radial_offset * cos(theta_deg);
     y = radial_offset * sin(theta_deg);
@@ -467,7 +485,7 @@ module counter_recess() {
 module cylinder_shell(cutout_rotate_deg = 0) {
     difference() {
         // Outer cylinder (64 segments to match web generator)
-        cylinder(h = active_cylinder_height_mm, r = active_cylinder_diameter_mm / 2, center = true, $fn = 64);
+        cylinder(h = active_cylinder_height_mm, r = active_cylinder_diameter_mm / 2, center = true, $fn = CYLINDER_SHELL_FN);
         
         // Polygonal cutout if specified
         if (active_polygon_cutout_radius_mm > 0) {
@@ -493,10 +511,10 @@ module cylinder_emboss_plate() {
                                has_invalid_chars(Line_3) || has_invalid_chars(Line_4);
                 
                 if (invalid_found) {
-                    translate([0, 0, active_cylinder_height_mm/2 + 5])
+                    translate([0, 0, active_cylinder_height_mm/2 + INVALID_TEXT_Z_OFFSET])
                     color("red")
-                    linear_extrude(height = 2)
-                    text("INVALID CHARACTERS", size = 5, halign = "center", valign = "center");
+                    linear_extrude(height = INVALID_TEXT_DEPTH)
+                    text("INVALID CHARACTERS", size = INVALID_TEXT_SIZE, halign = "center", valign = "center");
                 }
         
                 // Create braille dots on cylinder surface
@@ -593,7 +611,7 @@ module cylinder_counter_plate() {
                     dot_angle_deg = -(dot_angle_rad * 180 / PI);
                     dot_y = y_pos + dot_row_offsets[dot_pos[0]];
                     
-                    recess_radius_offset = use_rounded_dots ? 0 : 0.05;
+                    recess_radius_offset = use_rounded_dots ? 0 : INDICATOR_OVERCUT;
                     x = (radius + recess_radius_offset) * cos(dot_angle_deg);
                     y = (radius + recess_radius_offset) * sin(dot_angle_deg);
                     
