@@ -38,7 +38,7 @@ The OpenSCAD version has been updated to match the web-based generator's UI para
 |--------------------|-------------------|---------|--------|
 | `paper_thickness_preset` | Card Thickness | `"0.4mm"` | `"0.4mm"`, `"0.3mm"`, `"Custom"` |
 
-**Note:** The web UI label is "Card Thickness" but this is NOT the removed card-geometry feature. This is a parametric memory system that automatically sets 24 parameters (spacing, dot dimensions, and cylinder settings) to known-good values optimized for different paper thicknesses. Selecting "0.4mm" or "0.3mm" forces all preset-controlled parameters to specific values. "Custom" indicates that values deviate from presets.
+**Note:** The web UI label is "Card Thickness" but this is NOT the removed card-geometry feature. This is a parametric memory system that automatically sets 23 parameters (spacing, dot dimensions, and cylinder settings) to known-good values optimized for different paper thicknesses. Selecting "0.4mm" or "0.3mm" forces all preset-controlled parameters to specific values. "Custom" indicates that values deviate from presets.
 
 ### Expert Mode - Shape Selection
 | OpenSCAD Parameter | Web App Equivalent | Values |
@@ -201,7 +201,7 @@ All default values match the web-based generator's defaults (0.4mm paper preset 
 
 ## Notes
 
-1. **Paper Thickness Preset System**: This is a convenience system that sets 24 parameters to known-good values:
+1. **Paper Thickness Preset System**: This is a convenience system that sets 23 parameters to known-good values:
    - **0.4mm preset** (thicker paper, larger dots): Default setting that matches web app on-load behavior
    - **0.3mm preset** (thinner paper, smaller dots): Alternative optimized for thinner materials
    - **Custom**: Indicator state when values deviate from presets

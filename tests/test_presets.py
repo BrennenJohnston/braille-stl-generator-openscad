@@ -206,8 +206,8 @@ class TestPresetTables:
             f"  {k}: expected {e!r}, got {a!r}" for k, e, a in mismatches
         )
 
-    def test_preset_tables_share_24_parameters(self, preset_04, preset_03):
-        """Both tables cover the same 24 parameters (just at different sizes)."""
+    def test_preset_tables_share_23_parameters(self, preset_04, preset_03):
+        """Both tables cover the same 23 parameters (just at different sizes)."""
         assert set(preset_04) == set(preset_03), (
             "PRESET_04 and PRESET_03 must cover the same parameters; the "
             "main SCAD looks up the same keys in both."
