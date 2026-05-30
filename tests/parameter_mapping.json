@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "OpenSCAD to Web API Parameter Mapping",
   "description": "Machine-readable mapping between OpenSCAD customizer variables and web API parameters. Source of truth for cross-platform validation.",
-  "version": "2.1.0",
-  "last_updated": "2026-01-10",
+  "version": "2.2.0",
+  "last_updated": "2026-05-30",
   "documentation": "See docs/PARAMETER_MAPPING.md for human-readable version",
   
   "ui_parameter_format": {
@@ -470,6 +470,7 @@
   "notes": [
     "Version 2.0.0: Card support removed, cylinder-only operation",
     "Version 2.1.0: Paper thickness preset system added, defaults updated to match web app 0.4mm preset",
+    "Version 2.2.0: Aggressive customizer polish (file rename, preset routing extraction, magic-number naming, $fn policy doc), TEXT TOO LONG warning geometry, expanded test coverage (presets/backward-compat/text-too-long suites, 3 new cross-platform fixtures, slider-range schema validator), split-repo cleanup (Plug Puller + CAD-to-OpenSCAD methodology extracted to sibling repos)",
     "This mapping is the source of truth for cross-platform validation",
     "Human-readable documentation in docs/PARAMETER_MAPPING.md should be kept in sync",
     "Web API uses snake_case; OpenSCAD uses snake_case (aligned)",

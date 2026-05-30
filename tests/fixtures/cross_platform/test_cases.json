@@ -3,11 +3,11 @@
   "title": "Cross-Platform Test Cases",
   "description": "Test case definitions for validating OpenSCAD STL output against web generator reference",
   "version": "1.0.0",
-  "fixture_version": "1.0.0",
+  "fixture_version": "1.1.0",
   "web_generator_commit": "localhost-dev-2026-01-10",
   "openscad_version": "2026.01.03",
   "openscad_backend": "Manifold",
-  "last_updated": "2026-01-09",
+  "last_updated": "2026-05-30",
   
   "test_cases": [
     {

@@ -1,12 +1,12 @@
 {
-  "version": "2.1.0",
+  "version": "2.2.0",
   "generated_at": "2026-01-11T05:36:31.285285Z",
   "generation_method": "openscad",
   "openscad_version": "OpenSCAD version 2026.01.03",
   "scad_file": "Braille_Cylinder_STL_Generator.scad",
   "total_fixtures": 14,
   "failed_fixtures": 0,
-  "notes": "Version 2.1.0: Paper thickness preset system added, defaults updated to match web app 0.4mm preset. All fixtures regenerated with new default values.",
+  "notes": "Version 2.2.0: Metadata-only bump for the v2.2.0 cleanup release. The 11 original fixtures from v2.1.0 are unchanged (same sha256). Phase 7b added 3 new fixtures (cylinder_rounded_emboss_multiline, cylinder_rounded_emboss_03mm, cylinder_rounded_counter_03mm) covering multi-line text and the 0.3mm paper-thickness preset; their reference STLs were rendered under OpenSCAD 2026.01.03 Manifold and are byte-stable across platforms. v2.2.0 also ships aggressive customizer polish (file rename, preset routing extraction, magic-number naming, $fn policy doc) and expanded tests (preset/backward-compat/text-too-long suites + slider-range schema validator). No fixture regeneration occurred in Phase 8.",
   "fixtures": [
     {
       "test_name": "cylinder_rounded_emboss_indicators_on",

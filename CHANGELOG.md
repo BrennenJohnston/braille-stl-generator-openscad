@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-05-30
+
 ### Removed
 - Plug Puller experiments (entire `Plug Puller Test/` tree, root
   `Plug_Puller_Parametric.scad`, root `Plug_Puller_v4_Parametric.scad`,
@@ -76,6 +78,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `active_polygon_cutout_points` semantic, global `$fn = 32`
   default) are each documented with their intent.
 - This `CHANGELOG.md` file.
+- Spin-off sibling repository [plug-puller-openscad](https://github.com/BrennenJohnston/plug-puller-openscad)
+  (private) — holds the Plug Puller v1/v2/v3/v4 design work
+  previously living in `Plug Puller Test/`.
+- Spin-off sibling repository
+  [cad-to-openscad-pipeline](https://github.com/BrennenJohnston/cad-to-openscad-pipeline)
+  (private) — packages the CAD-to-OpenSCAD methodology and the
+  general-purpose `dxf-to-openscad-polygon` console script.
+
+### Tests
+- `tests/test_presets.py` (9 tests): asserts the `PRESET_04` and
+  `PRESET_03` tables expose all 24 routed parameters, that
+  `preset_value(...)` falls back to the slider for "Custom", and
+  that every `active_*` aggregator in the main SCAD reads from
+  `preset_value()` rather than a hand-rolled ternary chain.
+- `tests/test_backward_compat.py` (6 tests): pins
+  `combined_shape`, `indicator_shapes`, `hemisphere_quality`, and
+  `shape_type` inside the explicit `/* [Hidden] */` block with an
+  empty-string default so the OpenSCAD Customizer no longer
+  surfaces them as orphan fields.
+- `tests/test_text_too_long.py` (2 tests): verifies the source
+  invariants of the new warning module and renders an oversized
+  text case through the nightly OpenSCAD runner to confirm the
+  warning geometry expands the cylinder's bounding box.
+- `tests/validate_parameter_schema.py` now parses
+  `// [min:step:max]` slider triples from the main SCAD and
+  cross-checks them against the `range` field in
+  `tests/parameter_mapping.json`. The validator's summary line
+  reports "All 24 OpenSCAD slider ranges match
+  parameter_mapping.json" and still exits 0.
+- Three new cross-platform reference fixtures, all LFS-tracked,
+  watertight, and byte-stable under OpenSCAD 2026.01.03 Manifold:
+  - `cylinder_rounded_emboss_multiline` (3-line short text, 0.4mm
+    preset, sha `8c70a0740e1c…`)
+  - `cylinder_rounded_emboss_03mm` (0.3mm paper-thickness preset,
+    rounded emboss, sha `da6336e72aa0…`)
+  - `cylinder_rounded_counter_03mm` (0.3mm preset on the rounded
+    counter path, sha `c07d653b6db3…`)
+  Total cross-platform fixtures: 11 → 14. The original 11 sha256
+  hashes are unchanged.
+- CI wiring: `tests/test_cloudcompare_logic.py`,
+  `tests/test_presets.py`, `tests/test_backward_compat.py`, and
+  `tests/test_text_too_long.py` are now invoked by the `test-quick`
+  job in `.github/workflows/stl-validation.yml`. Pinned OpenSCAD
+  remains 2026.01.03.
+- `tests/fixtures/cross_platform/FIXTURES_VERSION.{json,txt}` and
+  `tests/fixtures/cross_platform/test_cases.json` metadata bumped
+  to reflect the v2.2.0 release (no reference STL regeneration).
 
 ### Fixed
 - `docs/PARAMETER_MAPPING.md` "Indicator Shapes" section described
