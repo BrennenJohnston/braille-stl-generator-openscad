@@ -110,18 +110,34 @@ The OpenSCAD version has been updated to match the web-based generator's UI para
 ## Key Features Implemented
 
 ### 1. **Unified Shape Selection**
-- `combined_shape` parameter controls both emboss and counter plate dot shapes
-- When set to `"rounded"`: Uses rounded dome dots for emboss, bowl recesses for counter
-- When set to `"cone"`: Uses cone frustum dots for emboss, cone recesses for counter
+- `dot_shape` parameter (Customizer dropdown) controls both emboss and
+  counter plate dot shapes
+- When set to `"Rounded"`: Uses rounded dome dots for emboss, bowl
+  recesses for counter
+- When set to `"Cone"`: Uses cone frustum dots for emboss, cone recesses
+  for counter
 
-### 2. **Indicator Shapes**
-- `indicator_shapes = "on"` (On): Adds start/end markers to each row
-  - Reserves 2 cells per row (1 at start, 1 at end for cards; 2 at start for cylinders)
-  - Cards: Rectangle at column 0, Triangle at column N-1
-  - Cylinders: Triangle at column 0, Rectangle at column 1
-  - Counter plates: Triangle rotated 180° (cylinders only), Rectangle always used (never character)
-  - Helps align plates during embossing
-- `indicator_shapes = "off"` (Off): All cells available for braille text
+> **Backward compatibility:** the test harness and older configs may
+> still set `combined_shape` (lowercase: `"rounded"` / `"cone"`). It
+> lives in the `[Hidden]` block of the SCAD file and is normalized into
+> `dot_shape` at load time. New code should always use `dot_shape`.
+
+### 2. **Indicator Shapes (cylinder-only)**
+- `indicator_on` (Customizer toggle, On/Off) controls whether start
+  alignment markers are rendered.
+- When **On**, two cells per row are reserved at the leading edge of the
+  cylinder, so usable text capacity drops from `grid_columns` to
+  `grid_columns - 2`:
+  - **Column 0:** Triangle (orientation marker)
+  - **Column 1:** Rectangle (alignment / "this side up" marker)
+  - On the **counter plate**, the triangle is rotated 180° to mate with
+    the emboss plate; the rectangle is rendered identically.
+- When **Off**, all `grid_columns` cells are available for braille text
+  and no indicator geometry is generated.
+
+> Card indicators (rectangle at column 0, triangle at column N-1) were
+> removed when card support was retired in v2.0. Only the cylinder
+> layout above ships now.
 
 ### 3. **Flexible Counter Plate Recesses**
 - **Bowl Recess (Rounded)**: Spherical cap with adjustable diameter and depth
@@ -161,7 +177,7 @@ All default values match the web-based generator's defaults (0.4mm paper preset 
 2. Copy Unicode braille output
 3. Open OpenSCAD file
 4. Paste braille into Line_1, Line_2, etc.
-5. Choose shape_type and plate_type in Customizer
+5. Choose `dot_shape` and `plate_type` in Customizer
 6. Adjust expert parameters (optional)
 7. Render (F6)
 8. Export STL (File → Export → Export as STL)
@@ -192,7 +208,13 @@ All default values match the web-based generator's defaults (0.4mm paper preset 
    - The preset controls: spacing (7 params), emboss rounded (4 params), emboss cone (3 params), counter bowl (2 params), counter cone (3 params), and cylinder dimensions (5 params)
    - Text, plate type, shape selection, and rendering quality remain user-controlled
 
-2. **Indicator Shapes**: When enabled (`indicator_shapes = "on"`), they reserve the first and last cell of each row. The `grid_columns` parameter represents the number of cells *available for text*, not including indicators. The code internally adds 2 cells when indicators are on.
+2. **Indicator Shapes**: When enabled (`indicator_on = true` in the
+   Customizer; `indicator_shapes = "on"` is the legacy backward-compat
+   alias), the cylinder reserves the **first two cells** (col 0 = triangle,
+   col 1 = rectangle) at the leading edge for alignment markers. The
+   `grid_columns` parameter represents the number of cells *available for
+   text*, not including indicators - the code internally adds 2 cells when
+   indicators are on.
 
 3. **Rounded vs. Cone**: The web app calls these "Rounded" and "Cone" - both terms refer to the combined emboss+counter shape pair.
 
