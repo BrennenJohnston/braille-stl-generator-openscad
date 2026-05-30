@@ -168,7 +168,7 @@ parameter_name = default_value; // [min:step:max] or [option1, option2]
 ### Documentation Files
 
 - `README.md` — Project overview and quick start
-- `PARAMETER_MAPPING.md` — Maps parameters to web app UI controls
+- `docs/PARAMETER_MAPPING.md` — Maps parameters to web app UI controls
 - `OPENSCAD_COORDINATE_SYSTEM_SPECIFICATIONS.md` — Technical coordinate system details
 
 ## Related Projects

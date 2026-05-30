@@ -350,7 +350,7 @@ No additional centering translation is needed for cone dots.
 
 - `README.md` - Overview and usage
 - `Braille_Cylinder_STL_Generator.scad` - Main OpenSCAD implementation
-- `PARAMETER_MAPPING.md` - OpenSCAD to web UI parameter correspondence
+- `docs/PARAMETER_MAPPING.md` - OpenSCAD to web UI parameter correspondence
 
 Note: This document includes some historical comparison notes to the Python/Three.js implementation used by the web app. The web app source/specs are not present in this OpenSCAD-only branch.
 

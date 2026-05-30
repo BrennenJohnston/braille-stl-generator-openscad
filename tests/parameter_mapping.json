@@ -4,7 +4,7 @@
   "description": "Machine-readable mapping between OpenSCAD customizer variables and web API parameters. Source of truth for cross-platform validation.",
   "version": "2.1.0",
   "last_updated": "2026-01-10",
-  "documentation": "See PARAMETER_MAPPING.md for human-readable version",
+  "documentation": "See docs/PARAMETER_MAPPING.md for human-readable version",
   
   "ui_parameter_format": {
     "description": "OpenSCAD Customizer dropdown format guidelines to prevent duplicate options",
@@ -471,7 +471,7 @@
     "Version 2.0.0: Card support removed, cylinder-only operation",
     "Version 2.1.0: Paper thickness preset system added, defaults updated to match web app 0.4mm preset",
     "This mapping is the source of truth for cross-platform validation",
-    "Human-readable documentation in PARAMETER_MAPPING.md should be kept in sync",
+    "Human-readable documentation in docs/PARAMETER_MAPPING.md should be kept in sync",
     "Web API uses snake_case; OpenSCAD uses snake_case (aligned)",
     "UI dropdown labels are human-friendly (e.g., 'Rounded' not 'rounded')",
     "Test system uses lowercase values (e.g., 'rounded', 'positive')",
