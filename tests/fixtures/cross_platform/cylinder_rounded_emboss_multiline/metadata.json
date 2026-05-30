@@ -1,0 +1,47 @@
+{
+  "test_name": "cylinder_rounded_emboss_multiline",
+  "description": "Cylinder: Rounded dots, Embossing plate, 3-line short text (0.4mm preset)",
+  "tags": [
+    "cylinder",
+    "rounded",
+    "emboss",
+    "indicators_on",
+    "multiline",
+    "preset_04mm"
+  ],
+  "priority": "medium",
+  "reference_stl": "cross_platform/cylinder_rounded_emboss_multiline/reference.stl",
+  "stl_size_bytes": 10602874,
+  "stl_sha256": "8c70a0740e1c52d0d70b89584c31f9cf0a0bbc9afd010547dab2a05dff83dba7",
+  "mesh_properties": {
+    "volume_mm3": 10432.241449594712,
+    "surface_area_mm2": 10074.107467888778,
+    "bounding_box_mm": [
+      [
+        -15.4,
+        -16.388543269115218,
+        0.0
+      ],
+      [
+        16.347578837631616,
+        15.4,
+        52.0
+      ]
+    ],
+    "face_count": 32680,
+    "vertex_count": 16432,
+    "is_watertight": true,
+    "centroid_mm": [
+      0.16212438901584011,
+      -0.2936065751234048,
+      26.12606905687628
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5090439319610596
+  },
+  "generated_at": "2026-05-30T16:59:17.917238Z"
+}

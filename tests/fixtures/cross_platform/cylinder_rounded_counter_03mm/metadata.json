@@ -1,0 +1,47 @@
+{
+  "test_name": "cylinder_rounded_counter_03mm",
+  "description": "Cylinder: Rounded dots, Counter plate, 0.3mm paper-thickness preset",
+  "tags": [
+    "cylinder",
+    "rounded",
+    "counter",
+    "indicators_on",
+    "preset_03mm",
+    "slow_openscad"
+  ],
+  "priority": "medium",
+  "reference_stl": "cross_platform/cylinder_rounded_counter_03mm/reference.stl",
+  "stl_size_bytes": 20862860,
+  "stl_sha256": "c07d653b6db3a22062d01672a948392d5ab0bd66032feba02438d5dafc6fda6e",
+  "mesh_properties": {
+    "volume_mm3": 10273.294690930326,
+    "surface_area_mm2": 10004.916696331207,
+    "bounding_box_mm": [
+      [
+        -15.4,
+        -15.4,
+        0.0
+      ],
+      [
+        15.4,
+        15.4,
+        52.0
+      ]
+    ],
+    "face_count": 64896,
+    "vertex_count": 32448,
+    "is_watertight": true,
+    "centroid_mm": [
+      0.04211730268577335,
+      0.008102702696226824,
+      26.00000000000004
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Cylinder_STL_Generator.scad",
+    "duration_seconds": 1.0102379322052002
+  },
+  "generated_at": "2026-05-30T16:59:20.284827Z"
+}
