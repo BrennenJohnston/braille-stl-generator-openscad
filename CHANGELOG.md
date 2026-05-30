@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1] - 2026-05-30
+
+### Added
+- Wired the three new v2.2.0 cross-platform fixtures
+  (`cylinder_rounded_emboss_multiline`,
+  `cylinder_rounded_emboss_03mm`,
+  `cylinder_rounded_counter_03mm`) into
+  `tests/cross_platform_validation.py` so CI's `test-full` matrix
+  exercises all 14 reference STLs instead of just the original 11.
+- `INVALID_TEXT_STACK_GAP = 8` constant in
+  `Braille_Cylinder_STL_Generator.scad`, replacing the literal `+ 8`
+  used to stack the `TEXT TOO LONG` warning above
+  `INVALID CHARACTERS`. The structural invariant in
+  `tests/test_text_too_long.py` was updated to assert the named
+  form.
+
+### Fixed
+- Doc/code drift around the preset surface area: corrected
+  "24 parameters" → "23 parameters" in `README.md`,
+  `docs/PARAMETER_MAPPING.md` (2 places), and
+  `tests/parameter_mapping.json` after `braille_x_adjust` was removed
+  in v2.2.0. Renamed the corresponding pytest method
+  `test_preset_tables_share_24_parameters` →
+  `test_preset_tables_share_23_parameters`. (The CHANGELOG's "24
+  slider ranges" line under v2.2.0 is unchanged — that count
+  includes `cone_segments`, which is a numeric slider but is not
+  preset-controlled.)
+- `README.md` "Positioning adjustments (X/Y offsets)" bullet was
+  obsolete after `braille_x_adjust` removal; now reads "Vertical
+  positioning adjustment (Y offset)".
+- `tests/fixtures/cross_platform/test_cases.json` `fixture_version`
+  bumped from `1.1.0` to `2.2.0` to match
+  `FIXTURES_VERSION.json` / `.txt`.
+- `Braille_Cylinder_STL_Generator.scad` `$fn` policy header
+  corrected from "the four sources are intentionally segregated" to
+  "the five sources" (the body already enumerated five cases).
+
 ## [2.2.0] - 2026-05-30
 
 ### Removed
