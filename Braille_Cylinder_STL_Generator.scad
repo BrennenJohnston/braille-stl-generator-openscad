@@ -331,6 +331,42 @@ function get_dot_pattern(char) =
     : [0,0,0,0,0,0]; // Empty pattern for non-braille
 
 // =============================================================================
+// $fn TESSELLATION POLICY
+// =============================================================================
+//
+// Every curved-surface primitive below picks its $fn from exactly one source
+// based on what kind of surface it is. The four sources are intentionally
+// segregated (not competing) — pick whichever matches your geometry class:
+//
+//   1. CYLINDER_SHELL_FN = 64   — the outer cylinder shell. Hardcoded so the
+//      visual roundness of the printable face matches the web preview's
+//      three.js mesh exactly. Fixture STLs depend on this; never make it
+//      user-tweakable.
+//
+//   2. cone_segments  (slider)  — every cone/frustum primitive (emboss dot
+//      base/sides, cone counter recess). User-controllable 8..64; default 16.
+//      Cones are the cheapest primitive, so a low default keeps render time
+//      low while still allowing the user to crank it up for final exports.
+//
+//   3. quality_fn  (derived)    — every SPHERE primitive (the rounded dome
+//      on top of an emboss dot, and the spherical-cap bowl counter recess).
+//      Spheres cost O(n²) facets so we route them through a 3-step quality
+//      dropdown: Low/24, Medium/32, High/64. The hemisphere_quality test
+//      override also flows in here for cross-platform fixtures.
+//
+//   4. active_polygon_cutout_points (slider)  — the optional polygonal
+//      cutout subtracted from the cylinder shell. $fn here is SEMANTIC: it
+//      directly controls how many sides the cutout has (e.g. 6 for a hex
+//      hole), so the value is the cutout's purpose, not its quality.
+//
+//   5. global $fn = 32 (default) — anything not in cases 1–4 (mainly 2D
+//      shapes inside linear_extrude, where curvature isn't expressed).
+//
+// If you add a new curved primitive, pick the case that matches and pass
+// its constant explicitly. Do not rely on the global $fn for any visible
+// curved surface or you will silently desync from the web preview.
+//
+// =============================================================================
 // INDICATOR SHAPE MODULES
 // =============================================================================
 //
@@ -484,7 +520,7 @@ module counter_recess() {
 
 module cylinder_shell(cutout_rotate_deg = 0) {
     difference() {
-        // Outer cylinder (64 segments to match web generator)
+        // Outer cylinder (see $fn TESSELLATION POLICY: case 1)
         cylinder(h = active_cylinder_height_mm, r = active_cylinder_diameter_mm / 2, center = true, $fn = CYLINDER_SHELL_FN);
         
         // Polygonal cutout if specified
