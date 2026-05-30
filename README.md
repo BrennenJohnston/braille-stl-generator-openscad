@@ -14,6 +14,15 @@ This is the **offline OpenSCAD companion** to the web-based Braille STL Generato
 | **OpenSCAD** (this repo) | [github.com/BrennenJohnston/braille-stl-generator-openscad](https://github.com/BrennenJohnston/braille-stl-generator-openscad) | Offline use, full parametric control |
 | **Web App Source** | [github.com/BrennenJohnston/braille-card-and-cylinder-stl-generator](https://github.com/BrennenJohnston/braille-card-and-cylinder-stl-generator) | Web app source code |
 
+### Spin-off Projects
+
+The following repositories were extracted from earlier iterations of this project and are now developed separately:
+
+| Repo | Description |
+|------|-------------|
+| [plug-puller-openscad](https://github.com/BrennenJohnston/plug-puller-openscad) | Parametric SCAD + CAD data for the Plug Puller experiments (v1.0–v4.0). |
+| [cad-to-openscad-pipeline](https://github.com/BrennenJohnston/cad-to-openscad-pipeline) | Reusable methodology and tooling for converting CAD models into clean parametric OpenSCAD, including the `dxf_to_openscad_polygon` tool. |
+
 ## ⚠️ Key Difference
 
 **This OpenSCAD version requires pre-translated Unicode braille text.** It does NOT include automatic translation.
@@ -29,7 +38,7 @@ This is the **offline OpenSCAD companion** to the web-based Braille STL Generato
    - Type your text and copy the braille output (e.g., ⠓⠑⠇⠇⠕)
 
 2. **Open in OpenSCAD**:
-   - Open `Braille_Card_And_Cylinder_STL_Generator.scad`
+   - Open `Braille_Cylinder_STL_Generator.scad`
    - Open the Customizer panel (View → Customizer)
 
 3. **Configure**:
@@ -182,11 +191,17 @@ See [docs/QUICK_START_TESTING.md](docs/QUICK_START_TESTING.md) for detailed test
 - Solution: Translate at Branah.com and copy the braille output
 
 ### "TEXT TOO LONG" Warning
-- Your braille text exceeds `grid_columns` limit
-- Solution: Reduce text length or increase `grid_columns`
+- Any of `Line_1`–`Line_4` is longer than the cells available for text
+- Capacity = `grid_columns` when indicators are off, or
+  `grid_columns - 2` when indicators are on (col 0 and col 1 are
+  reserved for the alignment markers)
+- A red `TEXT TOO LONG` extrusion is rendered above the cylinder
+  whenever the limit is exceeded
+- Solution: shorten the line, increase `grid_columns`, or turn
+  indicators off
 
 ### Dots Don't Align
-- Check `braille_x_adjust` and `braille_y_adjust`
+- Check `braille_y_adjust` for vertical offset, or `seam_offset_degrees` for angular offset around the cylinder
 - Ensure spacing settings match between emboss and counter plates
 
 ### Plates Don't Fit Together
@@ -238,5 +253,5 @@ For general braille embossing questions, see the [web app](https://braille-card-
 
 ---
 
-**Version**: 2.1.0  
-**Last Updated**: 2026-01-11
+**Version**: 2.2.0  
+**Last Updated**: 2026-05-30

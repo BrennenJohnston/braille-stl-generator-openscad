@@ -196,7 +196,7 @@ The indicator shape implementation is **correct and complete**. The work done by
 ## References
 
 - **Web Specification:** `C:\Users\WATAP\Documents\github\braille-card-and-cylinder-stl-generator\docs\specifications\RECESS_INDICATOR_SPECIFICATIONS.md`
-- **OpenSCAD Implementation:** `Braille_Card_And_Cylinder_STL_Generator.scad` (lines 259-309, 699-755)
+- **OpenSCAD Implementation:** `Braille_Cylinder_STL_Generator.scad` (lines 259-309, 699-755)
 - **Test Suite:** `tests/cross_platform_validation.py`, `tests/test_indicator_source_guards.py`
 - **Test Cases:** `tests/fixtures/cross_platform/test_cases.json` (11 test cases)
 

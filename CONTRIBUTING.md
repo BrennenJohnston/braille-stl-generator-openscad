@@ -50,7 +50,7 @@ By participating in this project, you agree to maintain a respectful and inclusi
 2. Use the Customizer panel (View → Customizer) to adjust parameters
 3. Press F5 for preview, F6 for full render
 4. Test with various configurations:
-   - Cylinder shapes (card temporarily hidden)
+   - Cylinder shape (card support permanently removed)
    - Positive (emboss) vs Negative (counter) plates
    - Rounded vs Cone dot shapes
    - With and without indicator shapes
@@ -168,7 +168,7 @@ parameter_name = default_value; // [min:step:max] or [option1, option2]
 ### Documentation Files
 
 - `README.md` — Project overview and quick start
-- `PARAMETER_MAPPING.md` — Maps parameters to web app UI controls
+- `docs/PARAMETER_MAPPING.md` — Maps parameters to web app UI controls
 - `OPENSCAD_COORDINATE_SYSTEM_SPECIFICATIONS.md` — Technical coordinate system details
 
 ## Related Projects

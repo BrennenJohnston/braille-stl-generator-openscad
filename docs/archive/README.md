@@ -14,6 +14,7 @@ These documents are preserved for reference but are no longer actively maintaine
 | `VALIDATION_SUMMARY.md` | Indicator shape validation summary | 2026-01-10 |
 | `VALIDATION_EXECUTIVE_SUMMARY.txt` | Executive summary of validation | 2026-01-10 |
 | `INDICATOR_VALIDATION_REPORT.md` | Detailed indicator shape validation report | 2026-01-10 |
+| `CODEBASE_AUDIT_SUMMARY_2026-01-10.md` | Pre-cleanup codebase audit (input to v2.2.0 cleanup plan) | 2026-01-10 |
 
 ## Current Documentation
 

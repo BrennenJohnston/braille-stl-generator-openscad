@@ -2,9 +2,9 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "OpenSCAD to Web API Parameter Mapping",
   "description": "Machine-readable mapping between OpenSCAD customizer variables and web API parameters. Source of truth for cross-platform validation.",
-  "version": "2.1.0",
-  "last_updated": "2026-01-10",
-  "documentation": "See PARAMETER_MAPPING.md for human-readable version",
+  "version": "2.2.0",
+  "last_updated": "2026-05-30",
+  "documentation": "See docs/PARAMETER_MAPPING.md for human-readable version",
   
   "ui_parameter_format": {
     "description": "OpenSCAD Customizer dropdown format guidelines to prevent duplicate options",
@@ -229,17 +229,6 @@
       "unit": "mm",
       "section": "Expert Mode - Braille Spacing",
       "description": "Spacing between dots within a cell"
-    },
-    {
-      "openscad_name": "braille_x_adjust",
-      "web_api_name": "braille_x_adjust",
-      "web_ui_label": "X Adjust",
-      "type": "float",
-      "default": 0.0,
-      "range": [-10, 10],
-      "unit": "mm",
-      "section": "Expert Mode - Braille Spacing",
-      "description": "Horizontal adjustment of braille pattern"
     },
     {
       "openscad_name": "braille_y_adjust",
@@ -481,8 +470,9 @@
   "notes": [
     "Version 2.0.0: Card support removed, cylinder-only operation",
     "Version 2.1.0: Paper thickness preset system added, defaults updated to match web app 0.4mm preset",
+    "Version 2.2.0: Aggressive customizer polish (file rename, preset routing extraction, magic-number naming, $fn policy doc), TEXT TOO LONG warning geometry, expanded test coverage (presets/backward-compat/text-too-long suites, 3 new cross-platform fixtures, slider-range schema validator), split-repo cleanup (Plug Puller + CAD-to-OpenSCAD methodology extracted to sibling repos)",
     "This mapping is the source of truth for cross-platform validation",
-    "Human-readable documentation in PARAMETER_MAPPING.md should be kept in sync",
+    "Human-readable documentation in docs/PARAMETER_MAPPING.md should be kept in sync",
     "Web API uses snake_case; OpenSCAD uses snake_case (aligned)",
     "UI dropdown labels are human-friendly (e.g., 'Rounded' not 'rounded')",
     "Test system uses lowercase values (e.g., 'rounded', 'positive')",

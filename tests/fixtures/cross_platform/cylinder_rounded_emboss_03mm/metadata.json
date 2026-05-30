@@ -1,0 +1,46 @@
+{
+  "test_name": "cylinder_rounded_emboss_03mm",
+  "description": "Cylinder: Rounded dots, Embossing plate, 0.3mm paper-thickness preset",
+  "tags": [
+    "cylinder",
+    "rounded",
+    "emboss",
+    "indicators_on",
+    "preset_03mm"
+  ],
+  "priority": "medium",
+  "reference_stl": "cross_platform/cylinder_rounded_emboss_03mm/reference.stl",
+  "stl_size_bytes": 1949026,
+  "stl_sha256": "da6336e72aa05982812411a9b74357c7dc316af9dbaa6fe99f3afcd2119fcb05",
+  "mesh_properties": {
+    "volume_mm3": 10396.055678044162,
+    "surface_area_mm2": 9850.80012021565,
+    "bounding_box_mm": [
+      [
+        -15.4,
+        -16.18880039103984,
+        0.0
+      ],
+      [
+        15.4,
+        15.4,
+        52.0
+      ]
+    ],
+    "face_count": 6080,
+    "vertex_count": 3056,
+    "is_watertight": true,
+    "centroid_mm": [
+      -0.03803935828863929,
+      -0.08709573764365279,
+      26.04347470880981
+    ]
+  },
+  "generation": {
+    "method": "openscad",
+    "openscad_version": "OpenSCAD version 2026.01.03",
+    "scad_file": "Braille_Cylinder_STL_Generator.scad",
+    "duration_seconds": 0.5123145580291748
+  },
+  "generated_at": "2026-05-30T16:59:18.577092Z"
+}

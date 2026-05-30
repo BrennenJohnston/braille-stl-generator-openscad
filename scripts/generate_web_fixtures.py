@@ -216,7 +216,6 @@ class WebFixtureGenerator:
                         "cell_spacing": parameters.get("cell_spacing"),
                         "line_spacing": parameters.get("line_spacing"),
                         "dot_spacing": parameters.get("dot_spacing"),
-                        "braille_x_adjust": parameters.get("braille_x_adjust"),
                         "braille_y_adjust": parameters.get("braille_y_adjust"),
                         # Cylinder geometry
                         "cylinder_diameter_mm": parameters.get("cylinder_diameter_mm"),

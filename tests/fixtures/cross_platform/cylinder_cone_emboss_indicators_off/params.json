@@ -19,7 +19,6 @@
     "cell_spacing": 6.5,
     "line_spacing": 10.0,
     "dot_spacing": 2.5,
-    "braille_x_adjust": 0.0,
     "braille_y_adjust": 0.0,
     "emboss_dot_base_diameter": 1.8,
     "emboss_dot_height": 1.0,

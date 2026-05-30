@@ -119,7 +119,10 @@ line_spacing = 10.0; // [5:0.1:25] Vertical spacing between lines (mm)
 dot_spacing = 2.5; // [1:0.1:5] Spacing between dots within a cell (mm)
 
 // --- Braille Positioning ---
-braille_x_adjust = 0.0; // [-10:0.1:10] Horizontal adjustment of braille pattern (mm)
+// Note: on a cylinder, X = angular wrap around the seam — a linear "X adjust"
+// has no useful meaning, so only the vertical adjust is exposed. Use
+// `seam_offset_degrees` (Expert Mode - Cylinder Dimensions) to rotate the
+// braille pattern around the cylinder axis.
 braille_y_adjust = 0.0; // [-10:0.1:10] Vertical adjustment of braille pattern (mm)
 
 /* [Expert Mode - Braille Dot Adjustments] */
@@ -155,85 +158,9 @@ $fn = 32; // Resolution for curved surfaces
 // Mathematical constants
 PI = 3.14159265359;
 
-// =============================================================================
-// PRESET VALUE CONSTANTS
-// =============================================================================
-// Source: Web app THICKNESS_PRESETS in public/index.html
-// These values are applied when paper_thickness_preset is "0.4mm" or "0.3mm"
-
-// --------- 0.4mm Preset (Thicker Paper, Larger Dots) ---------
-// Spacing
-_p04_grid_columns = 11;
-_p04_grid_rows = 4;
-_p04_cell_spacing = 6.5;
-_p04_line_spacing = 10.0;
-_p04_dot_spacing = 2.5;
-_p04_braille_x_adjust = 0.0;
-_p04_braille_y_adjust = 0.0;
-
-// Emboss Rounded
-_p04_rounded_dot_base_diameter = 1.5;
-_p04_rounded_dot_base_height = 0.5;
-_p04_rounded_dot_dome_diameter = 1.0;
-_p04_rounded_dot_dome_height = 0.5;
-
-// Emboss Cone
-_p04_emboss_dot_base_diameter = 1.5;
-_p04_emboss_dot_height = 0.8;
-_p04_emboss_dot_flat_hat = 0.4;
-
-// Counter Bowl
-_p04_bowl_counter_dot_base_diameter = 1.8;
-_p04_counter_dot_depth = 0.8;
-
-// Counter Cone
-_p04_cone_counter_dot_base_diameter = 1.9;
-_p04_cone_counter_dot_height = 0.7;
-_p04_cone_counter_dot_flat_hat = 1.0;
-
-// Cylinder
-_p04_cylinder_diameter_mm = 30.8;
-_p04_cylinder_height_mm = 52;
-_p04_polygon_cutout_radius_mm = 13;
-_p04_polygon_cutout_points = 12;
-_p04_seam_offset_degrees = 0.0;
-
-// --------- 0.3mm Preset (Thinner Paper, Smaller Dots) ---------
-// Spacing (same as 0.4mm)
-_p03_grid_columns = 11;
-_p03_grid_rows = 4;
-_p03_cell_spacing = 6.5;
-_p03_line_spacing = 10.0;
-_p03_dot_spacing = 2.5;
-_p03_braille_x_adjust = 0.0;
-_p03_braille_y_adjust = 0.0;
-
-// Emboss Rounded (smaller)
-_p03_rounded_dot_base_diameter = 1.2;
-_p03_rounded_dot_base_height = 0.4;
-_p03_rounded_dot_dome_diameter = 0.8;
-_p03_rounded_dot_dome_height = 0.4;
-
-// Emboss Cone (smaller)
-_p03_emboss_dot_base_diameter = 1.2;
-_p03_emboss_dot_height = 0.6;
-_p03_emboss_dot_flat_hat = 0.2;
-
-// Counter Bowl (smaller)
-_p03_bowl_counter_dot_base_diameter = 1.5;
-_p03_counter_dot_depth = 0.5;
-
-// Counter Cone (smaller)
-_p03_cone_counter_dot_base_diameter = 1.5;
-_p03_cone_counter_dot_height = 0.5;
-_p03_cone_counter_dot_flat_hat = 0.8;
-
-// Cylinder (same as 0.4mm)
-_p03_cylinder_diameter_mm = 30.8;
-_p03_cylinder_height_mm = 52;
-_p03_polygon_cutout_radius_mm = 13;
-_p03_polygon_cutout_points = 12;
-_p03_seam_offset_degrees = 0.0;
+// Preset value tables (PRESET_04, PRESET_03) and the preset_value() lookup
+// helper live in presets.scad. Edit that file to change preset values.
+include <presets.scad>;
 
 // =============================================================================
 // BACKWARD COMPATIBILITY - Test System Parameters
@@ -243,6 +170,10 @@ _p03_seam_offset_degrees = 0.0;
 //
 // Usage: openscad -D 'combined_shape="rounded"' -D 'indicator_shapes="on"' ...
 //
+// IMPORTANT: keep this `/* [Hidden] */` marker so OpenSCAD's Customizer
+// never renders these four vars as orphan, uncategorized sliders even if
+// a new `/* [Section] */` heading gets inserted above this block later.
+/* [Hidden] */
 combined_shape = "";         // "rounded" or "cone" (from test system)
 indicator_shapes = "";       // "on" or "off" (from test system)
 hemisphere_quality = "";     // "low", "medium", "high" (from test system)
@@ -274,111 +205,45 @@ quality_fn = (hemisphere_quality == "low" || render_quality == "Low") ? 24 :
 // =============================================================================
 // PRESET ROUTING - Select preset vs. custom values
 // =============================================================================
-// These variables route between preset constants and user parameters based on
-// paper_thickness_preset selection. Pattern: preset value if "0.4mm" or "0.3mm",
-// otherwise use the user's manual parameter setting.
+// Each `_preset_*` variable routes between the matching preset table entry
+// (see presets.scad) and the user's slider value. If `paper_thickness_preset`
+// is "0.4mm" or "0.3mm", the table value wins; otherwise the slider value
+// (third argument) is used.
 
 // Spacing parameters
-_preset_grid_columns = (paper_thickness_preset == "0.4mm") ? _p04_grid_columns :
-                       (paper_thickness_preset == "0.3mm") ? _p03_grid_columns :
-                       grid_columns;
-
-_preset_grid_rows = (paper_thickness_preset == "0.4mm") ? _p04_grid_rows :
-                    (paper_thickness_preset == "0.3mm") ? _p03_grid_rows :
-                    grid_rows;
-
-_preset_cell_spacing = (paper_thickness_preset == "0.4mm") ? _p04_cell_spacing :
-                       (paper_thickness_preset == "0.3mm") ? _p03_cell_spacing :
-                       cell_spacing;
-
-_preset_line_spacing = (paper_thickness_preset == "0.4mm") ? _p04_line_spacing :
-                       (paper_thickness_preset == "0.3mm") ? _p03_line_spacing :
-                       line_spacing;
-
-_preset_dot_spacing = (paper_thickness_preset == "0.4mm") ? _p04_dot_spacing :
-                      (paper_thickness_preset == "0.3mm") ? _p03_dot_spacing :
-                      dot_spacing;
-
-_preset_braille_x_adjust = (paper_thickness_preset == "0.4mm") ? _p04_braille_x_adjust :
-                           (paper_thickness_preset == "0.3mm") ? _p03_braille_x_adjust :
-                           braille_x_adjust;
-
-_preset_braille_y_adjust = (paper_thickness_preset == "0.4mm") ? _p04_braille_y_adjust :
-                           (paper_thickness_preset == "0.3mm") ? _p03_braille_y_adjust :
-                           braille_y_adjust;
+_preset_grid_columns                   = preset_value(paper_thickness_preset, "grid_columns",                   grid_columns);
+_preset_grid_rows                      = preset_value(paper_thickness_preset, "grid_rows",                      grid_rows);
+_preset_cell_spacing                   = preset_value(paper_thickness_preset, "cell_spacing",                   cell_spacing);
+_preset_line_spacing                   = preset_value(paper_thickness_preset, "line_spacing",                   line_spacing);
+_preset_dot_spacing                    = preset_value(paper_thickness_preset, "dot_spacing",                    dot_spacing);
+_preset_braille_y_adjust               = preset_value(paper_thickness_preset, "braille_y_adjust",               braille_y_adjust);
 
 // Emboss Rounded parameters
-_preset_rounded_dot_base_diameter = (paper_thickness_preset == "0.4mm") ? _p04_rounded_dot_base_diameter :
-                                    (paper_thickness_preset == "0.3mm") ? _p03_rounded_dot_base_diameter :
-                                    rounded_dot_base_diameter;
-
-_preset_rounded_dot_base_height = (paper_thickness_preset == "0.4mm") ? _p04_rounded_dot_base_height :
-                                  (paper_thickness_preset == "0.3mm") ? _p03_rounded_dot_base_height :
-                                  rounded_dot_base_height;
-
-_preset_rounded_dot_dome_diameter = (paper_thickness_preset == "0.4mm") ? _p04_rounded_dot_dome_diameter :
-                                    (paper_thickness_preset == "0.3mm") ? _p03_rounded_dot_dome_diameter :
-                                    rounded_dot_dome_diameter;
-
-_preset_rounded_dot_dome_height = (paper_thickness_preset == "0.4mm") ? _p04_rounded_dot_dome_height :
-                                  (paper_thickness_preset == "0.3mm") ? _p03_rounded_dot_dome_height :
-                                  rounded_dot_dome_height;
+_preset_rounded_dot_base_diameter      = preset_value(paper_thickness_preset, "rounded_dot_base_diameter",      rounded_dot_base_diameter);
+_preset_rounded_dot_base_height        = preset_value(paper_thickness_preset, "rounded_dot_base_height",        rounded_dot_base_height);
+_preset_rounded_dot_dome_diameter      = preset_value(paper_thickness_preset, "rounded_dot_dome_diameter",      rounded_dot_dome_diameter);
+_preset_rounded_dot_dome_height        = preset_value(paper_thickness_preset, "rounded_dot_dome_height",        rounded_dot_dome_height);
 
 // Emboss Cone parameters
-_preset_emboss_dot_base_diameter = (paper_thickness_preset == "0.4mm") ? _p04_emboss_dot_base_diameter :
-                                   (paper_thickness_preset == "0.3mm") ? _p03_emboss_dot_base_diameter :
-                                   emboss_dot_base_diameter;
-
-_preset_emboss_dot_height = (paper_thickness_preset == "0.4mm") ? _p04_emboss_dot_height :
-                            (paper_thickness_preset == "0.3mm") ? _p03_emboss_dot_height :
-                            emboss_dot_height;
-
-_preset_emboss_dot_flat_hat = (paper_thickness_preset == "0.4mm") ? _p04_emboss_dot_flat_hat :
-                              (paper_thickness_preset == "0.3mm") ? _p03_emboss_dot_flat_hat :
-                              emboss_dot_flat_hat;
+_preset_emboss_dot_base_diameter       = preset_value(paper_thickness_preset, "emboss_dot_base_diameter",       emboss_dot_base_diameter);
+_preset_emboss_dot_height              = preset_value(paper_thickness_preset, "emboss_dot_height",              emboss_dot_height);
+_preset_emboss_dot_flat_hat            = preset_value(paper_thickness_preset, "emboss_dot_flat_hat",            emboss_dot_flat_hat);
 
 // Counter Bowl parameters
-_preset_bowl_counter_dot_base_diameter = (paper_thickness_preset == "0.4mm") ? _p04_bowl_counter_dot_base_diameter :
-                                         (paper_thickness_preset == "0.3mm") ? _p03_bowl_counter_dot_base_diameter :
-                                         bowl_counter_dot_base_diameter;
-
-_preset_counter_dot_depth = (paper_thickness_preset == "0.4mm") ? _p04_counter_dot_depth :
-                            (paper_thickness_preset == "0.3mm") ? _p03_counter_dot_depth :
-                            counter_dot_depth;
+_preset_bowl_counter_dot_base_diameter = preset_value(paper_thickness_preset, "bowl_counter_dot_base_diameter", bowl_counter_dot_base_diameter);
+_preset_counter_dot_depth              = preset_value(paper_thickness_preset, "counter_dot_depth",              counter_dot_depth);
 
 // Counter Cone parameters
-_preset_cone_counter_dot_base_diameter = (paper_thickness_preset == "0.4mm") ? _p04_cone_counter_dot_base_diameter :
-                                         (paper_thickness_preset == "0.3mm") ? _p03_cone_counter_dot_base_diameter :
-                                         cone_counter_dot_base_diameter;
-
-_preset_cone_counter_dot_height = (paper_thickness_preset == "0.4mm") ? _p04_cone_counter_dot_height :
-                                  (paper_thickness_preset == "0.3mm") ? _p03_cone_counter_dot_height :
-                                  cone_counter_dot_height;
-
-_preset_cone_counter_dot_flat_hat = (paper_thickness_preset == "0.4mm") ? _p04_cone_counter_dot_flat_hat :
-                                    (paper_thickness_preset == "0.3mm") ? _p03_cone_counter_dot_flat_hat :
-                                    cone_counter_dot_flat_hat;
+_preset_cone_counter_dot_base_diameter = preset_value(paper_thickness_preset, "cone_counter_dot_base_diameter", cone_counter_dot_base_diameter);
+_preset_cone_counter_dot_height        = preset_value(paper_thickness_preset, "cone_counter_dot_height",        cone_counter_dot_height);
+_preset_cone_counter_dot_flat_hat      = preset_value(paper_thickness_preset, "cone_counter_dot_flat_hat",      cone_counter_dot_flat_hat);
 
 // Cylinder parameters
-_preset_cylinder_diameter_mm = (paper_thickness_preset == "0.4mm") ? _p04_cylinder_diameter_mm :
-                               (paper_thickness_preset == "0.3mm") ? _p03_cylinder_diameter_mm :
-                               cylinder_diameter_mm;
-
-_preset_cylinder_height_mm = (paper_thickness_preset == "0.4mm") ? _p04_cylinder_height_mm :
-                             (paper_thickness_preset == "0.3mm") ? _p03_cylinder_height_mm :
-                             cylinder_height_mm;
-
-_preset_polygon_cutout_radius_mm = (paper_thickness_preset == "0.4mm") ? _p04_polygon_cutout_radius_mm :
-                                   (paper_thickness_preset == "0.3mm") ? _p03_polygon_cutout_radius_mm :
-                                   polygon_cutout_radius_mm;
-
-_preset_polygon_cutout_points = (paper_thickness_preset == "0.4mm") ? _p04_polygon_cutout_points :
-                                (paper_thickness_preset == "0.3mm") ? _p03_polygon_cutout_points :
-                                polygon_cutout_points;
-
-_preset_seam_offset_degrees = (paper_thickness_preset == "0.4mm") ? _p04_seam_offset_degrees :
-                              (paper_thickness_preset == "0.3mm") ? _p03_seam_offset_degrees :
-                              seam_offset_degrees;
+_preset_cylinder_diameter_mm           = preset_value(paper_thickness_preset, "cylinder_diameter_mm",           cylinder_diameter_mm);
+_preset_cylinder_height_mm             = preset_value(paper_thickness_preset, "cylinder_height_mm",             cylinder_height_mm);
+_preset_polygon_cutout_radius_mm       = preset_value(paper_thickness_preset, "polygon_cutout_radius_mm",       polygon_cutout_radius_mm);
+_preset_polygon_cutout_points          = preset_value(paper_thickness_preset, "polygon_cutout_points",          polygon_cutout_points);
+_preset_seam_offset_degrees            = preset_value(paper_thickness_preset, "seam_offset_degrees",            seam_offset_degrees);
 
 // =============================================================================
 // ACTIVE PARAMETERS - Final values used by geometry
@@ -387,14 +252,13 @@ _preset_seam_offset_degrees = (paper_thickness_preset == "0.4mm") ? _p04_seam_of
 // They incorporate both preset routing (above) and shape-based routing (rounded vs cone).
 
 // Active emboss dot parameters (based on shape selection, using preset-routed values)
-active_emboss_base_diameter = use_rounded_dots ? _preset_rounded_dot_base_diameter : _preset_emboss_dot_base_diameter;
+// Note: cone/rounded emboss modules consume the underlying _preset_* constants
+// directly; only the composite height is needed at this layer.
 active_emboss_height = use_rounded_dots ? (_preset_rounded_dot_base_height + _preset_rounded_dot_dome_height) : _preset_emboss_dot_height;
-active_emboss_top_diameter = use_rounded_dots ? _preset_rounded_dot_dome_diameter : _preset_emboss_dot_flat_hat;
 
 // Active counter dot parameters (based on shape selection, using preset-routed values)
 active_counter_base_diameter = use_rounded_dots ? _preset_bowl_counter_dot_base_diameter : _preset_cone_counter_dot_base_diameter;
 active_counter_height = use_rounded_dots ? _preset_counter_dot_depth : _preset_cone_counter_dot_height;
-active_counter_top_diameter = use_rounded_dots ? 0 : _preset_cone_counter_dot_flat_hat;
 
 // Active spacing parameters (pass through from preset routing)
 active_grid_columns = _preset_grid_columns;
@@ -402,7 +266,6 @@ active_grid_rows = _preset_grid_rows;
 active_cell_spacing = _preset_cell_spacing;
 active_line_spacing = _preset_line_spacing;
 active_dot_spacing = _preset_dot_spacing;
-active_braille_x_adjust = _preset_braille_x_adjust;
 active_braille_y_adjust = _preset_braille_y_adjust;
 
 // Active cylinder parameters (pass through from preset routing)
@@ -417,6 +280,20 @@ actual_grid_columns = indicator_on ? (active_grid_columns + 2) : active_grid_col
 grid_width = (actual_grid_columns - 1) * active_cell_spacing;
 grid_height = (active_grid_rows - 1) * active_line_spacing;
 top_margin = (active_cylinder_height_mm - grid_height) / 2;
+
+// Cylinder grid geometry — shared by cylinder_emboss_plate and
+// cylinder_counter_plate. Both modules used to recompute these identically
+// inline; hoisting them keeps the two plates in lockstep so any spacing
+// change automatically applies to both. Names mirror the prior local names
+// so the module bodies need no changes beyond removing the duplicates.
+radius                = active_cylinder_diameter_mm / 2;
+grid_angle            = grid_width / radius;
+start_angle           = -grid_angle / 2;
+cell_spacing_angle    = active_cell_spacing / radius;
+dot_spacing_angle     = active_dot_spacing / radius;
+dot_col_angle_offsets = [-dot_spacing_angle / 2, dot_spacing_angle / 2];
+dot_row_offsets       = [active_dot_spacing, 0, -active_dot_spacing];
+dot_positions         = [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]];
 
 // Counter plate recess radii (spherical cap formula to match web generator)
 // For a bowl recess: R = (a² + h²) / (2h) where a = opening radius, h = depth
@@ -454,6 +331,42 @@ function get_dot_pattern(char) =
     : [0,0,0,0,0,0]; // Empty pattern for non-braille
 
 // =============================================================================
+// $fn TESSELLATION POLICY
+// =============================================================================
+//
+// Every curved-surface primitive below picks its $fn from exactly one source
+// based on what kind of surface it is. The four sources are intentionally
+// segregated (not competing) — pick whichever matches your geometry class:
+//
+//   1. CYLINDER_SHELL_FN = 64   — the outer cylinder shell. Hardcoded so the
+//      visual roundness of the printable face matches the web preview's
+//      three.js mesh exactly. Fixture STLs depend on this; never make it
+//      user-tweakable.
+//
+//   2. cone_segments  (slider)  — every cone/frustum primitive (emboss dot
+//      base/sides, cone counter recess). User-controllable 8..64; default 16.
+//      Cones are the cheapest primitive, so a low default keeps render time
+//      low while still allowing the user to crank it up for final exports.
+//
+//   3. quality_fn  (derived)    — every SPHERE primitive (the rounded dome
+//      on top of an emboss dot, and the spherical-cap bowl counter recess).
+//      Spheres cost O(n²) facets so we route them through a 3-step quality
+//      dropdown: Low/24, Medium/32, High/64. The hemisphere_quality test
+//      override also flows in here for cross-platform fixtures.
+//
+//   4. active_polygon_cutout_points (slider)  — the optional polygonal
+//      cutout subtracted from the cylinder shell. $fn here is SEMANTIC: it
+//      directly controls how many sides the cutout has (e.g. 6 for a hex
+//      hole), so the value is the cutout's purpose, not its quality.
+//
+//   5. global $fn = 32 (default) — anything not in cases 1–4 (mainly 2D
+//      shapes inside linear_extrude, where curvature isn't expressed).
+//
+// If you add a new curved primitive, pick the case that matches and pass
+// its constant explicitly. Do not rely on the global $fn for any visible
+// curved surface or you will silently desync from the web preview.
+//
+// =============================================================================
 // INDICATOR SHAPE MODULES
 // =============================================================================
 //
@@ -467,7 +380,25 @@ function get_dot_pattern(char) =
 //     Column 1: Rectangle placeholder (counter ALWAYS rectangle; emboss uses rect for braille input)
 //
 INDICATOR_TRIANGLE_DEPTH_EMBOSS = 0.6;
-INDICATOR_RECT_DEPTH_EMBOSS = 0.5;
+INDICATOR_RECT_DEPTH_EMBOSS     = 0.5;
+
+// Radial epsilon pushed into the cylinder shell so recessed indicator
+// markers and cone-counter recesses break coplanar boolean faces cleanly
+// (without this, CGAL/Manifold can produce zero-area facets at the contact
+// patch and STL exporters complain about non-manifold edges).
+INDICATOR_OVERCUT = 0.05;
+
+// Cylinder shell tessellation count. The cylinder is rendered as a regular
+// prism; 64 segments gives near-cylindrical appearance at modest cost.
+// Keep in sync with the web preview's three.js shell segments.
+CYLINDER_SHELL_FN = 64;
+
+// "INVALID CHARACTERS" warning text placement (rendered above the cylinder
+// when get_dot_pattern() returns the bad-pattern marker for an untranslated
+// English glyph).
+INVALID_TEXT_Z_OFFSET = 5;   // mm above the cylinder top
+INVALID_TEXT_SIZE     = 5;   // text() font size in mm
+INVALID_TEXT_DEPTH    = 2;   // linear_extrude height in mm
 
 module indicator_triangle_2d(rotate_180 = false) {
     // Isosceles triangle with vertical base on LEFT, apex RIGHT (default).
@@ -505,7 +436,7 @@ module indicator_rectangle_prism_centered(depth) {
 }
 
 // Cylinder marker placement helper
-module place_cylinder_marker(theta_deg, y_pos, cyl_radius, depth, overcut = 0.05) {
+module place_cylinder_marker(theta_deg, y_pos, cyl_radius, depth, overcut = INDICATOR_OVERCUT) {
     radial_offset = cyl_radius - depth/2 + overcut;
     x = radial_offset * cos(theta_deg);
     y = radial_offset * sin(theta_deg);
@@ -589,8 +520,8 @@ module counter_recess() {
 
 module cylinder_shell(cutout_rotate_deg = 0) {
     difference() {
-        // Outer cylinder (64 segments to match web generator)
-        cylinder(h = active_cylinder_height_mm, r = active_cylinder_diameter_mm / 2, center = true, $fn = 64);
+        // Outer cylinder (see $fn TESSELLATION POLICY: case 1)
+        cylinder(h = active_cylinder_height_mm, r = active_cylinder_diameter_mm / 2, center = true, $fn = CYLINDER_SHELL_FN);
         
         // Polygonal cutout if specified
         if (active_polygon_cutout_radius_mm > 0) {
@@ -604,18 +535,8 @@ module cylinder_shell(cutout_rotate_deg = 0) {
 
 module cylinder_emboss_plate() {
     translate([0, 0, active_cylinder_height_mm/2]) {
-        // Calculate angular spacing
-        radius = active_cylinder_diameter_mm / 2;
-        grid_angle = grid_width / radius;
-        start_angle = -grid_angle / 2;
-        cell_spacing_angle = active_cell_spacing / radius;
-
-        // Dot positioning
-        dot_spacing_angle = active_dot_spacing / radius;
-        dot_col_angle_offsets = [-dot_spacing_angle / 2, dot_spacing_angle / 2];
-        dot_row_offsets = [active_dot_spacing, 0, -active_dot_spacing];
-        dot_positions = [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]];
-
+        // Angular grid + dot-positioning constants are derived at top level;
+        // see `radius`, `start_angle`, `dot_positions`, etc. above.
         difference() {
             union() {
                 // Base cylinder
@@ -626,10 +547,24 @@ module cylinder_emboss_plate() {
                                has_invalid_chars(Line_3) || has_invalid_chars(Line_4);
                 
                 if (invalid_found) {
-                    translate([0, 0, active_cylinder_height_mm/2 + 5])
+                    translate([0, 0, active_cylinder_height_mm/2 + INVALID_TEXT_Z_OFFSET])
                     color("red")
-                    linear_extrude(height = 2)
-                    text("INVALID CHARACTERS", size = 5, halign = "center", valign = "center");
+                    linear_extrude(height = INVALID_TEXT_DEPTH)
+                    text("INVALID CHARACTERS", size = INVALID_TEXT_SIZE, halign = "center", valign = "center");
+                }
+
+                // Check whether any line exceeds the cells available for text.
+                // When indicators are on, the first two cells are reserved for
+                // alignment markers, so usable capacity drops by 2.
+                text_too_long =
+                    max([len(Line_1), len(Line_2), len(Line_3), len(Line_4)])
+                    > (active_grid_columns - (indicator_on ? 2 : 0));
+
+                if (text_too_long) {
+                    translate([0, 0, active_cylinder_height_mm/2 + INVALID_TEXT_Z_OFFSET + 8])
+                    color("red")
+                    linear_extrude(height = INVALID_TEXT_DEPTH)
+                    text("TEXT TOO LONG", size = INVALID_TEXT_SIZE, halign = "center", valign = "center");
                 }
         
                 // Create braille dots on cylinder surface
@@ -690,19 +625,10 @@ module cylinder_counter_plate() {
     difference() {
         // Base cylinder
         cylinder_shell(cutout_rotate_deg = active_seam_offset_degrees);
-        
-        // Calculate angular spacing
-        radius = active_cylinder_diameter_mm / 2;
-        grid_angle = grid_width / radius;
-        start_angle = -grid_angle / 2;
-        cell_spacing_angle = active_cell_spacing / radius;
-        
-        // Dot positioning
-        dot_spacing_angle = active_dot_spacing / radius;
-        dot_col_angle_offsets = [-dot_spacing_angle / 2, dot_spacing_angle / 2];
-        dot_row_offsets = [active_dot_spacing, 0, -active_dot_spacing];
-        dot_positions = [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]];
-        
+
+        // Angular grid + dot-positioning constants are derived at top level;
+        // see `radius`, `start_angle`, `dot_positions`, etc. above.
+
         // Create indicator recesses if enabled
         if (indicator_on) {
             for (row = [0 : active_grid_rows - 1]) {
@@ -735,7 +661,7 @@ module cylinder_counter_plate() {
                     dot_angle_deg = -(dot_angle_rad * 180 / PI);
                     dot_y = y_pos + dot_row_offsets[dot_pos[0]];
                     
-                    recess_radius_offset = use_rounded_dots ? 0 : 0.05;
+                    recess_radius_offset = use_rounded_dots ? 0 : INDICATOR_OVERCUT;
                     x = (radius + recess_radius_offset) * cos(dot_angle_deg);
                     y = (radius + recess_radius_offset) * sin(dot_angle_deg);
                     
