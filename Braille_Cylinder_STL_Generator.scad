@@ -281,6 +281,20 @@ grid_width = (actual_grid_columns - 1) * active_cell_spacing;
 grid_height = (active_grid_rows - 1) * active_line_spacing;
 top_margin = (active_cylinder_height_mm - grid_height) / 2;
 
+// Cylinder grid geometry — shared by cylinder_emboss_plate and
+// cylinder_counter_plate. Both modules used to recompute these identically
+// inline; hoisting them keeps the two plates in lockstep so any spacing
+// change automatically applies to both. Names mirror the prior local names
+// so the module bodies need no changes beyond removing the duplicates.
+radius                = active_cylinder_diameter_mm / 2;
+grid_angle            = grid_width / radius;
+start_angle           = -grid_angle / 2;
+cell_spacing_angle    = active_cell_spacing / radius;
+dot_spacing_angle     = active_dot_spacing / radius;
+dot_col_angle_offsets = [-dot_spacing_angle / 2, dot_spacing_angle / 2];
+dot_row_offsets       = [active_dot_spacing, 0, -active_dot_spacing];
+dot_positions         = [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]];
+
 // Counter plate recess radii (spherical cap formula to match web generator)
 // For a bowl recess: R = (a² + h²) / (2h) where a = opening radius, h = depth
 // This ensures the opening diameter = bowl_counter_dot_base_diameter and depth = counter_dot_depth
@@ -467,18 +481,8 @@ module cylinder_shell(cutout_rotate_deg = 0) {
 
 module cylinder_emboss_plate() {
     translate([0, 0, active_cylinder_height_mm/2]) {
-        // Calculate angular spacing
-        radius = active_cylinder_diameter_mm / 2;
-        grid_angle = grid_width / radius;
-        start_angle = -grid_angle / 2;
-        cell_spacing_angle = active_cell_spacing / radius;
-
-        // Dot positioning
-        dot_spacing_angle = active_dot_spacing / radius;
-        dot_col_angle_offsets = [-dot_spacing_angle / 2, dot_spacing_angle / 2];
-        dot_row_offsets = [active_dot_spacing, 0, -active_dot_spacing];
-        dot_positions = [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]];
-
+        // Angular grid + dot-positioning constants are derived at top level;
+        // see `radius`, `start_angle`, `dot_positions`, etc. above.
         difference() {
             union() {
                 // Base cylinder
@@ -553,19 +557,10 @@ module cylinder_counter_plate() {
     difference() {
         // Base cylinder
         cylinder_shell(cutout_rotate_deg = active_seam_offset_degrees);
-        
-        // Calculate angular spacing
-        radius = active_cylinder_diameter_mm / 2;
-        grid_angle = grid_width / radius;
-        start_angle = -grid_angle / 2;
-        cell_spacing_angle = active_cell_spacing / radius;
-        
-        // Dot positioning
-        dot_spacing_angle = active_dot_spacing / radius;
-        dot_col_angle_offsets = [-dot_spacing_angle / 2, dot_spacing_angle / 2];
-        dot_row_offsets = [active_dot_spacing, 0, -active_dot_spacing];
-        dot_positions = [[0, 0], [1, 0], [2, 0], [0, 1], [1, 1], [2, 1]];
-        
+
+        // Angular grid + dot-positioning constants are derived at top level;
+        // see `radius`, `start_angle`, `dot_positions`, etc. above.
+
         // Create indicator recesses if enabled
         if (indicator_on) {
             for (row = [0 : active_grid_rows - 1]) {
