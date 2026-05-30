@@ -112,6 +112,21 @@ jobs:
       
       - name: Run indicator source guard tests
         run: pytest tests/test_indicator_source_guards.py -v
+      
+      - name: Run CloudCompare logic tests
+        run: pytest tests/test_cloudcompare_logic.py -v
+      
+      - name: Run preset routing tests
+        run: pytest tests/test_presets.py -v
+      
+      - name: Run backward-compat placement tests
+        run: pytest tests/test_backward_compat.py -v
+      
+      - name: Run TEXT TOO LONG warning tests
+        # The render-based assertion auto-skips when OpenSCAD is absent
+        # (test-quick runner intentionally doesn't install it). The
+        # source-only invariant check still runs.
+        run: pytest tests/test_text_too_long.py -v
 
   # ==========================================================================
   # Job 3: Full STL Validation
