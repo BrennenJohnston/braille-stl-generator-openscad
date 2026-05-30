@@ -158,83 +158,9 @@ $fn = 32; // Resolution for curved surfaces
 // Mathematical constants
 PI = 3.14159265359;
 
-// =============================================================================
-// PRESET VALUE CONSTANTS
-// =============================================================================
-// Source: Web app THICKNESS_PRESETS in public/index.html
-// These values are applied when paper_thickness_preset is "0.4mm" or "0.3mm"
-
-// --------- 0.4mm Preset (Thicker Paper, Larger Dots) ---------
-// Spacing
-_p04_grid_columns = 11;
-_p04_grid_rows = 4;
-_p04_cell_spacing = 6.5;
-_p04_line_spacing = 10.0;
-_p04_dot_spacing = 2.5;
-_p04_braille_y_adjust = 0.0;
-
-// Emboss Rounded
-_p04_rounded_dot_base_diameter = 1.5;
-_p04_rounded_dot_base_height = 0.5;
-_p04_rounded_dot_dome_diameter = 1.0;
-_p04_rounded_dot_dome_height = 0.5;
-
-// Emboss Cone
-_p04_emboss_dot_base_diameter = 1.5;
-_p04_emboss_dot_height = 0.8;
-_p04_emboss_dot_flat_hat = 0.4;
-
-// Counter Bowl
-_p04_bowl_counter_dot_base_diameter = 1.8;
-_p04_counter_dot_depth = 0.8;
-
-// Counter Cone
-_p04_cone_counter_dot_base_diameter = 1.9;
-_p04_cone_counter_dot_height = 0.7;
-_p04_cone_counter_dot_flat_hat = 1.0;
-
-// Cylinder
-_p04_cylinder_diameter_mm = 30.8;
-_p04_cylinder_height_mm = 52;
-_p04_polygon_cutout_radius_mm = 13;
-_p04_polygon_cutout_points = 12;
-_p04_seam_offset_degrees = 0.0;
-
-// --------- 0.3mm Preset (Thinner Paper, Smaller Dots) ---------
-// Spacing (same as 0.4mm)
-_p03_grid_columns = 11;
-_p03_grid_rows = 4;
-_p03_cell_spacing = 6.5;
-_p03_line_spacing = 10.0;
-_p03_dot_spacing = 2.5;
-_p03_braille_y_adjust = 0.0;
-
-// Emboss Rounded (smaller)
-_p03_rounded_dot_base_diameter = 1.2;
-_p03_rounded_dot_base_height = 0.4;
-_p03_rounded_dot_dome_diameter = 0.8;
-_p03_rounded_dot_dome_height = 0.4;
-
-// Emboss Cone (smaller)
-_p03_emboss_dot_base_diameter = 1.2;
-_p03_emboss_dot_height = 0.6;
-_p03_emboss_dot_flat_hat = 0.2;
-
-// Counter Bowl (smaller)
-_p03_bowl_counter_dot_base_diameter = 1.5;
-_p03_counter_dot_depth = 0.5;
-
-// Counter Cone (smaller)
-_p03_cone_counter_dot_base_diameter = 1.5;
-_p03_cone_counter_dot_height = 0.5;
-_p03_cone_counter_dot_flat_hat = 0.8;
-
-// Cylinder (same as 0.4mm)
-_p03_cylinder_diameter_mm = 30.8;
-_p03_cylinder_height_mm = 52;
-_p03_polygon_cutout_radius_mm = 13;
-_p03_polygon_cutout_points = 12;
-_p03_seam_offset_degrees = 0.0;
+// Preset value tables (PRESET_04, PRESET_03) and the preset_value() lookup
+// helper live in presets.scad. Edit that file to change preset values.
+include <presets.scad>;
 
 // =============================================================================
 // BACKWARD COMPATIBILITY - Test System Parameters
@@ -279,107 +205,45 @@ quality_fn = (hemisphere_quality == "low" || render_quality == "Low") ? 24 :
 // =============================================================================
 // PRESET ROUTING - Select preset vs. custom values
 // =============================================================================
-// These variables route between preset constants and user parameters based on
-// paper_thickness_preset selection. Pattern: preset value if "0.4mm" or "0.3mm",
-// otherwise use the user's manual parameter setting.
+// Each `_preset_*` variable routes between the matching preset table entry
+// (see presets.scad) and the user's slider value. If `paper_thickness_preset`
+// is "0.4mm" or "0.3mm", the table value wins; otherwise the slider value
+// (third argument) is used.
 
 // Spacing parameters
-_preset_grid_columns = (paper_thickness_preset == "0.4mm") ? _p04_grid_columns :
-                       (paper_thickness_preset == "0.3mm") ? _p03_grid_columns :
-                       grid_columns;
-
-_preset_grid_rows = (paper_thickness_preset == "0.4mm") ? _p04_grid_rows :
-                    (paper_thickness_preset == "0.3mm") ? _p03_grid_rows :
-                    grid_rows;
-
-_preset_cell_spacing = (paper_thickness_preset == "0.4mm") ? _p04_cell_spacing :
-                       (paper_thickness_preset == "0.3mm") ? _p03_cell_spacing :
-                       cell_spacing;
-
-_preset_line_spacing = (paper_thickness_preset == "0.4mm") ? _p04_line_spacing :
-                       (paper_thickness_preset == "0.3mm") ? _p03_line_spacing :
-                       line_spacing;
-
-_preset_dot_spacing = (paper_thickness_preset == "0.4mm") ? _p04_dot_spacing :
-                      (paper_thickness_preset == "0.3mm") ? _p03_dot_spacing :
-                      dot_spacing;
-
-_preset_braille_y_adjust = (paper_thickness_preset == "0.4mm") ? _p04_braille_y_adjust :
-                           (paper_thickness_preset == "0.3mm") ? _p03_braille_y_adjust :
-                           braille_y_adjust;
+_preset_grid_columns                   = preset_value(paper_thickness_preset, "grid_columns",                   grid_columns);
+_preset_grid_rows                      = preset_value(paper_thickness_preset, "grid_rows",                      grid_rows);
+_preset_cell_spacing                   = preset_value(paper_thickness_preset, "cell_spacing",                   cell_spacing);
+_preset_line_spacing                   = preset_value(paper_thickness_preset, "line_spacing",                   line_spacing);
+_preset_dot_spacing                    = preset_value(paper_thickness_preset, "dot_spacing",                    dot_spacing);
+_preset_braille_y_adjust               = preset_value(paper_thickness_preset, "braille_y_adjust",               braille_y_adjust);
 
 // Emboss Rounded parameters
-_preset_rounded_dot_base_diameter = (paper_thickness_preset == "0.4mm") ? _p04_rounded_dot_base_diameter :
-                                    (paper_thickness_preset == "0.3mm") ? _p03_rounded_dot_base_diameter :
-                                    rounded_dot_base_diameter;
-
-_preset_rounded_dot_base_height = (paper_thickness_preset == "0.4mm") ? _p04_rounded_dot_base_height :
-                                  (paper_thickness_preset == "0.3mm") ? _p03_rounded_dot_base_height :
-                                  rounded_dot_base_height;
-
-_preset_rounded_dot_dome_diameter = (paper_thickness_preset == "0.4mm") ? _p04_rounded_dot_dome_diameter :
-                                    (paper_thickness_preset == "0.3mm") ? _p03_rounded_dot_dome_diameter :
-                                    rounded_dot_dome_diameter;
-
-_preset_rounded_dot_dome_height = (paper_thickness_preset == "0.4mm") ? _p04_rounded_dot_dome_height :
-                                  (paper_thickness_preset == "0.3mm") ? _p03_rounded_dot_dome_height :
-                                  rounded_dot_dome_height;
+_preset_rounded_dot_base_diameter      = preset_value(paper_thickness_preset, "rounded_dot_base_diameter",      rounded_dot_base_diameter);
+_preset_rounded_dot_base_height        = preset_value(paper_thickness_preset, "rounded_dot_base_height",        rounded_dot_base_height);
+_preset_rounded_dot_dome_diameter      = preset_value(paper_thickness_preset, "rounded_dot_dome_diameter",      rounded_dot_dome_diameter);
+_preset_rounded_dot_dome_height        = preset_value(paper_thickness_preset, "rounded_dot_dome_height",        rounded_dot_dome_height);
 
 // Emboss Cone parameters
-_preset_emboss_dot_base_diameter = (paper_thickness_preset == "0.4mm") ? _p04_emboss_dot_base_diameter :
-                                   (paper_thickness_preset == "0.3mm") ? _p03_emboss_dot_base_diameter :
-                                   emboss_dot_base_diameter;
-
-_preset_emboss_dot_height = (paper_thickness_preset == "0.4mm") ? _p04_emboss_dot_height :
-                            (paper_thickness_preset == "0.3mm") ? _p03_emboss_dot_height :
-                            emboss_dot_height;
-
-_preset_emboss_dot_flat_hat = (paper_thickness_preset == "0.4mm") ? _p04_emboss_dot_flat_hat :
-                              (paper_thickness_preset == "0.3mm") ? _p03_emboss_dot_flat_hat :
-                              emboss_dot_flat_hat;
+_preset_emboss_dot_base_diameter       = preset_value(paper_thickness_preset, "emboss_dot_base_diameter",       emboss_dot_base_diameter);
+_preset_emboss_dot_height              = preset_value(paper_thickness_preset, "emboss_dot_height",              emboss_dot_height);
+_preset_emboss_dot_flat_hat            = preset_value(paper_thickness_preset, "emboss_dot_flat_hat",            emboss_dot_flat_hat);
 
 // Counter Bowl parameters
-_preset_bowl_counter_dot_base_diameter = (paper_thickness_preset == "0.4mm") ? _p04_bowl_counter_dot_base_diameter :
-                                         (paper_thickness_preset == "0.3mm") ? _p03_bowl_counter_dot_base_diameter :
-                                         bowl_counter_dot_base_diameter;
-
-_preset_counter_dot_depth = (paper_thickness_preset == "0.4mm") ? _p04_counter_dot_depth :
-                            (paper_thickness_preset == "0.3mm") ? _p03_counter_dot_depth :
-                            counter_dot_depth;
+_preset_bowl_counter_dot_base_diameter = preset_value(paper_thickness_preset, "bowl_counter_dot_base_diameter", bowl_counter_dot_base_diameter);
+_preset_counter_dot_depth              = preset_value(paper_thickness_preset, "counter_dot_depth",              counter_dot_depth);
 
 // Counter Cone parameters
-_preset_cone_counter_dot_base_diameter = (paper_thickness_preset == "0.4mm") ? _p04_cone_counter_dot_base_diameter :
-                                         (paper_thickness_preset == "0.3mm") ? _p03_cone_counter_dot_base_diameter :
-                                         cone_counter_dot_base_diameter;
-
-_preset_cone_counter_dot_height = (paper_thickness_preset == "0.4mm") ? _p04_cone_counter_dot_height :
-                                  (paper_thickness_preset == "0.3mm") ? _p03_cone_counter_dot_height :
-                                  cone_counter_dot_height;
-
-_preset_cone_counter_dot_flat_hat = (paper_thickness_preset == "0.4mm") ? _p04_cone_counter_dot_flat_hat :
-                                    (paper_thickness_preset == "0.3mm") ? _p03_cone_counter_dot_flat_hat :
-                                    cone_counter_dot_flat_hat;
+_preset_cone_counter_dot_base_diameter = preset_value(paper_thickness_preset, "cone_counter_dot_base_diameter", cone_counter_dot_base_diameter);
+_preset_cone_counter_dot_height        = preset_value(paper_thickness_preset, "cone_counter_dot_height",        cone_counter_dot_height);
+_preset_cone_counter_dot_flat_hat      = preset_value(paper_thickness_preset, "cone_counter_dot_flat_hat",      cone_counter_dot_flat_hat);
 
 // Cylinder parameters
-_preset_cylinder_diameter_mm = (paper_thickness_preset == "0.4mm") ? _p04_cylinder_diameter_mm :
-                               (paper_thickness_preset == "0.3mm") ? _p03_cylinder_diameter_mm :
-                               cylinder_diameter_mm;
-
-_preset_cylinder_height_mm = (paper_thickness_preset == "0.4mm") ? _p04_cylinder_height_mm :
-                             (paper_thickness_preset == "0.3mm") ? _p03_cylinder_height_mm :
-                             cylinder_height_mm;
-
-_preset_polygon_cutout_radius_mm = (paper_thickness_preset == "0.4mm") ? _p04_polygon_cutout_radius_mm :
-                                   (paper_thickness_preset == "0.3mm") ? _p03_polygon_cutout_radius_mm :
-                                   polygon_cutout_radius_mm;
-
-_preset_polygon_cutout_points = (paper_thickness_preset == "0.4mm") ? _p04_polygon_cutout_points :
-                                (paper_thickness_preset == "0.3mm") ? _p03_polygon_cutout_points :
-                                polygon_cutout_points;
-
-_preset_seam_offset_degrees = (paper_thickness_preset == "0.4mm") ? _p04_seam_offset_degrees :
-                              (paper_thickness_preset == "0.3mm") ? _p03_seam_offset_degrees :
-                              seam_offset_degrees;
+_preset_cylinder_diameter_mm           = preset_value(paper_thickness_preset, "cylinder_diameter_mm",           cylinder_diameter_mm);
+_preset_cylinder_height_mm             = preset_value(paper_thickness_preset, "cylinder_height_mm",             cylinder_height_mm);
+_preset_polygon_cutout_radius_mm       = preset_value(paper_thickness_preset, "polygon_cutout_radius_mm",       polygon_cutout_radius_mm);
+_preset_polygon_cutout_points          = preset_value(paper_thickness_preset, "polygon_cutout_points",          polygon_cutout_points);
+_preset_seam_offset_degrees            = preset_value(paper_thickness_preset, "seam_offset_degrees",            seam_offset_degrees);
 
 // =============================================================================
 // ACTIVE PARAMETERS - Final values used by geometry
