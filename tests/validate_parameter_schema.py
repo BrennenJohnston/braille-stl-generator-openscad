@@ -114,26 +114,45 @@ class ParameterSchemaValidator:
                 # Parse default value
                 param_value = self._parse_openscad_value(param_value_str)
 
-                # Parse enum values if present
+                # Parse enum values + numeric slider range if present.
+                # Customizer comments use two `[...]` forms:
+                #   - Dropdown: `// [Option1, Option2]`
+                #   - Slider:   `// [min:step:max]`  (e.g. `[0:0.1:5]`)
+                # Both share the bracket syntax; we discriminate on whether
+                # the contents look like a `min:step:max` numeric triple.
                 enum_values = None
                 enum_labels = {}
+                slider_range = None  # (min, step, max) when present
                 enum_match = re.search(
                     r"\[([^\]]+)\]", param_comment
                 )
                 if enum_match:
-                    enum_spec = enum_match.group(1)
-                    enum_values = []
-                    for option in enum_spec.split(","):
-                        option = option.strip()
-                        if ":" in option:
-                            value, label = option.split(":", 1)
-                            value = value.strip().strip('"')
-                            label = label.strip()
-                            enum_values.append(value)
-                            enum_labels[value] = label
-                        else:
-                            value = option.strip().strip('"')
-                            enum_values.append(value)
+                    enum_spec = enum_match.group(1).strip()
+                    slider_match = re.match(
+                        r"^\s*(-?\d+(?:\.\d+)?)\s*:\s*"
+                        r"(-?\d+(?:\.\d+)?)\s*:\s*"
+                        r"(-?\d+(?:\.\d+)?)\s*$",
+                        enum_spec,
+                    )
+                    if slider_match:
+                        slider_range = (
+                            float(slider_match.group(1)),
+                            float(slider_match.group(2)),
+                            float(slider_match.group(3)),
+                        )
+                    else:
+                        enum_values = []
+                        for option in enum_spec.split(","):
+                            option = option.strip()
+                            if ":" in option:
+                                value, label = option.split(":", 1)
+                                value = value.strip().strip('"')
+                                label = label.strip()
+                                enum_values.append(value)
+                                enum_labels[value] = label
+                            else:
+                                value = option.strip().strip('"')
+                                enum_values.append(value)
 
                 # Get description (comment without enum spec)
                 description = re.sub(r"\[([^\]]+)\]", "", param_comment).strip()
@@ -145,6 +164,7 @@ class ParameterSchemaValidator:
                     "description": description,
                     "enum_values": enum_values,
                     "enum_labels": enum_labels,
+                    "slider_range": slider_range,
                 }
 
             i += 1
@@ -199,6 +219,7 @@ class ParameterSchemaValidator:
         results.extend(self._check_defaults_match())
         results.extend(self._check_types_compatible())
         results.extend(self._check_enums_match())
+        results.extend(self._check_slider_ranges_match())
         results.extend(self._check_sections_align())
 
         # Determine overall pass/fail
@@ -380,6 +401,104 @@ class ParameterSchemaValidator:
                         "actual_values": sorted(actual_values),
                     }
                 )
+
+        return results
+
+    def _check_slider_ranges_match(self) -> List[Dict[str, Any]]:
+        """
+        Check that OpenSCAD `// [min:step:max]` slider ranges agree with the
+        ``range`` field in parameter_mapping.json. Only applies to numeric
+        parameters that declare both a slider range in the SCAD comment and
+        a ``range`` entry in the mapping. Mismatches are reported as
+        errors so a divergent slider can't ship unnoticed.
+        """
+        results = []
+        checked = 0
+
+        for param_def in self.parameters:
+            mapping_range = param_def.get("range")
+            if not mapping_range:
+                continue  # Mapping has no range -> nothing to compare.
+
+            openscad_name = param_def["openscad_name"]
+            openscad_param = self.openscad_params.get(openscad_name)
+            if openscad_param is None:
+                continue  # Caught by the all_mapped check.
+
+            slider_range = openscad_param.get("slider_range")
+            if slider_range is None:
+                continue  # SCAD declaration is not a numeric slider.
+
+            checked += 1
+            scad_min, _step, scad_max = slider_range
+            try:
+                expected_min, expected_max = float(mapping_range[0]), float(
+                    mapping_range[1]
+                )
+            except (TypeError, ValueError, IndexError):
+                results.append(
+                    {
+                        "check": "slider_ranges_match",
+                        "severity": "error",
+                        "passed": False,
+                        "message": (
+                            f"`range` field for '{openscad_name}' in "
+                            f"parameter_mapping.json is malformed: "
+                            f"{mapping_range!r}; expected [min, max]."
+                        ),
+                        "parameter": openscad_name,
+                    }
+                )
+                continue
+
+            if abs(scad_min - expected_min) > 1e-9 or abs(scad_max - expected_max) > 1e-9:
+                results.append(
+                    {
+                        "check": "slider_ranges_match",
+                        "severity": "error",
+                        "passed": False,
+                        "message": (
+                            f"Slider range mismatch for '{openscad_name}': "
+                            f"openscad=[{scad_min}, {scad_max}], "
+                            f"mapping=[{expected_min}, {expected_max}]. "
+                            f"Update either the OpenSCAD `[min:step:max]` "
+                            f"comment or the parameter_mapping.json `range` "
+                            f"entry so they agree."
+                        ),
+                        "parameter": openscad_name,
+                        "scad_range": [scad_min, scad_max],
+                        "mapping_range": [expected_min, expected_max],
+                    }
+                )
+
+        if checked == 0:
+            results.append(
+                {
+                    "check": "slider_ranges_match",
+                    "severity": "info",
+                    "passed": True,
+                    "message": (
+                        "Slider-range check skipped: no parameters had both "
+                        "a SCAD `[min:step:max]` comment and a mapping "
+                        "`range` entry."
+                    ),
+                }
+            )
+        elif not any(
+            r["check"] == "slider_ranges_match" and not r["passed"]
+            for r in results
+        ):
+            results.append(
+                {
+                    "check": "slider_ranges_match",
+                    "severity": "error",
+                    "passed": True,
+                    "message": (
+                        f"All {checked} OpenSCAD slider ranges match "
+                        f"parameter_mapping.json"
+                    ),
+                }
+            )
 
         return results
 
