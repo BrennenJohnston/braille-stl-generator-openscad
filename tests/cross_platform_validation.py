@@ -43,7 +43,7 @@ class TestCrossPlatformValidation:
 
     # Generate parametrized tests for each test case
     # NOTE: Only cylinder tests are active. Card tests removed until web UI parity restored.
-    # 8 core matrix tests + 2 indicator isolation + 1 parametric variation = 11 total
+    # 8 core matrix + 2 indicator isolation + 1 parametric + 1 multiline + 2 preset_03 = 14 total
     @pytest.mark.parametrize(
         "test_case_name",
         [
@@ -61,6 +61,11 @@ class TestCrossPlatformValidation:
             "cylinder_indicator_recess_cone",
             # Parametric variation test
             "cylinder_rounded_emboss_custom_cutout",
+            # Multiline text fixture
+            "cylinder_rounded_emboss_multiline",
+            # 0.3 mm preset fixtures (PRESET_03 paper thickness)
+            "cylinder_rounded_emboss_03mm",
+            "cylinder_rounded_counter_03mm",
         ],
     )
     def test_stl_validation(
@@ -248,6 +253,8 @@ class TestEmbossPlates(TestCrossPlatformValidation):
             "cylinder_cone_emboss_indicators_on",
             "cylinder_cone_emboss_indicators_off",
             "cylinder_rounded_emboss_custom_cutout",
+            "cylinder_rounded_emboss_multiline",
+            "cylinder_rounded_emboss_03mm",
         ],
     )
     def test_emboss_validation(
@@ -282,6 +289,7 @@ class TestCounterPlates(TestCrossPlatformValidation):
             "cylinder_rounded_counter_indicators_off",
             "cylinder_cone_counter_indicators_on",
             "cylinder_cone_counter_indicators_off",
+            "cylinder_rounded_counter_03mm",
         ],
     )
     def test_counter_validation(

@@ -477,7 +477,7 @@
     "UI dropdown labels are human-friendly (e.g., 'Rounded' not 'rounded')",
     "Test system uses lowercase values (e.g., 'rounded', 'positive')",
     "OpenSCAD normalizes both formats in calculated values section",
-    "Paper thickness preset controls 24 parameters across spacing, dot dimensions, and cylinder settings",
+    "Paper thickness preset controls 23 parameters across spacing, dot dimensions, and cylinder settings",
     "Web UI label 'Card Thickness' is NOT card geometry—it's a parametric memory system for known-good values",
     "Rendering quality parameters affect mesh resolution, not actual geometry dimensions",
     "All spatial units are millimeters (mm)",

@@ -240,12 +240,18 @@ def test_warning_source_constants_present():
     """
     src = SCAD_FILE.read_text(encoding="utf-8")
     assert '"TEXT TOO LONG"' in src, "Expected literal `\"TEXT TOO LONG\"` in SCAD source"
-    assert "INVALID_TEXT_Z_OFFSET + 8" in src, (
+    assert "INVALID_TEXT_Z_OFFSET + INVALID_TEXT_STACK_GAP" in src, (
         "Expected the TEXT TOO LONG warning to be stacked at "
-        "INVALID_TEXT_Z_OFFSET + 8 (above the INVALID CHARACTERS marker). "
-        "This is a structural invariant of the warning placement."
+        "INVALID_TEXT_Z_OFFSET + INVALID_TEXT_STACK_GAP (above the "
+        "INVALID CHARACTERS marker). This is a structural invariant of "
+        "the warning placement."
     )
-    for const in ("INVALID_TEXT_Z_OFFSET", "INVALID_TEXT_SIZE", "INVALID_TEXT_DEPTH"):
+    for const in (
+        "INVALID_TEXT_Z_OFFSET",
+        "INVALID_TEXT_SIZE",
+        "INVALID_TEXT_DEPTH",
+        "INVALID_TEXT_STACK_GAP",
+    ):
         assert re.search(rf"^\s*{const}\s*=", src, re.MULTILINE), (
             f"Expected named constant `{const}` in SCAD source."
         )
