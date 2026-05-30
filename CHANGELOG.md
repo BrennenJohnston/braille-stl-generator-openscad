@@ -142,6 +142,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   hidden)" → "Cylinder shape (card support permanently removed)".
 - `docs/archive/README.md` index now lists the newly archived
   audit document.
+- CI: `STL Validation (ubuntu-latest)` job had been failing since
+  the v2.1.0 release (2026-01-11) with `libEGL.so.1: cannot open
+  shared object file` because ubuntu-latest (now 24.04) no longer
+  ships the OpenGL / EGL / xcb / font runtime that the OpenSCAD
+  2026.01.03 nightly AppImage dynamically links against. The
+  Ubuntu install step now `apt-get install`s the Qt6 headless-
+  render runtime (libegl1, libgl1, libgles2, libopengl0, libxcb-*,
+  libxkbcommon-*, libfontconfig1, libfreetype6, libharfbuzz0b, …)
+  before extracting the AppImage. Both `comparison_profile=baseline`
+  and `=strict` workflow_dispatch runs go fully green on
+  `feature/v2.2-cleanup` (runs `26690377853` and `26690446255`).
 
 ## [2.1.0] - 2026-01-11
 
