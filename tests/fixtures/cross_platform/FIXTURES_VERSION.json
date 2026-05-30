@@ -3,7 +3,7 @@
   "generated_at": "2026-01-11T05:36:31.285285Z",
   "generation_method": "openscad",
   "openscad_version": "OpenSCAD version 2026.01.03",
-  "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+  "scad_file": "Braille_Cylinder_STL_Generator.scad",
   "total_fixtures": 11,
   "failed_fixtures": 0,
   "notes": "Version 2.1.0: Paper thickness preset system added, defaults updated to match web app 0.4mm preset. All fixtures regenerated with new default values.",
@@ -49,7 +49,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5045549869537354
       },
       "generated_at": "2026-01-11T05:36:17.888153Z"
@@ -95,7 +95,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.504040002822876
       },
       "generated_at": "2026-01-11T05:36:18.604898Z"
@@ -142,7 +142,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 1.5064866542816162
       },
       "generated_at": "2026-01-11T05:36:21.157314Z"
@@ -189,7 +189,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 1.507338047027588
       },
       "generated_at": "2026-01-11T05:36:23.555209Z"
@@ -235,7 +235,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.504704475402832
       },
       "generated_at": "2026-01-11T05:36:24.216477Z"
@@ -281,7 +281,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5041906833648682
       },
       "generated_at": "2026-01-11T05:36:24.876404Z"
@@ -328,7 +328,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 1.0045661926269531
       },
       "generated_at": "2026-01-11T05:36:26.306414Z"
@@ -375,7 +375,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5047898292541504
       },
       "generated_at": "2026-01-11T05:36:27.195779Z"
@@ -422,7 +422,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 1.5050852298736572
       },
       "generated_at": "2026-01-11T05:36:29.657511Z"
@@ -469,7 +469,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5048782825469971
       },
       "generated_at": "2026-01-11T05:36:30.543765Z"
@@ -517,7 +517,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5038754940032959
       },
       "generated_at": "2026-01-11T05:36:31.283830Z"

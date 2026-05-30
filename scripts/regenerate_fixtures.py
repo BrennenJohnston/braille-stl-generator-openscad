@@ -349,7 +349,7 @@ Examples:
     parser.add_argument(
         "--scad-file",
         type=Path,
-        default=PROJECT_ROOT / "Braille_Card_And_Cylinder_STL_Generator.scad",
+        default=PROJECT_ROOT / "Braille_Cylinder_STL_Generator.scad",
         help="OpenSCAD file to use (for --openscad-mode)",
     )
     parser.add_argument(

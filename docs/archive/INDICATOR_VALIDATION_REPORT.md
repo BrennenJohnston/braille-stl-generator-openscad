@@ -23,7 +23,7 @@
 
 ### 1. Specification Review
 - Reviewed `RECESS_INDICATOR_SPECIFICATIONS.md` from web repository
-- Compared against OpenSCAD implementation in `Braille_Card_And_Cylinder_STL_Generator.scad`
+- Compared against OpenSCAD implementation in `Braille_Cylinder_STL_Generator.scad`
 - Verified coordinate systems and geometric calculations
 
 ### 2. Code Analysis

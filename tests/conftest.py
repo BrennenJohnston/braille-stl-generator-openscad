@@ -96,7 +96,7 @@ def fixtures_dir(tests_dir) -> Path:
 @pytest.fixture(scope="session")
 def scad_file(project_root) -> Path:
     """Path to main OpenSCAD file."""
-    scad_path = project_root / "Braille_Card_And_Cylinder_STL_Generator.scad"
+    scad_path = project_root / "Braille_Cylinder_STL_Generator.scad"
     if not scad_path.exists():
         pytest.skip(f"OpenSCAD file not found: {scad_path}")
     return scad_path

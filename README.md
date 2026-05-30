@@ -38,7 +38,7 @@ The following repositories were extracted from earlier iterations of this projec
    - Type your text and copy the braille output (e.g., ⠓⠑⠇⠇⠕)
 
 2. **Open in OpenSCAD**:
-   - Open `Braille_Card_And_Cylinder_STL_Generator.scad`
+   - Open `Braille_Cylinder_STL_Generator.scad`
    - Open the Customizer panel (View → Customizer)
 
 3. **Configure**:
