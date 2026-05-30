@@ -14,6 +14,15 @@ This is the **offline OpenSCAD companion** to the web-based Braille STL Generato
 | **OpenSCAD** (this repo) | [github.com/BrennenJohnston/braille-stl-generator-openscad](https://github.com/BrennenJohnston/braille-stl-generator-openscad) | Offline use, full parametric control |
 | **Web App Source** | [github.com/BrennenJohnston/braille-card-and-cylinder-stl-generator](https://github.com/BrennenJohnston/braille-card-and-cylinder-stl-generator) | Web app source code |
 
+### Spin-off Projects
+
+The following repositories were extracted from earlier iterations of this project and are now developed separately:
+
+| Repo | Description |
+|------|-------------|
+| [plug-puller-openscad](https://github.com/BrennenJohnston/plug-puller-openscad) | Parametric SCAD + CAD data for the Plug Puller experiments (v1.0–v4.0). |
+| [cad-to-openscad-pipeline](https://github.com/BrennenJohnston/cad-to-openscad-pipeline) | Reusable methodology and tooling for converting CAD models into clean parametric OpenSCAD, including the `dxf_to_openscad_polygon` tool. |
+
 ## ⚠️ Key Difference
 
 **This OpenSCAD version requires pre-translated Unicode braille text.** It does NOT include automatic translation.
