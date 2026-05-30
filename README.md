@@ -74,7 +74,7 @@ The following repositories were extracted from earlier iterations of this projec
 - **0.3mm Preset**: Optimized for thinner paper, smaller dots
 - **Custom**: Use manually-entered parameter values
 
-The preset system controls 24 parameters at once (spacing, dot dimensions, cylinder settings) matching the web app's "Card Thickness" dropdown.
+The preset system controls 23 parameters at once (spacing, dot dimensions, cylinder settings) matching the web app's "Card Thickness" dropdown.
 
 ### Parametric Control
 All parameters match the web-based generator UI:
@@ -82,7 +82,7 @@ All parameters match the web-based generator UI:
 - Braille spacing (cell, line, dot spacing)
 - Dot dimensions (separate controls for rounded and cone shapes)
 - Counter plate recess dimensions
-- Positioning adjustments (X/Y offsets)
+- Vertical positioning adjustment (Y offset)
 
 ---
 
@@ -253,5 +253,5 @@ For general braille embossing questions, see the [web app](https://braille-card-
 
 ---
 
-**Version**: 2.2.0  
+**Version**: 2.2.1  
 **Last Updated**: 2026-05-30
