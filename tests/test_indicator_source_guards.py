@@ -10,7 +10,7 @@ def test_indicator_shapes_not_cylinders_in_scad_source():
     even before OpenSCAD/mesh comparison runs.
     """
 
-    scad_path = Path(__file__).resolve().parents[1] / "Braille_Card_And_Cylinder_STL_Generator.scad"
+    scad_path = Path(__file__).resolve().parents[1] / "Braille_Cylinder_STL_Generator.scad"
     scad = scad_path.read_text(encoding="utf-8")
 
     # Modules required by the web-spec indicator implementation

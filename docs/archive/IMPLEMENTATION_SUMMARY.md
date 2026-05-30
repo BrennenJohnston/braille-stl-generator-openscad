@@ -22,7 +22,7 @@ Successfully implemented a comprehensive cross-platform STL validation framework
 
 ### Changes Made
 
-1. **`Braille_Card_And_Cylinder_STL_Generator.scad`** (line 97):
+1. **`Braille_Cylinder_STL_Generator.scad`** (line 97):
    - Changed `shape_type` dropdown from `["card:...", "cylinder:..."]` to `["cylinder:Cylinder (Curved Surface)"]`
    - Changed default from `"card"` to `"cylinder"`
    - Added comment explaining card is temporarily hidden (code preserved)
@@ -277,7 +277,7 @@ Only validates OpenSCAD internal consistency, NOT cross-platform parity.
 
 ### Modified Files
 
-- ✅ `Braille_Card_And_Cylinder_STL_Generator.scad` - Cylinder-only dropdown
+- ✅ `Braille_Cylinder_STL_Generator.scad` - Cylinder-only dropdown
 - ✅ `tests/parameter_mapping.json` - Updated shape_type default and values
 - ✅ `tests/fixtures/cross_platform/test_cases.json` - 11 cylinder tests (was 10 total with 7 card)
 - ✅ `tests/cross_platform_validation.py` - Updated test parametrization
@@ -361,7 +361,7 @@ Only validates OpenSCAD internal consistency, NOT cross-platform parity.
 
 ```bash
 # Open in OpenSCAD Customizer
-openscad Braille_Card_And_Cylinder_STL_Generator.scad
+openscad Braille_Cylinder_STL_Generator.scad
 
 # Check that shape_type dropdown shows only "Cylinder"
 ```

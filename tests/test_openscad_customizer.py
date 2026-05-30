@@ -18,7 +18,7 @@ import pytest
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
-SCAD_FILE = PROJECT_ROOT / "Braille_Card_And_Cylinder_STL_Generator.scad"
+SCAD_FILE = PROJECT_ROOT / "Braille_Cylinder_STL_Generator.scad"
 
 
 class TestOpenSCADCustomizer:

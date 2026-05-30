@@ -1,12 +1,12 @@
 {
-  "version": "2.1.0",
+  "version": "2.2.0",
   "generated_at": "2026-01-11T05:36:31.285285Z",
   "generation_method": "openscad",
   "openscad_version": "OpenSCAD version 2026.01.03",
-  "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
-  "total_fixtures": 11,
+  "scad_file": "Braille_Cylinder_STL_Generator.scad",
+  "total_fixtures": 14,
   "failed_fixtures": 0,
-  "notes": "Version 2.1.0: Paper thickness preset system added, defaults updated to match web app 0.4mm preset. All fixtures regenerated with new default values.",
+  "notes": "Version 2.2.0: Metadata-only bump for the v2.2.0 cleanup release. The 11 original fixtures from v2.1.0 are unchanged (same sha256). Phase 7b added 3 new fixtures (cylinder_rounded_emboss_multiline, cylinder_rounded_emboss_03mm, cylinder_rounded_counter_03mm) covering multi-line text and the 0.3mm paper-thickness preset; their reference STLs were rendered under OpenSCAD 2026.01.03 Manifold and are byte-stable across platforms. v2.2.0 also ships aggressive customizer polish (file rename, preset routing extraction, magic-number naming, $fn policy doc) and expanded tests (preset/backward-compat/text-too-long suites + slider-range schema validator). No fixture regeneration occurred in Phase 8.",
   "fixtures": [
     {
       "test_name": "cylinder_rounded_emboss_indicators_on",
@@ -49,7 +49,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5045549869537354
       },
       "generated_at": "2026-01-11T05:36:17.888153Z"
@@ -95,7 +95,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.504040002822876
       },
       "generated_at": "2026-01-11T05:36:18.604898Z"
@@ -142,7 +142,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 1.5064866542816162
       },
       "generated_at": "2026-01-11T05:36:21.157314Z"
@@ -189,7 +189,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 1.507338047027588
       },
       "generated_at": "2026-01-11T05:36:23.555209Z"
@@ -235,7 +235,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.504704475402832
       },
       "generated_at": "2026-01-11T05:36:24.216477Z"
@@ -281,7 +281,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5041906833648682
       },
       "generated_at": "2026-01-11T05:36:24.876404Z"
@@ -328,7 +328,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 1.0045661926269531
       },
       "generated_at": "2026-01-11T05:36:26.306414Z"
@@ -375,7 +375,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5047898292541504
       },
       "generated_at": "2026-01-11T05:36:27.195779Z"
@@ -422,7 +422,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 1.5050852298736572
       },
       "generated_at": "2026-01-11T05:36:29.657511Z"
@@ -469,7 +469,7 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5048782825469971
       },
       "generated_at": "2026-01-11T05:36:30.543765Z"
@@ -517,10 +517,126 @@
       "generation": {
         "method": "openscad",
         "openscad_version": "OpenSCAD version 2026.01.03",
-        "scad_file": "Braille_Card_And_Cylinder_STL_Generator.scad",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
         "duration_seconds": 0.5038754940032959
       },
       "generated_at": "2026-01-11T05:36:31.283830Z"
+    },
+    {
+      "test_name": "cylinder_rounded_emboss_multiline",
+      "description": "Cylinder: Rounded dots, Embossing plate, 3-line short text (0.4mm preset)",
+      "tags": [
+        "cylinder",
+        "rounded",
+        "emboss",
+        "indicators_on",
+        "multiline",
+        "preset_04mm"
+      ],
+      "priority": "medium",
+      "reference_stl": "cross_platform/cylinder_rounded_emboss_multiline/reference.stl",
+      "stl_size_bytes": 10602874,
+      "stl_sha256": "8c70a0740e1c52d0d70b89584c31f9cf0a0bbc9afd010547dab2a05dff83dba7",
+      "mesh_properties": {
+        "volume_mm3": 10432.241449594712,
+        "surface_area_mm2": 10074.107467888778,
+        "bounding_box_mm": [
+          [-15.4, -16.388543269115218, 0.0],
+          [16.347578837631616, 15.4, 52.0]
+        ],
+        "face_count": 32680,
+        "vertex_count": 16432,
+        "is_watertight": true,
+        "centroid_mm": [
+          0.16212438901584011,
+          -0.2936065751234048,
+          26.12606905687628
+        ]
+      },
+      "generation": {
+        "method": "openscad",
+        "openscad_version": "OpenSCAD version 2026.01.03",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
+        "duration_seconds": 0.5090439319610596
+      },
+      "generated_at": "2026-05-30T16:59:17.917238Z"
+    },
+    {
+      "test_name": "cylinder_rounded_emboss_03mm",
+      "description": "Cylinder: Rounded dots, Embossing plate, 0.3mm paper-thickness preset",
+      "tags": [
+        "cylinder",
+        "rounded",
+        "emboss",
+        "indicators_on",
+        "preset_03mm"
+      ],
+      "priority": "medium",
+      "reference_stl": "cross_platform/cylinder_rounded_emboss_03mm/reference.stl",
+      "stl_size_bytes": 1949026,
+      "stl_sha256": "da6336e72aa05982812411a9b74357c7dc316af9dbaa6fe99f3afcd2119fcb05",
+      "mesh_properties": {
+        "volume_mm3": 10396.055678044162,
+        "surface_area_mm2": 9850.80012021565,
+        "bounding_box_mm": [
+          [-15.4, -16.18880039103984, 0.0],
+          [15.4, 15.4, 52.0]
+        ],
+        "face_count": 6080,
+        "vertex_count": 3056,
+        "is_watertight": true,
+        "centroid_mm": [
+          -0.03803935828863929,
+          -0.08709573764365279,
+          26.04347470880981
+        ]
+      },
+      "generation": {
+        "method": "openscad",
+        "openscad_version": "OpenSCAD version 2026.01.03",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
+        "duration_seconds": 0.5123145580291748
+      },
+      "generated_at": "2026-05-30T16:59:18.577092Z"
+    },
+    {
+      "test_name": "cylinder_rounded_counter_03mm",
+      "description": "Cylinder: Rounded dots, Counter plate, 0.3mm paper-thickness preset",
+      "tags": [
+        "cylinder",
+        "rounded",
+        "counter",
+        "indicators_on",
+        "preset_03mm",
+        "slow_openscad"
+      ],
+      "priority": "medium",
+      "reference_stl": "cross_platform/cylinder_rounded_counter_03mm/reference.stl",
+      "stl_size_bytes": 20862860,
+      "stl_sha256": "c07d653b6db3a22062d01672a948392d5ab0bd66032feba02438d5dafc6fda6e",
+      "mesh_properties": {
+        "volume_mm3": 10273.294690930326,
+        "surface_area_mm2": 10004.916696331207,
+        "bounding_box_mm": [
+          [-15.4, -15.4, 0.0],
+          [15.4, 15.4, 52.0]
+        ],
+        "face_count": 64896,
+        "vertex_count": 32448,
+        "is_watertight": true,
+        "centroid_mm": [
+          0.04211730268577335,
+          0.008102702696226824,
+          26.00000000000004
+        ]
+      },
+      "generation": {
+        "method": "openscad",
+        "openscad_version": "OpenSCAD version 2026.01.03",
+        "scad_file": "Braille_Cylinder_STL_Generator.scad",
+        "duration_seconds": 1.0102379322052002
+      },
+      "generated_at": "2026-05-30T16:59:20.284827Z"
     }
   ]
 }

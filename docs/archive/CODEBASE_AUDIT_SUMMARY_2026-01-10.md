@@ -121,7 +121,7 @@ The following items are documented as P3-P4 priority for future enhancement:
 
 | File | Changes |
 |------|---------|
-| `Braille_Card_And_Cylinder_STL_Generator.scad` | Removed card support entirely, fixed dropdown duplicates |
+| `Braille_Cylinder_STL_Generator.scad` | Removed card support entirely, fixed dropdown duplicates |
 | `tests/parameter_mapping.json` | Removed card parameters, updated to v2.0.0 |
 | `tests/README.md` | Updated card test case references to cylinder |
 | `tests/fixtures/cross_platform/README.md` | Updated example to use cylinder, updated version requirements |
@@ -226,7 +226,7 @@ Created `tests/test_openscad_customizer.py` to catch:
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `Braille_Card_And_Cylinder_STL_Generator.scad` | Main OpenSCAD generator | ✅ Current |
+| `Braille_Cylinder_STL_Generator.scad` | Main OpenSCAD generator | ✅ Current |
 
 ### Test Infrastructure
 

@@ -197,7 +197,7 @@ def check_scad_file():
     """Check if OpenSCAD file exists."""
     print("\n📄 Checking OpenSCAD file...")
     
-    scad_file = PROJECT_ROOT / "Braille_Card_And_Cylinder_STL_Generator.scad"
+    scad_file = PROJECT_ROOT / "Braille_Cylinder_STL_Generator.scad"
     if scad_file.exists():
         print(f"  ✓ OpenSCAD file found: {scad_file.name}")
         return True
