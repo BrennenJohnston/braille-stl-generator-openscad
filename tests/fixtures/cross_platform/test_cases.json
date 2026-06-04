@@ -473,7 +473,7 @@
       "expected_properties": {
         "is_watertight": true
       },
-      "note": "Exercises the multi-line render path; lines stay well under the 9-cell capacity so the TEXT TOO LONG warning never fires."
+      "note": "Exercises the multi-line render path; lines stay well under the 11-cell capacity so the TEXT TOO LONG warning never fires."
     },
     {
       "name": "cylinder_rounded_emboss_03mm",

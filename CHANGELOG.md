@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **False-positive `TEXT TOO LONG` warning with indicators On.** The warning
+  threshold subtracted 2 cells when indicators were enabled
+  (`active_grid_columns - (indicator_on ? 2 : 0)`), implying a "Design B"
+  capacity of `grid_columns - 2`. This contradicted the actual geometry, which
+  widens the grid by 2 cells when indicators are on (`actual_grid_columns =
+  grid_columns + 2`) and leaves the text capacity unchanged ("Design A"). A
+  full-capacity line (e.g. 10–11 chars) with indicators On rendered correctly
+  yet was wrongly flagged. The threshold is now `> active_grid_columns` in both
+  `Braille_Cylinder_STL_Generator.scad` and the MakerWorld twin, and the
+  adjacent comment was rewritten to describe the Design-A model. No reference
+  fixtures changed (longest fixture line is 5 chars, so the warning never fired
+  before or after the fix — zero geometry delta).
+
+### Changed
+- **Capacity documentation reconciled to Design A.** Standardized the wording
+  across `README.md` (features list + "TEXT TOO LONG" troubleshooting),
+  `docs/PARAMETER_MAPPING.md` (the "Indicator Shapes" prose now matches Note 2
+  and the Default Values line), the `grid_columns` parameter description in both
+  SCAD headers, `tests/parameter_mapping.json`, and the
+  `cylinder_rounded_emboss_multiline` note in
+  `tests/fixtures/cross_platform/test_cases.json`: text capacity is always
+  `grid_columns`; enabling indicators adds 2 marker cells without reducing
+  capacity.
+- **Testing documentation corrected.** `README.md` now describes the suite as
+  OpenSCAD self/regression validation against committed OpenSCAD-generated
+  reference STLs (the web reference parity claim was stale; the web API is
+  retired). Stale fixture counts were updated from 11 to the authoritative 14
+  and the 3 missing cases (`cylinder_rounded_emboss_multiline`,
+  `cylinder_rounded_emboss_03mm`, `cylinder_rounded_counter_03mm`) were added to
+  the coverage matrices in `README.md`,
+  `tests/fixtures/cross_platform/README_FIXTURE_GENERATION.md`, and
+  `docs/QUICK_START_TESTING.md`.
+
+### Removed
+- **Dead variable `active_counter_base_diameter`.** Defined but never
+  referenced; removed from both `Braille_Cylinder_STL_Generator.scad` and the
+  MakerWorld twin (`active_counter_height`, which is used, is unaffected).
+
+### Tests
+- `tests/test_text_too_long.py` updated to the Design-A contract
+  (`capacity = grid_columns`) and now renders an exact-capacity line
+  (`grid_columns` chars with indicators On) asserting the warning does **not**
+  fire — the regression guard for the bug fixed above.
+
 ## [2.3.0] - 2026-06-04
 
 ### Added

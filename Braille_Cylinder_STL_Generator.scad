@@ -112,7 +112,7 @@ seam_offset_degrees = 0.0; // [0:1:360] Seam offset (degrees) — Rotates starti
 
 /* [Expert Mode - Braille Spacing] */
 // --- Braille Dimensions ---
-grid_columns = 11; // [1:1:20] Number of braille cells per row available for text (2 cells reserved for indicators when On)
+grid_columns = 11; // [1:1:20] Text capacity in braille cells per row (when indicators are On, 2 extra cells are added for markers; text capacity is unchanged)
 grid_rows = 4; // [1:1:10] Number of lines of braille
 cell_spacing = 6.5; // [2:0.1:15] Horizontal spacing between cells (mm)
 line_spacing = 10.0; // [5:0.1:25] Vertical spacing between lines (mm)
@@ -257,7 +257,6 @@ _preset_seam_offset_degrees            = preset_value(paper_thickness_preset, "s
 active_emboss_height = use_rounded_dots ? (_preset_rounded_dot_base_height + _preset_rounded_dot_dome_height) : _preset_emboss_dot_height;
 
 // Active counter dot parameters (based on shape selection, using preset-routed values)
-active_counter_base_diameter = use_rounded_dots ? _preset_bowl_counter_dot_base_diameter : _preset_cone_counter_dot_base_diameter;
 active_counter_height = use_rounded_dots ? _preset_counter_dot_depth : _preset_cone_counter_dot_height;
 
 // Active spacing parameters (pass through from preset routing)
@@ -568,12 +567,13 @@ module cylinder_emboss_plate() {
                     text("INVALID CHARACTERS", size = INVALID_TEXT_SIZE, halign = "center", valign = "center");
                 }
 
-                // Check whether any line exceeds the cells available for text.
-                // When indicators are on, the first two cells are reserved for
-                // alignment markers, so usable capacity drops by 2.
+                // Check whether any line exceeds the text capacity.
+                // Text capacity is always grid_columns; when indicators are on,
+                // the grid is widened by 2 cells (actual_grid_columns) to hold
+                // the alignment markers, so text capacity is unchanged.
                 text_too_long =
                     max([len(Line_1), len(Line_2), len(Line_3), len(Line_4)])
-                    > (active_grid_columns - (indicator_on ? 2 : 0));
+                    > active_grid_columns;
 
                 if (text_too_long) {
                     translate([0, 0, active_cylinder_height_mm/2 + INVALID_TEXT_Z_OFFSET + INVALID_TEXT_STACK_GAP])

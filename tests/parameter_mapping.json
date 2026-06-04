@@ -185,7 +185,7 @@
       "default": 11,
       "range": [1, 20],
       "section": "Expert Mode - Braille Spacing",
-      "description": "Number of braille cells per row available for text (2 cells reserved for indicators when On)"
+      "description": "Text capacity in braille cells per row (when indicators are On, 2 extra cells are added for markers; text capacity is unchanged)"
     },
     {
       "openscad_name": "grid_rows",
