@@ -7,6 +7,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-06-04
+
+### Added
+- **MakerWorld single-file build (alternative).** New
+  `makerworld/Braille_Cylinder_STL_Generator_MakerWorld.scad` — a flattened,
+  single-file copy of the generator for MakerWorld's Parametric Model Maker
+  (which accepts only one `.scad` file and rejects local `include <...>`). It
+  inlines `presets.scad` between `// ==== BEGIN/END inlined from presets.scad ====`
+  sentinels and defaults `dot_shape` to `"Cone"` (the dropdown still offers
+  `Rounded`). The dual-file desktop version remains the canonical source of
+  truth.
+- `makerworld/README.md` with upload steps, the Cone-default note, and the
+  maintainer re-flatten procedure.
+- `tests/test_makerworld_sync.py` guarding that the MakerWorld file's geometry
+  body (from the `BACKWARD COMPATIBILITY` marker to EOF) is byte-identical to
+  the canonical main file, that presets are inlined (no active `include`), and
+  that the Cone default + sentinels are present.
+
+### Fixed
+- **Indicator triangle mirror (emboss/counter now form a true mirrored pair).**
+  The counter plate previously built its indicators by negating angles while
+  reusing the emboss triangle orientation and the rectangle's `+dot_spacing/2`
+  local offset un-mirrored, so (1) the triangle pointed the wrong way relative
+  to the emboss plate and (2) the triangle→rectangle center spacing differed
+  between the two plates by ~`dot_spacing` (≈2.5 mm). The per-row indicator
+  layout is now factored into a single `place_row_indicators` module; the
+  emboss plate renders it directly and the counter plate renders the same
+  module under `mirror([0, 1, 0])`, producing an exact mirrored pair with
+  identical triangle→rectangle spacing and opposite triangle directions (emboss
+  apex right, counter apex left, verified by render). In
+  `Braille_Cylinder_STL_Generator.scad`.
+
+### Changed
+- **Default `dot_shape` is now `"Cone"`** (was `"Rounded"`) in
+  `Braille_Cylinder_STL_Generator.scad`, so the OpenSCAD Customizer loads with
+  Cone selected; the dropdown still offers `Rounded`. `paper_thickness_preset`
+  remains `"0.4mm"` by default. This matches the MakerWorld single-file build,
+  so both files now share the Cone default. Reference fixtures are unaffected
+  (the test matrix passes `combined_shape` explicitly). README "Default
+  Settings" updated accordingly.
+- `tests/test_indicator_source_guards.py` now asserts the new shared-module +
+  `mirror([0, 1, 0])` structure (`place_row_indicators`, the emboss/counter call
+  sites, and `rotate_180 = true` in the shared module) while keeping the old
+  anti-regression guards.
+- Regenerated all 14 cross-platform reference fixtures for the indicator
+  geometry change and bumped `fixture_version` `2.2.0` → `2.3.0` in
+  `tests/fixtures/cross_platform/test_cases.json` (with a note). Indicator
+  geometry changed on every `indicators_on` fixture; `verify_fixture_integrity`
+  and the full `cross_platform_validation` suite pass against the new fixtures.
+
 ## [2.2.1] - 2026-05-30
 
 ### Added
